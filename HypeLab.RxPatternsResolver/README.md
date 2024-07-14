@@ -16,7 +16,7 @@ public class Example
 {
    private readonly RegexPatternsResolver _rxResolver;
 	
-   public Class1(RegexPatternsResolver rxResolver)
+   public Example(RegexPatternsResolver rxResolver)
    {
 	_rxResolver = rxResolver;
    }
