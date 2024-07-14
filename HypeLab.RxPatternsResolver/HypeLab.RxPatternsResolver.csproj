@@ -9,7 +9,7 @@
 		<Authors>Hype-Lab</Authors>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-		<PackageProjectUrl>https://github.com/mperu92/HypeLab.Libraries/tree/main/HypeLab.RxPatternsResolver</PackageProjectUrl>
+		<PackageProjectUrl>https://github.com/hype-lab/DotNetLibraries/tree/main/HypeLab.RxPatternsResolver</PackageProjectUrl>
 		<PackageReleaseNotes>Changed important code in readme examples</PackageReleaseNotes>
 		<Copyright>©2024 HypeLab</Copyright>
 		<PackageTags>regex, regular expressions, c#, .net standard 2.1</PackageTags>
@@ -21,7 +21,7 @@
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 		<NeutralLanguage>en-US</NeutralLanguage>
-		<RepositoryUrl>https://github.com/mperu92/HypeLab.Libraries/tree/main/HypeLab.RxPatternsResolver</RepositoryUrl>
+		<RepositoryUrl>https://github.com/hype-lab/DotNetLibraries/tree/main/HypeLab.RxPatternsResolver</RepositoryUrl>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<RepositoryType>git</RepositoryType>
 		<Version>0.1.4</Version>
