@@ -11,7 +11,7 @@
 		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
 		<PackageProjectUrl>https://github.com/hype-lab/DotNetLibraries/tree/main/HypeLab.RxPatternsResolver</PackageProjectUrl>
 		<PackageReleaseNotes>Changed readme examples, NuGets update, minimal code adjustements</PackageReleaseNotes>
-		<Copyright>©2024 HypeLab</Copyright>
+		<Copyright>©2024 Hype-Lab</Copyright>
 		<PackageTags>regex, regular expressions, c#, .net standard 2.1</PackageTags>
 	</PropertyGroup>
 
