@@ -1,0 +1,43 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<PackageVersion>0.0.1</PackageVersion>
+		<Title>Hype-Lab.MailEngine</Title>
+		<Description>
+			Provides mail engine services for sending emails using SendGrid and SMTP.
+		</Description>
+		<Authors>Hype-Lab</Authors>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+		<PackageProjectUrl>https://github.com/hype-lab/DotNetLibraries/tree/main/HypeLab.MailEngine</PackageProjectUrl>
+		<PackageReleaseNotes>First release</PackageReleaseNotes>
+		<Copyright>©2024 Hype-Lab</Copyright>
+		<PackageTags>email sending, c#, .net 8</PackageTags>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<GenerateDocumentationFile>True</GenerateDocumentationFile>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<NeutralLanguage>en-US</NeutralLanguage>
+		<RepositoryUrl>https://github.com/hype-lab/DotNetLibraries/tree/main/HypeLab.MailEngine</RepositoryUrl>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<RepositoryType>git</RepositoryType>
+		<Version>0.0.1</Version>
+		<AssemblyVersion>0.0.0.1</AssemblyVersion>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
+		<PackageReference Include="SendGrid" Version="9.29.3" />
+		<PackageReference Include="SendGrid.Extensions.DependencyInjection" Version="1.0.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Update="README.md">
+			<PackagePath>\</PackagePath>
+			<Pack>True</Pack>
+		</None>
+	</ItemGroup>
+</Project>
