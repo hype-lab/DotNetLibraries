@@ -10,7 +10,7 @@
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
 		<PackageProjectUrl>https://github.com/hype-lab/DotNetLibraries/tree/main/HypeLab.RxPatternsResolver</PackageProjectUrl>
-		<PackageReleaseNotes>Changed important code in readme examples</PackageReleaseNotes>
+		<PackageReleaseNotes>Changed readme examples, NuGets update, minimal code adjustements</PackageReleaseNotes>
 		<Copyright>©2024 HypeLab</Copyright>
 		<PackageTags>regex, regular expressions, c#, .net standard 2.1</PackageTags>
 	</PropertyGroup>
