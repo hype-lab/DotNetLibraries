@@ -1,0 +1,42 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<PackageVersion>0.1.4</PackageVersion>
+		<Title>Hype-Lab.RxPatternsResolver</Title>
+		<Description>
+			Provides a class capable of solve collections of regex patterns given an input string. Also equipped with a default patterns set.
+			Also exposes a method that validateS the email address format and optionally validates domain.
+		</Description>
+		<Authors>Hype-Lab</Authors>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+		<PackageProjectUrl>https://github.com/mperu92/HypeLab.Libraries/tree/main/HypeLab.RxPatternsResolver</PackageProjectUrl>
+		<PackageReleaseNotes>Changed important code in readme examples</PackageReleaseNotes>
+		<Copyright>©2024 HypeLab</Copyright>
+		<PackageTags>regex, regular expressions, c#, .net standard 2.1</PackageTags>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<TargetFramework>netstandard2.1</TargetFramework>
+		<Nullable>enable</Nullable>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<NeutralLanguage>en-US</NeutralLanguage>
+		<RepositoryUrl>https://github.com/mperu92/HypeLab.Libraries/tree/main/HypeLab.RxPatternsResolver</RepositoryUrl>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<RepositoryType>git</RepositoryType>
+		<Version>0.1.4</Version>
+		<AssemblyVersion>0.0.1.4</AssemblyVersion>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.1" />
+	  <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="README.md">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
+	</ItemGroup>
+</Project>
