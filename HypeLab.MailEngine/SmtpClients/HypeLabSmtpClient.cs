@@ -7,18 +7,18 @@ namespace HypeLab.MailEngine.SmtpClients
     /// <summary>
     /// Represents a custom SMTP client.
     /// </summary>
-    public class CustomSmtpClient : SmtpClient
+    public class HypeLabSmtpClient : SmtpClient
     {
         /// <summary>
         /// Constructor for CustomSmtpClient.
         /// </summary>
         /// <param name="smtpAccessInfo"></param>
-        public CustomSmtpClient(SmtpAccessInfo smtpAccessInfo)
+        public HypeLabSmtpClient(SmtpAccessInfo smtpAccessInfo)
         {
             Host = smtpAccessInfo.Server;
             Port = smtpAccessInfo.Port;
             EnableSsl = true;
-            Credentials = new NetworkCredential(smtpAccessInfo.AccountEmail, smtpAccessInfo.Password);
+            Credentials = new NetworkCredential(smtpAccessInfo.Email, smtpAccessInfo.Password);
         }
 
         /// <summary>

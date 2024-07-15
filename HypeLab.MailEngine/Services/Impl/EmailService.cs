@@ -41,11 +41,15 @@ namespace HypeLab.MailEngine.Services.Impl
         /// Sends an email.
         /// </summary>
         /// <param name="message"></param>
+        /// <param name="clientId"></param>
         /// <returns></returns>
         /// <exception cref="InvalidOperationException"></exception>
-        public async Task<EmailServiceResponse> SendEmailAsync(CustomMailMessage message)
+        public async Task<EmailServiceResponse> SendEmailAsync(CustomMailMessage message, string? clientId = null)
         {
-            if (_emailSender == null)
+            if (!string.IsNullOrWhiteSpace(clientId))
+                _emailSender = clientId.DetermineSenderByClientId(_emailSenderFactory);
+
+            if (_emailSender is null)
                 throw new InvalidOperationException("Email sender is not set.");
 
             EmailSenderResponse response = await _emailSender
@@ -55,29 +59,7 @@ namespace HypeLab.MailEngine.Services.Impl
             if (!response.IsValid)
                 return new EmailServiceResponse(isValid: false, message: response.Message);
 
-            return new EmailServiceResponse(isValid: true, message: "Email inviata");
-        }
-
-        /// <summary>
-        /// Sends an email by ClientId.
-        /// </summary>
-        /// <param name="clientId"></param>
-        /// <param name="message"></param>
-        /// <returns></returns>
-        public async Task<EmailServiceResponse> SendEmailAsync(string clientId, CustomMailMessage message)
-        {
-            ArgumentException.ThrowIfNullOrEmpty(clientId);
-
-            _emailSender = clientId.DetermineSenderByClientId(_emailSenderFactory);
-
-            EmailSenderResponse response = await _emailSender
-                .SendEmailAsync(message.EmailTo, message.HtmlMessage, message.EmailSubject, message.EmailFrom, message.PlainTextContent, message.EmailToName, message.EmailFromName, message.Ccs)
-                .ConfigureAwait(false);
-
-            if (!response.IsValid)
-                return new EmailServiceResponse(isValid: false, message: response.Message);
-
-            return new EmailServiceResponse(isValid: true, message: "Email inviata");
+            return new EmailServiceResponse(isValid: true, message: response.Message);
         }
     }
 }

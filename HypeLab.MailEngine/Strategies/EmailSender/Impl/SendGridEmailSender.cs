@@ -1,7 +1,6 @@
 ﻿using HypeLab.MailEngine.Data.Exceptions;
 using HypeLab.MailEngine.Data.Models;
 using HypeLab.MailEngine.Data.Models.Impl;
-using HypeLab.MailEngine.Factories.Impl;
 using SendGrid;
 using SendGrid.Helpers.Mail;
 using System.Net;
@@ -71,9 +70,9 @@ namespace HypeLab.MailEngine.Strategies.EmailSender.Impl
                 string content = await response.Body.ReadAsStringAsync().ConfigureAwait(false);
 
                 if (response.StatusCode == HttpStatusCode.Accepted || response.StatusCode == HttpStatusCode.OK)
-                    return EmailSenderResponse.Success($"Email inviata correttamente.\n{content}");
+                    return EmailSenderResponse.Success($"Email sent.\n{content}");
                 else
-                    return EmailSenderResponse.Failure($"Errore invio mail.\n Codice Status: {response.StatusCode}\nContent: {content}");
+                    return EmailSenderResponse.Failure($"Failed to send email.\n Status Code: {response.StatusCode}\nContent: {content}");
             }
             catch (SendGridEmailSenderException ex)
             {

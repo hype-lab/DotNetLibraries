@@ -10,6 +10,6 @@ namespace HypeLab.MailEngine.SendGrid
     /// </remarks>
     /// <param name="httpClient"></param>
     /// <param name="options"></param>
-    public class CustomSendGridClient(HttpClient httpClient, SendGridClientOptions options)
+    public class HypeLabSendGridClient(HttpClient httpClient, SendGridClientOptions options)
         : SendGridClient(httpClient, options) { }
 }

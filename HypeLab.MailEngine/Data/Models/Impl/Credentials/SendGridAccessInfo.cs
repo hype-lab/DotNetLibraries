@@ -35,7 +35,7 @@ namespace HypeLab.MailEngine.Data.Models.Impl.Credentials
         /// <returns></returns>
         public override string ToString()
         {
-            return $"ApiKey: {ApiKey}, ClientId: {ClientId}";
+            return $"ApiKey: {ApiKey}, ClientId: {ClientId}, IsDefault: {IsDefault}";
         }
 
         /// <summary>

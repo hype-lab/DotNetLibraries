@@ -12,13 +12,13 @@ namespace HypeLab.MailEngine.Strategies.EmailSender.Impl
     /// </summary>
     public sealed class SmtpEmailSender : ISmtpEmailSender
     {
-        private readonly CustomSmtpClient _smtpClient;
+        private readonly HypeLabSmtpClient _smtpClient;
 
         /// <summary>
         /// Constructor for SmtpEmailSender.
         /// </summary>
         /// <param name="smtpClient"></param>
-        public SmtpEmailSender(CustomSmtpClient smtpClient)
+        public SmtpEmailSender(HypeLabSmtpClient smtpClient)
         {
             _smtpClient = smtpClient;
         }

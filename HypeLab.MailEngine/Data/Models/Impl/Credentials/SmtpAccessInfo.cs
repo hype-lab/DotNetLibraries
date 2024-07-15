@@ -8,11 +8,11 @@ namespace HypeLab.MailEngine.Data.Models.Impl.Credentials
     /// <param name="clientId"></param>
     /// <param name="server"></param>
     /// <param name="port"></param>
-    /// <param name="accountEmail"></param>
+    /// <param name="email"></param>
     /// <param name="password"></param>
     /// <param name="enableSsl"></param>
     /// <param name="isDefault"></param>
-    public class SmtpAccessInfo(string clientId, string server, int port, string accountEmail, string password, bool enableSsl, bool isDefault) : IMailAccessInfo
+    public class SmtpAccessInfo(string clientId, string server, int port, string email, string password, bool enableSsl, bool isDefault) : IMailAccessInfo
     {
         /// <summary>
         /// The type of the email sender.
@@ -39,7 +39,7 @@ namespace HypeLab.MailEngine.Data.Models.Impl.Credentials
         /// <summary>
         /// The account email.
         /// </summary>
-        public string AccountEmail { get; } = accountEmail;
+        public string Email { get; } = email;
         /// <summary>
         /// The account password.
         /// </summary>
@@ -56,7 +56,7 @@ namespace HypeLab.MailEngine.Data.Models.Impl.Credentials
         /// <returns></returns>
         public override string ToString()
         {
-            return $"Server: {Server}, Port: {Port}, AccountEmail: {AccountEmail}, Password: {Password}, EnableSsl: {EnableSsl}";
+            return $"Server: {Server}, Port: {Port}, Email: {Email}, Password: {Password}, EnableSsl: {EnableSsl}";
         }
 
         /// <summary>

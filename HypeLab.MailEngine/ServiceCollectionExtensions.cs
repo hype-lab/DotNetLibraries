@@ -7,18 +7,19 @@ using HypeLab.MailEngine.Data.Exceptions;
 using HypeLab.MailEngine.Data.Models.Impl;
 using HypeLab.MailEngine.Data.Enums;
 using HypeLab.MailEngine.Helpers;
+using HypeLab.MailEngine.Factories.Impl;
 
 namespace HypeLab.MailEngine
 {
     /// <summary>
     /// Extension methods for the IServiceCollection interface.
-    /// For now the engine registers services as scoped, but this design can be changed in the future.
+    /// For now the engine registers services as scoped apart of the sendgrid options builder, but this design can be changed in the future.
     /// </summary>
     public static class ServiceCollectionExtensions
     {
         /// <summary>
         /// Adds the mail engine to the service collection.
-        /// For now the engine registers services as scoped, but this design can be changed in the future.
+        /// For now the engine registers services as scoped apart of the sendgrid options builder, but this design can be changed in the future.
         /// </summary>
         /// <param name="services"></param>
         /// <param name="mailAccessInfo"></param>
@@ -29,8 +30,9 @@ namespace HypeLab.MailEngine
             ArgumentNullException.ThrowIfNull(mailAccessInfo);
             MailAccessInfoClientIdNullException.ThrowIfClientIdNullOrEmpty(mailAccessInfo);
 
-            services.AddScopedMailEngine(mailAccessInfo);
+            services.AddScopedMailEngine(mailAccessInfo, isSingleSender: true);
 
+            services.AddScoped<IEmailSenderFactory, EmailSenderFactory>();
             services.AddScoped<IEmailService, EmailService>(serviceProvider =>
             {
                 // uses the service provider to get the IMailAccessInfo and IEmailSenderFactory instances
@@ -67,6 +69,7 @@ namespace HypeLab.MailEngine
                 services.AddScopedMailEngine(mailAccessInfo);
             }
 
+            services.AddScoped<IEmailSenderFactory, EmailSenderFactory>();
             services.AddScoped<IEmailService, EmailService>(serviceProvider =>
             {
                 // uses the service provider to get the IMailAccessesInfo and IEmailSenderFactory instances

@@ -136,3 +136,10 @@ $RECYCLE.BIN/
 Network Trash Folder
 Temporary Items
 .apdisk
+/TestApiForLibraries/TestApiForLibraries.csproj
+/TestApiForLibraries/Controllers/WeatherForecastController.cs
+/TestApiForLibraries/appsettings.json
+/TestApiForLibraries/Program.cs
+/TestApiForLibraries/TestApiForLibraries.http
+/TestApiForLibraries/WeatherForecast.cs
+/TestApiForLibraries/appsettings.Development.json
