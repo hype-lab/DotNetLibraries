@@ -31,7 +31,8 @@ namespace HypeLab.MailEngine
 
             services.AddKeyedScopedMailEngine(mailAccessInfo, isSingleSender: true);
 
-            services.AddScoped<IEmailSenderFactory, EmailSenderFactory>();
+
+            services.AddEmailSenderFactory();
             services.AddSingleInfoAccessEmailService();
 
             return services;
