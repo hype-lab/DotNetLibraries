@@ -17,7 +17,6 @@ namespace HypeLab.MailEngine.Strategies.EmailSender.Impl
         /// <summary>
         /// Constructor for SendGridEmailSender.
         /// </summary>
-        /// <param name="client"></param>
         public SendGridEmailSender(ISendGridClient client)
         {
             _client = client;
@@ -71,9 +70,9 @@ namespace HypeLab.MailEngine.Strategies.EmailSender.Impl
                 string content = await response.Body.ReadAsStringAsync().ConfigureAwait(false);
 
                 if (response.StatusCode == HttpStatusCode.Accepted || response.StatusCode == HttpStatusCode.OK)
-                    return EmailSenderResponse.Success($"Email inviata correttamente.\n{content}");
+                    return EmailSenderResponse.Success($"Email sent.\n{content}");
                 else
-                    return EmailSenderResponse.Failure($"Errore invio mail.\n Codice Status: {response.StatusCode}\nContent: {content}");
+                    return EmailSenderResponse.Failure($"Failed to send email.\n Status Code: {response.StatusCode}\nContent: {content}");
             }
             catch (SendGridEmailSenderException ex)
             {

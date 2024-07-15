@@ -21,14 +21,14 @@ namespace HypeLab.MailEngine.Data.Exceptions
         /// <summary>
         /// Constructor with message
         /// </summary>
-        public DefaultEmailSenderNotFoundException(string message)
-            : base(message) { }
+        public DefaultEmailSenderNotFoundException(string? message)
+            : base(message ?? ExceptionDefaults.DefaultEmailSenderNotFound.DefaultMessage) { }
 
         /// <summary>
         /// Constructor with message
         /// </summary>
-        public DefaultEmailSenderNotFoundException(string message, Exception innerException)
-            : base(message, innerException) { }
+        public DefaultEmailSenderNotFoundException(string? message, Exception innerException)
+            : base(message ?? ExceptionDefaults.DefaultEmailSenderNotFound.DefaultMessage, innerException) { }
 
         /// <summary>
         /// Throws an exception if no default email sender is found

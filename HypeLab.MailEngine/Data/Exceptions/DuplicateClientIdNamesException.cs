@@ -20,14 +20,14 @@ namespace HypeLab.MailEngine.Data.Exceptions
         /// <summary>
         /// Constructor with message
         /// </summary>
-        public DuplicateClientIdNamesException(string message)
-            : base(message) { }
+        public DuplicateClientIdNamesException(string? message)
+            : base(message ?? ExceptionDefaults.DuplicateClientIdNames.DefaultMessage) { }
 
         /// <summary>
         /// Constructor with message and inner exception
         /// </summary>
-        public DuplicateClientIdNamesException(string message, Exception innerException)
-            : base(message, innerException) { }
+        public DuplicateClientIdNamesException(string? message, Exception innerException)
+            : base(message ?? ExceptionDefaults.DuplicateClientIdNames.DefaultMessage, innerException) { }
 
         /// <summary>
         /// Throws an exception if there are duplicate client id names

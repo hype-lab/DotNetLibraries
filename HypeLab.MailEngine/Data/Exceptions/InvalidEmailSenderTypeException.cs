@@ -21,14 +21,14 @@ namespace HypeLab.MailEngine.Data.Exceptions
         /// <summary>
         /// Constructor with message
         /// </summary>
-        public InvalidEmailSenderTypeException(string message)
-            : base(message) { }
+        public InvalidEmailSenderTypeException(string? message)
+            : base(message ?? ExceptionDefaults.InvalidEmailSenderType.DefaultMessage) { }
 
         /// <summary>
         /// Constructor with message and inner exception
         /// </summary>
-        public InvalidEmailSenderTypeException(string message, Exception innerException)
-            : base(message, innerException) { }
+        public InvalidEmailSenderTypeException(string? message, Exception innerException)
+            : base(message ?? ExceptionDefaults.InvalidEmailSenderType.DefaultMessage, innerException) { }
 
         /// <summary>
         /// Throws an exception if the email sender type is invalid

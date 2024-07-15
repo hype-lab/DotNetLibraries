@@ -10,13 +10,9 @@ namespace HypeLab.MailEngine.Services
         /// <summary>
         /// Sends an email.
         /// </summary>
-        Task<EmailServiceResponse> SendEmailAsync(CustomMailMessage message);
-        /// <summary>
-        /// Sends an email by ClientId.
-        /// </summary>
-        /// <param name="clientId"></param>
         /// <param name="message"></param>
+        /// <param name="clientId"></param>
         /// <returns></returns>
-        Task<EmailServiceResponse> SendEmailAsync(string clientId, CustomMailMessage message);
+        Task<EmailServiceResponse> SendEmailAsync(CustomMailMessage message, string? clientId = null);
     }
 }

@@ -17,7 +17,7 @@
             /// <summary>
             /// The default exception message.
             /// </summary>
-            public const string DefaultMessage = "Multiple default email senders found.";
+            public const string DefaultMessage = "Multiple default email senders found. One default email sender must be set";
         }
 
         /// <summary>
@@ -62,7 +62,7 @@
             /// <summary>
             /// The default exception message.
             /// </summary>
-            public const string DefaultMessage = "ClientId cannot be null.";
+            public const string DefaultMessage = "ClientId cannot be null or empty.";
         }
 
         /// <summary>
