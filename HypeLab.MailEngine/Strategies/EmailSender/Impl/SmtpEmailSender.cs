@@ -10,7 +10,7 @@ namespace HypeLab.MailEngine.Strategies.EmailSender.Impl
     /// <summary>
     /// Represents an SMTP email sender.
     /// </summary>
-    public class SmtpEmailSender : ISmtpEmailSender
+    public sealed class SmtpEmailSender : ISmtpEmailSender
     {
         private readonly CustomSmtpClient _smtpClient;
 

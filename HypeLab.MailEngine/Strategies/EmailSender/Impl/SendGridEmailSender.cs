@@ -1,6 +1,7 @@
 ﻿using HypeLab.MailEngine.Data.Exceptions;
 using HypeLab.MailEngine.Data.Models;
 using HypeLab.MailEngine.Data.Models.Impl;
+using HypeLab.MailEngine.Factories.Impl;
 using SendGrid;
 using SendGrid.Helpers.Mail;
 using System.Net;
@@ -17,7 +18,6 @@ namespace HypeLab.MailEngine.Strategies.EmailSender.Impl
         /// <summary>
         /// Constructor for SendGridEmailSender.
         /// </summary>
-        /// <param name="client"></param>
         public SendGridEmailSender(ISendGridClient client)
         {
             _client = client;

@@ -20,14 +20,14 @@ namespace HypeLab.MailEngine.Data.Exceptions
         /// <summary>
         /// Constructor with message
         /// </summary>
-        public MultipleDefaultEmailSendersFoundException(string message)
-            : base(message) { }
+        public MultipleDefaultEmailSendersFoundException(string? message)
+            : base(message ?? ExceptionDefaults.MultipleDefaultEmailSendersFound.DefaultMessage) { }
 
         /// <summary>
         /// Constructor with message and inner exception
         /// </summary>
-        public MultipleDefaultEmailSendersFoundException(string message, Exception innerException)
-            : base(message, innerException) { }
+        public MultipleDefaultEmailSendersFoundException(string? message, Exception innerException)
+            : base(message ?? ExceptionDefaults.MultipleDefaultEmailSendersFound.DefaultMessage, innerException) { }
 
         /// <summary>
         /// Throws an exception if there are multiple default email senders found
