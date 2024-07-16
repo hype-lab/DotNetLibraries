@@ -11,6 +11,7 @@ using SendGrid;
 using HypeLab.MailEngine.SendGrid;
 using HypeLab.MailEngine.Services.Impl;
 using HypeLab.MailEngine.Services;
+using HypeLab.MailEngine.Factories.Impl;
 
 namespace HypeLab.MailEngine.Helpers
 {
@@ -23,7 +24,7 @@ namespace HypeLab.MailEngine.Helpers
             return emailSenderFactory.CreateEmailSender(clientId);
         }
 
-        public static void AddScopedMailEngine(this IServiceCollection services, IMailAccessInfo mailAccessInfo, bool isSingleSender = false)
+        public static void AddKeyedScopedMailEngine(this IServiceCollection services, IMailAccessInfo mailAccessInfo, bool isSingleSender = false)
         {
             switch (mailAccessInfo)
             {
@@ -100,6 +101,11 @@ namespace HypeLab.MailEngine.Helpers
                 default:
                     throw new InvalidEmailSenderTypeException($"The provided email sender type is invalid: {JsonConvert.SerializeObject(mailAccessInfo.GetType())}");
             }
+        }
+
+        public static void AddEmailSenderFactory(this IServiceCollection services)
+        {
+            services.AddScoped<IEmailSenderFactory, EmailSenderFactory>();
         }
 
         public static void AddSingleInfoAccessEmailService(this IServiceCollection services)
