@@ -143,3 +143,4 @@ Temporary Items
 /TestApiForLibraries/TestApiForLibraries.http
 /TestApiForLibraries/WeatherForecast.cs
 /TestApiForLibraries/appsettings.Development.json
+/TestApiForLibraries/Controllers/DummyController.cs
