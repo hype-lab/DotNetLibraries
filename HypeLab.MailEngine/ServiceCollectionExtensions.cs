@@ -1,11 +1,9 @@
-﻿using HypeLab.MailEngine.Factories;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using HypeLab.MailEngine.Data.Models;
 using HypeLab.MailEngine.Data.Exceptions;
 using HypeLab.MailEngine.Data.Models.Impl;
 using HypeLab.MailEngine.Data.Enums;
 using HypeLab.MailEngine.Helpers;
-using HypeLab.MailEngine.Factories.Impl;
 using HypeLab.MailEngine.Helpers.Const;
 
 namespace HypeLab.MailEngine
@@ -31,7 +29,6 @@ namespace HypeLab.MailEngine
 
             services.AddKeyedScopedMailEngine(mailAccessInfo, isSingleSender: true);
 
-
             services.AddEmailSenderFactory();
             services.AddSingleInfoAccessEmailService();
 
@@ -40,13 +37,12 @@ namespace HypeLab.MailEngine
 
         /// <summary>
         /// Adds the mail engine to the service collection.
-        /// For now the engine registers services as scoped, but this design can be changed in the future.
+        /// For now the engine registers services as scoped apart of the sendgrid options builder, but this design can be changed in the future.
         /// </summary>
         /// <param name="services"></param>
         /// <param name="mailAccessInfoParams"></param>
         /// <returns></returns>
         /// <exception cref="DefaultEmailSenderNotFoundException"></exception>
-        /// <exception cref="InvalidEmailSenderTypeException"></exception>
         public static IServiceCollection AddMailEngine(this IServiceCollection services, params IMailAccessInfo[] mailAccessInfoParams)
         {
             ArgumentNullException.ThrowIfNull(mailAccessInfoParams);
