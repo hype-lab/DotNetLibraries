@@ -12,7 +12,7 @@ namespace HypeLab.MailEngine.Data.Models.Impl.Credentials
     /// <param name="password"></param>
     /// <param name="enableSsl"></param>
     /// <param name="isDefault"></param>
-    public class SmtpAccessInfo(string clientId, string server, int port, string email, string password, bool enableSsl, bool isDefault) : IMailAccessInfo
+    public class SmtpAccessInfo(string clientId, string server, int port, string email, string password, bool enableSsl, bool? isDefault = null) : IMailAccessInfo
     {
         /// <summary>
         /// The type of the email sender.
@@ -22,7 +22,7 @@ namespace HypeLab.MailEngine.Data.Models.Impl.Credentials
         /// <summary>
         /// Indicates whether the access info is the default one.
         /// </summary>
-        public bool IsDefault { get; } = isDefault;
+        public bool IsDefault { get; } = isDefault ?? true;
         /// <summary>
         /// The client id.
         /// </summary>
