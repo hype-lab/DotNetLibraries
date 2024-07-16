@@ -1,7 +1,7 @@
-# HypeLab.MailEngine
-## Note: This library targets .NET 8, so it's not compatible with .NET 5 or .NET Core 3.1
-
 [![NuGet version (HypeLab.MailEngine)](https://img.shields.io/nuget/v/HypeLab.MailEngine.svg?style=flat-square)](https://www.nuget.org/packages/HypeLab.MailEngine/)
+
+# HypeLab.MailEngine
+## Note: This library targets .NET 8, so it's not compatible with lower versions of .NET.
 
 HypeLab.MailEngine is a flexible and modular .NET library **that targets .NET 8** for managing multiple email clients, including support for both SMTP and SendGrid for now.
 The package allows to configure and use multiple email clients with distinct settings, leveraging dependency injection for seamless integration.
@@ -63,7 +63,7 @@ public void ConfigureServices(IServiceCollection services)
 {
 	WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-	SendGridAccessInfo sendGridAccessInfo = builder.Configuration.GetSection("SendGrid").Get<SendGridAccessInfo>;()
+	SendGridAccessInfo sendGridAccessInfo = builder.Configuration.GetSection("SendGrid").Get<SendGridAccessInfo>()
 		?? throw new InvalidOperationException("SendGrid section not found");
 
 	builder.Services.AddMailEngine(sendGridAccessInfo);
