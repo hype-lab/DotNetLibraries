@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<PackageVersion>0.0.3</PackageVersion>
+		<PackageVersion>0.1.0</PackageVersion>
 		<Title>Hype-Lab.MailEngine</Title>
 		<Description>
 			A flexible and modular .NET library for managing multiple email clients, including support for both SMTP and SendGrid for now.
@@ -25,8 +25,8 @@
 		<RepositoryUrl>https://github.com/hype-lab/DotNetLibraries/tree/main/HypeLab.MailEngine</RepositoryUrl>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<RepositoryType>git</RepositoryType>
-		<Version>0.0.3</Version>
-		<AssemblyVersion>0.0.0.3</AssemblyVersion>
+		<Version>0.1.0</Version>
+		<AssemblyVersion>0.0.1.0</AssemblyVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
