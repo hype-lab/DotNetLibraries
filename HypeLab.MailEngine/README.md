@@ -89,18 +89,18 @@ public class MyService
 
 	public async Task SendEmailAsync()
 	{
-	CustomMailMessage mailMessage = CustomMailMessage.Create(
-            emailTo: "your_email@to",
-            emailSubject: "MailEngine .NET Library Email",
-            emailFrom: "info@hype-lab.it",
-            htmlMessage: "<h1>Test email from MailEngine .NET Library</h1>",
-            plainTextContent: "Test email from MailEngine .NET Library",
-            emailToName: "Matt P",
-            emailFromName: "Info Hype-Lab");
+		CustomMailMessage mailMessage = CustomMailMessage.Create(
+				emailTo: "your_email@to",
+				emailSubject: "MailEngine .NET Library Email",
+				emailFrom: "info@hype-lab.it",
+				htmlMessage: "<h1>Test email from MailEngine .NET Library</h1>",
+				plainTextContent: "Test email from MailEngine .NET Library",
+				emailToName: "Matt P",
+				emailFromName: "Info Hype-Lab");
 
         EmailServiceResponse resp = await emailService.SendEmailAsync(mailMessage);
         if (resp.IsError)
-	throw new InvalidOperationException(resp.ErrorMessage);
+		throw new InvalidOperationException(resp.ErrorMessage);
 
 		// ...
 	}
@@ -149,22 +149,21 @@ public class MyService
 
 	public async Task SendEmailAsync()
 	{
-	CustomMailMessage mailMessage = CustomMailMessage.Create(
-            emailTo: "your_email@to",
-            emailSubject: "MailEngine .NET Library Email",
-            emailFrom: "info@hype-lab.it",
-            htmlMessage: "<h1>Test email from MailEngine .NET Library</h1>",
-            plainTextContent: "Test email from MailEngine .NET Library",
-            emailToName: "Matt P",
-            emailFromName: "Info Hype-Lab");
+		CustomMailMessage mailMessage = CustomMailMessage.Create(
+				emailTo: "your_email@to",
+				emailSubject: "MailEngine .NET Library Email",
+				emailFrom: "info@hype-lab.it",
+				htmlMessage: "<h1>Test email from MailEngine .NET Library</h1>",
+				plainTextContent: "Test email from MailEngine .NET Library",
+				emailToName: "Matt P",
+				emailFromName: "Info Hype-Lab");
 
         EmailServiceResponse resp = await emailService.SendEmailAsync(mailMessage);
         if (resp.IsError)
-	throw new InvalidOperationException(resp.ErrorMessage);
+		throw new InvalidOperationException(resp.ErrorMessage);
 
 		// ...
 	}
-
 }
 ```
 
@@ -172,18 +171,18 @@ public class MyService
 ```csharp
 public async Task SendEmailAsync(string? clientId = null)
 {
-	CustomMailMessage mailMessage = CustomMailMessage.Create(
-        emailTo: "your_email@to",
-        emailSubject: "MailEngine .NET Library Email",
-        emailFrom: "info@hype-lab.it",
-        htmlMessage: "<h1>Test email from MailEngine .NET Library</h1>",
-        plainTextContent: "Test email from MailEngine .NET Library",
-        emailToName: "Matt P",
-        emailFromName: "Info Hype-Lab");
+		CustomMailMessage mailMessage = CustomMailMessage.Create(
+				emailTo: "your_email@to",
+				emailSubject: "MailEngine .NET Library Email",
+				emailFrom: "info@hype-lab.it",
+				htmlMessage: "<h1>Test email from MailEngine .NET Library</h1>",
+				plainTextContent: "Test email from MailEngine .NET Library",
+				emailToName: "Matt P",
+				emailFromName: "Info Hype-Lab");
 
     EmailServiceResponse resp = await emailService.SendEmailAsync(mailMessage, clientId);
     if (resp.IsError)
-		throw new InvalidOperationException(resp.ErrorMessage);
+	throw new InvalidOperationException(resp.ErrorMessage);
 
 	// ...
 }
