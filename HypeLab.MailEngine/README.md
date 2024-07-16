@@ -1,6 +1,9 @@
 # HypeLab.MailEngine
+## Note: This library targets .NET 8, so it's not compatible with .NET 5 or .NET Core 3.1
 
-HypeLab.MailEngine is a flexible and modular .NET library for managing multiple email clients, including support for both SMTP and SendGrid for now.
+[![NuGet version (HypeLab.MailEngine)](https://img.shields.io/nuget/v/HypeLab.MailEngine.svg?style=flat-square)](https://www.nuget.org/packages/HypeLab.MailEngine/)
+
+HypeLab.MailEngine is a flexible and modular .NET library **that targets .NET 8** for managing multiple email clients, including support for both SMTP and SendGrid for now.
 The package allows to configure and use multiple email clients with distinct settings, leveraging dependency injection for seamless integration.
 
 **Features**
@@ -45,6 +48,7 @@ In your `appsettings.json`, define the settings for your email clients:
 	}
 }
 ```
+**NOTE**: All properties are mandatory (both for Smtp and SendGrid). The `IsDefault` property is used to set the default email client.
 
 **Usage**
 
@@ -85,7 +89,7 @@ public class MyService
 
 	public async Task SendEmailAsync()
 	{
-		CustomMailMessage mailMessage = CustomMailMessage.Create(
+	CustomMailMessage mailMessage = CustomMailMessage.Create(
             emailTo: "your_email@to",
             emailSubject: "MailEngine .NET Library Email",
             emailFrom: "info@hype-lab.it",
@@ -96,7 +100,7 @@ public class MyService
 
         EmailServiceResponse resp = await emailService.SendEmailAsync(mailMessage);
         if (resp.IsError)
-			throw new InvalidOperationException(resp.ErrorMessage);
+	throw new InvalidOperationException(resp.ErrorMessage);
 
 		// ...
 	}
@@ -145,7 +149,7 @@ public class MyService
 
 	public async Task SendEmailAsync()
 	{
-		CustomMailMessage mailMessage = CustomMailMessage.Create(
+	CustomMailMessage mailMessage = CustomMailMessage.Create(
             emailTo: "your_email@to",
             emailSubject: "MailEngine .NET Library Email",
             emailFrom: "info@hype-lab.it",
@@ -156,7 +160,7 @@ public class MyService
 
         EmailServiceResponse resp = await emailService.SendEmailAsync(mailMessage);
         if (resp.IsError)
-			throw new InvalidOperationException(resp.ErrorMessage);
+	throw new InvalidOperationException(resp.ErrorMessage);
 
 		// ...
 	}
