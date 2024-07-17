@@ -116,25 +116,22 @@ For applications that need to manage multiple email clients, use the multiple em
 1. **Retrieve configuration sections and pass them to AddMailEngine in Startup.cs**:
 
 ```csharp
-public void ConfigureServices(IServiceCollection services)
-{
-	WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-	SendGridAccessInfo sendGridAccessInfo = Configuration.GetSection("SendGrid").Get<SendGridAccessInfo>()
-		?? throw new InvalidOperationException("SendGrid section not found");
+SendGridAccessInfo sendGridAccessInfo = Configuration.GetSection("SendGrid").Get<SendGridAccessInfo>()
+	?? throw new InvalidOperationException("SendGrid section not found");
 
-	SendGridAccessInfo sendGridAccessInfo2 = Configuration.GetSection("SendGrid2").Get<SendGridAccessInfo>()
-		?? throw new InvalidOperationException("SendGrid2 section not found");
+SendGridAccessInfo sendGridAccessInfo2 = Configuration.GetSection("SendGrid2").Get<SendGridAccessInfo>()
+	?? throw new InvalidOperationException("SendGrid2 section not found");
 
-	SmtpAccessInfo smtpAccessInfo = Configuration.GetSection("Smtp").Get<SmtpAccessInfo>()
-		?? throw new InvalidOperationException("Smtp section not found");
+SmtpAccessInfo smtpAccessInfo = Configuration.GetSection("Smtp").Get<SmtpAccessInfo>()
+	?? throw new InvalidOperationException("Smtp section not found");
 
-	services.AddMailEngine(sendGridAccessInfo, sendGridAccessInfo2, smtpAccessInfo);
+services.AddMailEngine(sendGridAccessInfo, sendGridAccessInfo2, smtpAccessInfo);
 
-	// ...other service registrations
+// ...other service registrations
 
-	WebApplication app = builder.Build();
-}
+WebApplication app = builder.Build();
 ```
 
 1. **Inject and use the email service**:
