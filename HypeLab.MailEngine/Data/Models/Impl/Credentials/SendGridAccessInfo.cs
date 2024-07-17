@@ -8,7 +8,7 @@ namespace HypeLab.MailEngine.Data.Models.Impl.Credentials
     /// <param name="clientId"></param>
     /// <param name="apiKey"></param>
     /// <param name="isDefault"></param>
-    public class SendGridAccessInfo(string clientId, string apiKey, bool isDefault) : IMailAccessInfo
+    public class SendGridAccessInfo(string clientId, string apiKey, bool? isDefault = null) : IMailAccessInfo
     {
         /// <summary>
         /// The type of the email sender.
@@ -18,7 +18,7 @@ namespace HypeLab.MailEngine.Data.Models.Impl.Credentials
         /// <summary>
         /// Indicates whether the access info is the default one.
         /// </summary>
-        public bool IsDefault { get; } = isDefault;
+        public bool IsDefault { get; } = isDefault ?? true;
         /// <summary>
         /// Id of the client.
         /// </summary>
