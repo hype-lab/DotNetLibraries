@@ -2,6 +2,7 @@
 using System.Net.Mail;
 using System.Security.Cryptography.X509Certificates;
 using HypeLab.MailEngine.Data.Exceptions;
+using HypeLab.MailEngine.Data.Models.Impl.Credentials.ValueTypes;
 
 namespace HypeLab.MailEngine.Data.Models.Impl.Credentials
 {
@@ -36,7 +37,7 @@ namespace HypeLab.MailEngine.Data.Models.Impl.Credentials
             int? timeout = null,
             string? pickupDirectoryLocation = null,
             string? targetName = null,
-            SmtpClientCert[]? clientCertificates = null,
+            HashSet<SmtpClientCert>? clientCertificates = null,
             SmtpDeliveryMethod deliveryMethod = SmtpDeliveryMethod.Network,
             SmtpDeliveryFormat deliveryFormat = SmtpDeliveryFormat.International
         ) : IMailAccessInfo
@@ -115,7 +116,7 @@ namespace HypeLab.MailEngine.Data.Models.Impl.Credentials
         /// <summary>
         /// The client certificates.
         /// </summary>
-        public SmtpClientCert[]? ClientCertificates { get; set; } = clientCertificates;
+        public HashSet<SmtpClientCert>? ClientCertificates { get; set; } = clientCertificates;
 
         /// <summary>
         /// Returns the string representation of the object.
@@ -158,46 +159,11 @@ namespace HypeLab.MailEngine.Data.Models.Impl.Credentials
             int? timeout = null,
             string? pickupDirectoryLocation = null,
             string? targetName = null,
-            SmtpClientCert[]? clientCertificates = null,
+            HashSet<SmtpClientCert>? clientCertificates = null,
             SmtpDeliveryMethod deliveryMethod = SmtpDeliveryMethod.Network,
             SmtpDeliveryFormat deliveryFormat = SmtpDeliveryFormat.International)
         {
             return new SmtpAccessInfo(clientId, server, port, accountEmail, password, enableSsl, isDefault, domain, useDefaultCredentials, timeout, pickupDirectoryLocation, targetName, clientCertificates, deliveryMethod, deliveryFormat);
         }
-    }
-
-    /// <summary>
-    /// Represents the certificate for the SMTP client.
-    /// </summary>
-    /// <param name="fileName"></param>
-    /// <param name="password"></param>
-    /// <param name="keyStorageFlags"></param>
-    public class SmtpClientCert(string fileName, string? password = null, string? keyStorageFlags = null)
-    {
-        private static X509KeyStorageFlags? ValidateKeyStorageFlags(string? ksf)
-        {
-            if (!string.IsNullOrEmpty(ksf))
-            {
-                if (Enum.TryParse(ksf, out X509KeyStorageFlags ksf2))
-                    return ksf2;
-                else
-                    throw new SmtpClientCertException("Invalid key storage flags.");
-            }
-
-            return null;
-        }
-
-        /// <summary>
-        /// The certificate path.
-        /// </summary>
-        public string FileName { get; set; } = fileName;
-        /// <summary>
-        /// The certificate password if provided.
-        /// </summary>
-        public string? Password { get; set; } = password;
-        /// <summary>
-        /// Set the key storage flags if provided.
-        /// </summary>
-        public X509KeyStorageFlags? KeyStorageFlags { get; } = ValidateKeyStorageFlags(keyStorageFlags);
     }
 }

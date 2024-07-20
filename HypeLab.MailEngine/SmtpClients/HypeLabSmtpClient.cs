@@ -2,6 +2,7 @@
 using System.Net.Mail;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
+using HypeLab.MailEngine.Data.Models.Impl.Credentials.ValueTypes;
 
 namespace HypeLab.MailEngine.SmtpClients
 {
@@ -42,13 +43,13 @@ namespace HypeLab.MailEngine.SmtpClients
             {
                 Credentials = new NetworkCredential(smtpAccessInfo.Email, smtpAccessInfo.Password);
             }
-            if (smtpAccessInfo.ClientCertificates?.Length > 0)
+            if (smtpAccessInfo.ClientCertificates?.Count > 0)
             {
                 foreach (SmtpClientCert certificate in smtpAccessInfo.ClientCertificates)
                 {
-                    if (certificate.KeyStorageFlags.HasValue && !string.IsNullOrEmpty(certificate.Password))
+                    if (certificate.KeyStorageFlagsEnum.HasValue && !string.IsNullOrEmpty(certificate.Password))
                     {
-                        ClientCertificates.Add(new X509Certificate(certificate.FileName, certificate.Password, certificate.KeyStorageFlags.Value));
+                        ClientCertificates.Add(new X509Certificate(certificate.FileName, certificate.Password, certificate.KeyStorageFlagsEnum.Value));
                     }
                     else if (!string.IsNullOrEmpty(certificate.Password))
                     {

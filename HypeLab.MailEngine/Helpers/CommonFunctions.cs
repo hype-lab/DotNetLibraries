@@ -12,6 +12,9 @@ using HypeLab.MailEngine.SendGrid;
 using HypeLab.MailEngine.Services.Impl;
 using HypeLab.MailEngine.Services;
 using HypeLab.MailEngine.Factories.Impl;
+using HypeLab.MailEngine.Data.Models.Impl.Credentials.ValueTypes;
+using SendGrid.Helpers.Reliability;
+using System.Net.Http.Headers;
 
 namespace HypeLab.MailEngine.Helpers
 {
@@ -58,13 +61,52 @@ namespace HypeLab.MailEngine.Helpers
                     if (isSingleSender)
                         services.AddScoped<IMailAccessInfo, SendGridAccessInfo>(_ => sgAccessInfo);
 
-                    services.AddKeyedSingleton(serviceKey: sgAccessInfo.ClientId, (_, __) => new SendGridClientOptions
+                    services.AddKeyedSingleton(serviceKey: sgAccessInfo.ClientId, (_, __) =>
                     {
-                        ApiKey = sgAccessInfo.ApiKey,
-                        RequestHeaders = new Dictionary<string, string>
+                        SendGridClientOptions op = new()
                         {
-                            { "X-Client-Id", sgAccessInfo.ClientId }
+                            ApiKey = sgAccessInfo.ApiKey,
+                            RequestHeaders = new Dictionary<string, string>
+                            {
+                                { "X-Client-Id", sgAccessInfo.ClientId }
+                            }
+                        };
+
+                        if (sgAccessInfo.RequestHeaders?.Count > 0)
+                        {
+                            foreach (RequestHeaderKeyValue rhkv in sgAccessInfo.RequestHeaders)
+                                op.RequestHeaders.Add(rhkv.Key, rhkv.Value);
                         }
+
+                        if (!string.IsNullOrEmpty(sgAccessInfo.Host))
+                            op.Host = sgAccessInfo.Host;
+
+                        if (!string.IsNullOrEmpty(sgAccessInfo.Version))
+                            op.Version = sgAccessInfo.Version;
+
+                        if (!string.IsNullOrEmpty(sgAccessInfo.UrlPath))
+                            op.UrlPath = sgAccessInfo.UrlPath;
+
+                        if (sgAccessInfo.Auth.HasValue)
+                            op.Auth = new AuthenticationHeaderValue(sgAccessInfo.Auth.Value.Scheme, sgAccessInfo.Auth.Value.Parameter);
+
+                        if (
+                            sgAccessInfo.MaximumNumberOfRetries.HasValue &&
+                            sgAccessInfo.MinimumBackOff.HasValue &&
+                            sgAccessInfo.DeltaBackOff.HasValue &&
+                            sgAccessInfo.MaximumBackOff.HasValue)
+                        {
+                            op.ReliabilitySettings = new ReliabilitySettings(
+                                sgAccessInfo.MaximumNumberOfRetries.Value,
+                                TimeSpan.FromSeconds(sgAccessInfo.MinimumBackOff.Value),
+                                TimeSpan.FromSeconds(sgAccessInfo.MaximumBackOff.Value),
+                                TimeSpan.FromSeconds(sgAccessInfo.DeltaBackOff.Value)
+                            );
+                        }
+
+                        op.HttpErrorAsException = sgAccessInfo.HttpErrorAsException;
+
+                        return op;
                     });
 
                     services.AddHttpClient(sgAccessInfo.ClientId, httpClient => httpClient.Timeout = TimeSpan.FromSeconds(100));
