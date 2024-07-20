@@ -79,5 +79,20 @@
             /// </summary>
             public const string DefaultMessage = "Duplicate client id names found.";
         }
+
+        /// <summary>
+        /// Default exception messages for the <see cref="Data.Models.IMailAccessInfo"/>.
+        /// </summary>
+        public static class SmtpClientCert
+        {
+            /// <summary>
+            /// The debugger display string to set.
+            /// </summary>
+            public const string DebuggerDisplay = "SmtpClientCertException: {Message}";
+            /// <summary>
+            /// The default exception message.
+            /// </summary>
+            public const string DefaultMessage = "Smtp client certificate not found.";
+        }
     }
 }

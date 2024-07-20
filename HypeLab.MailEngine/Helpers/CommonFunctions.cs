@@ -58,20 +58,6 @@ namespace HypeLab.MailEngine.Helpers
                     if (isSingleSender)
                         services.AddScoped<IMailAccessInfo, SendGridAccessInfo>(_ => sgAccessInfo);
 
-                    //services.AddSingleton<ISendGridOptionsProvider, SendGridOptionsProvider>(_ =>
-                    //{
-                    //    SendGridOptionsProvider provider = new();
-                    //    provider.Configure(sgAccessInfo.ClientId, new SendGridClientOptions
-                    //    {
-                    //        ApiKey = sgAccessInfo.ApiKey,
-                    //        RequestHeaders = new Dictionary<string, string>
-                    //        {
-                    //            { "X-Client-Id", sgAccessInfo.ClientId }
-                    //        }
-                    //    });
-                    //    return provider;
-                    //});
-
                     services.AddKeyedSingleton(serviceKey: sgAccessInfo.ClientId, (_, __) => new SendGridClientOptions
                     {
                         ApiKey = sgAccessInfo.ApiKey,
