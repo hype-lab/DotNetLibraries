@@ -74,9 +74,8 @@ builder.Services.AddMailEngine(sendGridAccessInfo);
 WebApplication app = builder.Build();
 ```
 
-The mail engine will register and use the email sender set as default in `appsettings.json` (`isDefault: true`).
 
-1. **Inject and use the email service**:
+2. **Inject and use the email service**:
 
 ```csharp
 public class MyService
@@ -134,7 +133,7 @@ services.AddMailEngine(sendGridAccessInfo, sendGridAccessInfo2, smtpAccessInfo);
 WebApplication app = builder.Build();
 ```
 
-1. **Inject and use the email service**:
+2. **Inject and use the email service**:
 
 ```csharp
 public class MyService
@@ -166,7 +165,7 @@ public class MyService
 }
 ```
 
-1.5 Use a specific sender instead of the default one passing the **clientId** optional argument to **SendEmailAsync**:
+2.5 Use a specific sender instead of the default one passing the **clientId** optional argument to **SendEmailAsync**:
 ```csharp
 public async Task SendEmailAsync(string? clientId = null)
 {
