@@ -87,7 +87,7 @@ In your `appsettings.json`, define the settings for your email clients:
 **NOTE**: The `IsDefault` property is used to set the default email client.
 In case you intend to use a single email sender, the class constructors allow the non-presence of `IsDefault`, and set it as `true`, **so be careful when using multiple email senders**, the engine will throws an exception if more than one sender is set as default.
 
-** Feel free to leave feedback about any outages or issues you may encounter with any of the properties. **
+**Feel free to leave feedback about any outages or issues you may encounter with any of the properties.**
 
 **Usage**
 
