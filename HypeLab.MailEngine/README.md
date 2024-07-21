@@ -87,6 +87,8 @@ In your `appsettings.json`, define the settings for your email clients:
 **NOTE**: The `IsDefault` property is used to set the default email client.
 In case you intend to use a single email sender, the class constructors allow the non-presence of `IsDefault`, and set it as `true`, **so be careful when using multiple email senders**, the engine will throws an exception if more than one sender is set as default.
 
+** Feel free to leave feedback about any outages or issues you may encounter with any of the properties. **
+
 **Usage**
 
 **Single Email Client**
@@ -238,21 +240,9 @@ Use this overload if you need to support multiple email clients:
 public static IServiceCollection AddMailEngine(this IServiceCollection services, params IMailAccessInfo[] mailAccessInfoParams)
 ```
 
-
-**Interfaces and Classes**
-
-- `IMailAccessInfo`: Base interface for email access information.
-- `SendGridAccessInfo`: Configuration class for SendGrid email client.
-- `SmtpAccessInfo`: Configuration class for SMTP email client.
-- `IMailAccessesInfo`: Interface for managing multiple email clients.
-- `IEmailService`: Interface for sending emails.
-- `ISmtpEmailService`: Specific interface for sending emails through SMTP.
-- `ISendGridEmailService`: Specific interface for sending emails through SendGrid.
-
-
 **Contributing**
 
-Contributions are welcome! Please feel free to open an issue or to ask anything if needed.
+Feedbacks and and Contributions are welcome! Also feel free to open an issue or to ask anything if needed.
 
 
 **License**

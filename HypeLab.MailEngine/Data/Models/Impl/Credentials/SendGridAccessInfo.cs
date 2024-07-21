@@ -1,7 +1,5 @@
 ﻿using HypeLab.MailEngine.Data.Enums;
 using HypeLab.MailEngine.Data.Models.Impl.Credentials.ValueTypes;
-using Microsoft.Extensions.Configuration;
-using System.Diagnostics.CodeAnalysis;
 
 namespace HypeLab.MailEngine.Data.Models.Impl.Credentials
 {

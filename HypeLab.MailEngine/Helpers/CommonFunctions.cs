@@ -96,11 +96,12 @@ namespace HypeLab.MailEngine.Helpers
                         if (sgAccessInfo.Reliability.HasValue)
                         {
                             ReliabilityValue reliabilityInfo = sgAccessInfo.Reliability.Value;
+                            reliabilityInfo.Validate();
                             op.ReliabilitySettings = new ReliabilitySettings(
-                                reliabilityInfo.MaximumNumberOfRetries,
-                                TimeSpan.FromSeconds(reliabilityInfo.MinimumBackOffInSeconds),
-                                TimeSpan.FromSeconds(reliabilityInfo.MaximumBackOffInSeconds),
-                                TimeSpan.FromSeconds(reliabilityInfo.DeltaBackOffInSeconds)
+                                reliabilityInfo.MaximumNumberOfRetries.Value,
+                                TimeSpan.FromSeconds(reliabilityInfo.MinimumBackOffInSeconds.Value),
+                                TimeSpan.FromSeconds(reliabilityInfo.MaximumBackOffInSeconds.Value),
+                                TimeSpan.FromSeconds(reliabilityInfo.DeltaBackOffInSeconds.Value)
                             );
                         }
 
