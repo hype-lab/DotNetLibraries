@@ -37,7 +37,7 @@ namespace HypeLab.MailEngine.Data.Models.Impl.Credentials
             int? timeout = null,
             string? pickupDirectoryLocation = null,
             string? targetName = null,
-            HashSet<SmtpClientCert>? clientCertificates = null,
+            HashSet<SmtpClientCertValue>? clientCertificates = null,
             SmtpDeliveryMethod deliveryMethod = SmtpDeliveryMethod.Network,
             SmtpDeliveryFormat deliveryFormat = SmtpDeliveryFormat.International
         ) : IMailAccessInfo
@@ -116,7 +116,7 @@ namespace HypeLab.MailEngine.Data.Models.Impl.Credentials
         /// <summary>
         /// The client certificates.
         /// </summary>
-        public HashSet<SmtpClientCert>? ClientCertificates { get; set; } = clientCertificates;
+        public HashSet<SmtpClientCertValue>? ClientCertificates { get; set; } = clientCertificates;
 
         /// <summary>
         /// Returns the string representation of the object.
@@ -159,7 +159,7 @@ namespace HypeLab.MailEngine.Data.Models.Impl.Credentials
             int? timeout = null,
             string? pickupDirectoryLocation = null,
             string? targetName = null,
-            HashSet<SmtpClientCert>? clientCertificates = null,
+            HashSet<SmtpClientCertValue>? clientCertificates = null,
             SmtpDeliveryMethod deliveryMethod = SmtpDeliveryMethod.Network,
             SmtpDeliveryFormat deliveryFormat = SmtpDeliveryFormat.International)
         {

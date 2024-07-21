@@ -48,7 +48,7 @@ namespace HypeLab.MailEngine.SmtpClients
                 }
                 if (smtpAccessInfo.ClientCertificates?.Count > 0)
                 {
-                    foreach (SmtpClientCert certificate in smtpAccessInfo.ClientCertificates)
+                    foreach (SmtpClientCertValue certificate in smtpAccessInfo.ClientCertificates)
                     {
                         if (certificate.KeyStorageFlagsEnum.HasValue && !string.IsNullOrEmpty(certificate.Password))
                         {
