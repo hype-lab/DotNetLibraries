@@ -1,12 +1,12 @@
 ﻿namespace HypeLab.MailEngine.Helpers.Const
 {
     /// <summary>
-    /// Default exception messages.
+    /// Default exception properties.
     /// </summary>
     public static class ExceptionDefaults
     {
         /// <summary>
-        /// Default exception messages for the <see cref="Data.Models.IMailAccessInfo"/>.
+        /// Default exception properties for the <see cref="Data.Exceptions.MultipleDefaultEmailSendersFoundException"/>.
         /// </summary>
         public static class MultipleDefaultEmailSendersFound
         {
@@ -21,7 +21,7 @@
         }
 
         /// <summary>
-        /// Default exception messages for the <see cref="Data.Models.IMailAccessInfo"/>.
+        /// Default exception properties for the <see cref="Data.Exceptions.DefaultEmailSenderNotFoundException"/>.
         /// </summary>
         public static class DefaultEmailSenderNotFound
         {
@@ -36,7 +36,7 @@
         }
 
         /// <summary>
-        /// Default exception messages for the <see cref="Data.Models.IMailAccessInfo"/>.
+        /// Default exception properties for the <see cref="Data.Exceptions.InvalidEmailSenderTypeException"/>.
         /// </summary>
         public static class InvalidEmailSenderType
         {
@@ -51,7 +51,7 @@
         }
 
         /// <summary>
-        /// Default exception messages for the <see cref="Data.Models.IMailAccessInfo"/>.
+        /// Default exception properties for the <see cref="Data.Exceptions.MailAccessInfoClientIdNullException"/>.
         /// </summary>
         public static class MailAccessInfoClientIdNull
         {
@@ -66,7 +66,7 @@
         }
 
         /// <summary>
-        /// Default exception messages for the <see cref="Data.Models.IMailAccessInfo"/>.
+        /// Default exception properties for the <see cref="Data.Exceptions.DuplicateClientIdNamesException"/>.
         /// </summary>
         public static class DuplicateClientIdNames
         {
@@ -81,7 +81,7 @@
         }
 
         /// <summary>
-        /// Default exception messages for the <see cref="Data.Models.IMailAccessInfo"/>.
+        /// Default exception properties for the <see cref="Data.Exceptions.SmtpClientCertException"/>.
         /// </summary>
         public static class SmtpClientCert
         {
@@ -93,6 +93,21 @@
             /// The default exception message.
             /// </summary>
             public const string DefaultMessage = "Smtp client certificate not found.";
+        }
+
+        /// <summary>
+        /// Default exception properties for the <see cref="Data.Exceptions.SmptClientFailedSettingOptionException"/>.
+        /// </summary>
+        public static class SmptClientFailedSettingOption
+        {
+            /// <summary>
+            /// The debugger display string to set.
+            /// </summary>
+            public const string DebuggerDisplay = "SmptClientFailedSettingOptionException: {Message}";
+            /// <summary>
+            /// The default exception message.
+            /// </summary>
+            public const string DefaultMessage = "Failed to set SMTP client option.";
         }
     }
 }

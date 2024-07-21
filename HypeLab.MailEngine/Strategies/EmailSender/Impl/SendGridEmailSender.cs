@@ -10,17 +10,11 @@ namespace HypeLab.MailEngine.Strategies.EmailSender.Impl
     /// <summary>
     /// Represents a SendGrid email sender.
     /// </summary>
-    public sealed class SendGridEmailSender : ISendGridEmailSender
+    /// <remarks>
+    /// Constructor for SendGridEmailSender.
+    /// </remarks>
+    public sealed class SendGridEmailSender(ISendGridClient client) : ISendGridEmailSender
     {
-        private readonly ISendGridClient _client;
-
-        /// <summary>
-        /// Constructor for SendGridEmailSender.
-        /// </summary>
-        public SendGridEmailSender(ISendGridClient client)
-        {
-            _client = client;
-        }
 
         // Implementation for sending email using SendGrid
         /// <summary>
@@ -66,23 +60,25 @@ namespace HypeLab.MailEngine.Strategies.EmailSender.Impl
                     }
                 }
 
-                Response response = await _client.SendEmailAsync(msg).ConfigureAwait(false);
+                Response response = await client.SendEmailAsync(msg).ConfigureAwait(false);
                 string content = await response.Body.ReadAsStringAsync().ConfigureAwait(false);
 
                 if (response.StatusCode == HttpStatusCode.Accepted || response.StatusCode == HttpStatusCode.OK)
-                    return EmailSenderResponse.Success($"Email sent.\n{content}");
+                {
+                    return EmailSenderResponse.Success($"Email sent. {content}");
+                }
                 else
-                    return EmailSenderResponse.Failure($"Failed to send email.\n Status Code: {response.StatusCode}\nContent: {content}");
+                {
+                    return EmailSenderResponse.Failure($"Failed to send email. Status Code: {response.StatusCode} Content: {content}");
+                }
             }
             catch (SendGridEmailSenderException ex)
             {
-                // Log the exception as needed
-                return EmailSenderResponse.Failure($"Failed to send email: {ex.Message}");
+                return EmailSenderResponse.Failure($"Failed to send email: {ex.Message} {ex.InnerException?.Message}");
             }
             catch (Exception ex)
             {
-                // Log the exception as needed
-                return EmailSenderResponse.Failure($"Failed to send email: {ex.Message}\n{ex.InnerException?.Message}");
+                return EmailSenderResponse.Failure($"Failed to send email: {ex.Message} {ex.InnerException?.Message}");
             }
         }
     }
