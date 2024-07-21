@@ -10,18 +10,12 @@ namespace HypeLab.MailEngine.Strategies.EmailSender.Impl
     /// <summary>
     /// Represents an SMTP email sender.
     /// </summary>
-    public sealed class SmtpEmailSender : ISmtpEmailSender
+    /// <remarks>
+    /// Constructor for SmtpEmailSender.
+    /// </remarks>
+    /// <param name="smtpClient"></param>
+    public sealed class SmtpEmailSender(HypeLabSmtpClient smtpClient) : ISmtpEmailSender
     {
-        private readonly HypeLabSmtpClient _smtpClient;
-
-        /// <summary>
-        /// Constructor for SmtpEmailSender.
-        /// </summary>
-        /// <param name="smtpClient"></param>
-        public SmtpEmailSender(HypeLabSmtpClient smtpClient)
-        {
-            _smtpClient = smtpClient;
-        }
 
         // Implementation for sending email using SmtpClient
         /// <summary>
@@ -67,18 +61,17 @@ namespace HypeLab.MailEngine.Strategies.EmailSender.Impl
                     }
                 }
 
-                await _smtpClient.SendMailAsync(mailMessage).ConfigureAwait(false);
+                await smtpClient.SendMailAsync(mailMessage).ConfigureAwait(false);
 
                 return EmailSenderResponse.Success("Email sent successfully.");
             }
             catch (SmtpEmailSenderException ex)
             {
-                // Log the exception as needed
-                return EmailSenderResponse.Failure($"Failed to send email: {ex.Message}\n{ex.InnerException?.Message}");
+                return EmailSenderResponse.Failure($"Failed to send email: {ex.Message} {ex.InnerException?.Message}");
             }
             catch (Exception ex)
             {
-                return EmailSenderResponse.Failure($"Failed to send email: {ex.Message}\n{ex.InnerException?.Message}");
+                return EmailSenderResponse.Failure($"Failed to send email: {ex.Message} {ex.InnerException?.Message}");
             }
         }
     }

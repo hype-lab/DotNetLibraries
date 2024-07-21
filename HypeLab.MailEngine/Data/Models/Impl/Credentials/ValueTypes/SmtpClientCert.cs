@@ -41,7 +41,7 @@ namespace HypeLab.MailEngine.Data.Models.Impl.Credentials.ValueTypes
         /// <summary>
         /// Set the key storage flags if provided.
         /// </summary>
-        public X509KeyStorageFlags? KeyStorageFlagsEnum
+        public readonly X509KeyStorageFlags? KeyStorageFlagsEnum
         {
             get
             {
@@ -53,7 +53,7 @@ namespace HypeLab.MailEngine.Data.Models.Impl.Credentials.ValueTypes
         /// Gets the hash code.
         /// </summary>
         /// <returns></returns>
-        public override int GetHashCode()
+        public override readonly int GetHashCode()
         {
             return HashCode.Combine(FileName, Password, KeyStorageFlagsEnum);
         }
@@ -63,7 +63,7 @@ namespace HypeLab.MailEngine.Data.Models.Impl.Credentials.ValueTypes
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public override bool Equals([NotNullWhen(true)] object? obj)
+        public override readonly bool Equals([NotNullWhen(true)] object? obj)
         {
             if (obj is not SmtpClientCert smtpClientCert)
                 return false;
@@ -76,7 +76,7 @@ namespace HypeLab.MailEngine.Data.Models.Impl.Credentials.ValueTypes
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
-        public bool Equals(SmtpClientCert other)
+        public readonly bool Equals(SmtpClientCert other)
         {
             return FileName == other.FileName && Password == other.Password && KeyStorageFlagsEnum == other.KeyStorageFlagsEnum;
         }

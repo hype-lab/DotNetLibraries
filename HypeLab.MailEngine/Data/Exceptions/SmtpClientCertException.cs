@@ -1,10 +1,12 @@
 ﻿using HypeLab.MailEngine.Helpers.Const;
+using System.Diagnostics;
 
 namespace HypeLab.MailEngine.Data.Exceptions
 {
     /// <summary>
     /// Represents an exception for the SMTP client certificate.
     /// </summary>
+    [DebuggerDisplay(ExceptionDefaults.SmtpClientCert.DebuggerDisplay)]
     public class SmtpClientCertException : Exception
     {
         /// <summary>
