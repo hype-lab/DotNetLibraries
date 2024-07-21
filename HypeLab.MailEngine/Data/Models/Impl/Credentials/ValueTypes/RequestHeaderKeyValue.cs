@@ -27,7 +27,7 @@ namespace HypeLab.MailEngine.Data.Models.Impl.Credentials.ValueTypes
 #pragma warning disable S125 // Sections of code should not be commented out
             //unchecked
             //{
-            //    int hash = 17;s
+            //    int hash = 17;
             //    hash = hash * 23 + Key.GetHashCode();
             //    hash = hash * 23 + Value.GetHashCode();
             //    return hash;

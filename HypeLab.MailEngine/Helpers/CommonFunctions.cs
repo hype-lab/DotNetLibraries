@@ -88,19 +88,20 @@ namespace HypeLab.MailEngine.Helpers
                             op.UrlPath = sgAccessInfo.UrlPath;
 
                         if (sgAccessInfo.Auth.HasValue)
-                            op.Auth = new AuthenticationHeaderValue(sgAccessInfo.Auth.Value.Scheme, sgAccessInfo.Auth.Value.Parameter);
-
-                        if (
-                            sgAccessInfo.MaximumNumberOfRetries.HasValue &&
-                            sgAccessInfo.MinimumBackOff.HasValue &&
-                            sgAccessInfo.DeltaBackOff.HasValue &&
-                            sgAccessInfo.MaximumBackOff.HasValue)
                         {
+                            AuthHeaderValue auth = sgAccessInfo.Auth.Value;
+                            op.Auth = new AuthenticationHeaderValue(auth.Scheme, auth.Parameter);
+                        }
+
+                        if (sgAccessInfo.Reliability.HasValue)
+                        {
+                            ReliabilityValue reliabilityInfo = sgAccessInfo.Reliability.Value;
+                            reliabilityInfo.Validate();
                             op.ReliabilitySettings = new ReliabilitySettings(
-                                sgAccessInfo.MaximumNumberOfRetries.Value,
-                                TimeSpan.FromSeconds(sgAccessInfo.MinimumBackOff.Value),
-                                TimeSpan.FromSeconds(sgAccessInfo.MaximumBackOff.Value),
-                                TimeSpan.FromSeconds(sgAccessInfo.DeltaBackOff.Value)
+                                reliabilityInfo.MaximumNumberOfRetries.Value,
+                                TimeSpan.FromSeconds(reliabilityInfo.MinimumBackOffInSeconds.Value),
+                                TimeSpan.FromSeconds(reliabilityInfo.MaximumBackOffInSeconds.Value),
+                                TimeSpan.FromSeconds(reliabilityInfo.DeltaBackOffInSeconds.Value)
                             );
                         }
 

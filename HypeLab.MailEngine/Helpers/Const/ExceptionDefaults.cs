@@ -109,5 +109,22 @@
             /// </summary>
             public const string DefaultMessage = "Failed to set SMTP client option.";
         }
+        
+        /// <summary>
+        /// Default exception properties for the <see cref="Data.Exceptions.InvalidReliabilityPropertiesException"/>.
+        /// </summary>
+        public static class InvalidReliabilityProperties
+        {
+             /// <summary>
+             /// The debugger display string to set.
+             /// </summary>
+            public const string DebuggerDisplay = "InvalidReliabilityPropertiesException: {Message}";
+            /// <summary>
+            /// The default exception message.
+            /// </summary>
+            public const string DefaultMessage = "All reliability properties must be provided.";
+        }
+
+
     }
 }

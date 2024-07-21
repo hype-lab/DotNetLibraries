@@ -29,29 +29,65 @@ In your `appsettings.json`, define the settings for your email clients:
 
 ```json
 {
-	"SendGrid": {
-		"ClientId": "Hype-Lab SendGridClient",
-		"IsDefault": true,
-		"ApiKey": "dummyKey"
-	},
-	"SendGrid2": {
-		"ClientId": "Hype-Lab SendGridClient2",
-		"IsDefault": false,
-		"ApiKey": "dummyKey"
-	},
-	"Smtp": {
-		"ClientId": "Hype-Lab SmtpClient",
-		"IsDefault": false,
-		"Server": "smtp.ionos.it",
-		"Port": 587,
-		"Email": "info@hype-lab.it",
-		"Password": "dummyKey",
-		"EnableSsl": true
-	}
+  "SendGrid": {
+    "ClientId": "Hype-Lab SendGridClient", // required
+    "IsDefault": true, // optional (if not present, it will be set as true)
+    "ApiKey": "dummyKey", // required
+    "RequestHeaders": [ // optional
+      {
+        "Key": "Authorization", // required if RequestHeaders is present
+        "Value": "Bearer SG" // required if RequestHeaders is present
+      },
+	  // etc.
+      {
+        "Key": "Content-Type",
+        "Value": "application/json"
+      }
+    ],
+    "Host": "https://api.sendgrid.com/v3/mail/send", // optional
+    "Version": "v3", // optional
+    "UrlPath": "/mail/send", // optional
+    "Reliability": { // optional
+      "MaximumNumberOfRetries": 3, // required if Reliability is present
+      "MinimumBackOffInSeconds": 1, // required if Reliability is present
+      "DeltaBackOffInSeconds": 1, // required if Reliability is present
+      "MaximumBackOffInSeconds": 10 // required if Reliability is present
+    },
+    "Auth": { // optional
+      "Scheme": "Bearer", // required if Auth is present
+      "Parameter": "SG" // optional
+    },
+    "HttpErrorAsException": true // optional
+  },
+  "Smtp": {
+    "ClientId": "Hype-Lab SmtpClient", // required
+    "Server": "smtp.google.com", // required
+    "Port": 587, // required
+    "Email": "info@hype-lab.it", // required
+    "Password": "dummyPassword", // required
+    "EnableSsl": true, // required
+    "IsDefault": false, // optional (if not present, it will be set as true)
+    "UseDefaultCredentials": false, // optional
+    "Domain": "hype-lab.it", // optional, passed to NetworkCredential constructor
+    "Timeout": 10000, // optional
+    "PickupDirectoryLocation": "C:\\inetpub\\mailroot\\Pickup", // optional
+    "TargetName": "STARTTLS/smtp.google.com", // optional
+    "DeliveryMethod": "Network", // optional, default is Network
+    "DeliveryFormat": "International", // optional, default is International
+    "ClientCertificates": [ // optional
+      {
+        "FileName": "C:\\inetpub\\mailroot\\Pickup\\hype-lab.it.pfx", // required if ClientCertificates is present
+        "Password": "dummyPassword", // optional
+        "KeyStorageFlags": "MachineKeySet" // optional
+      }
+    ]
+  },
 }
 ```
-**NOTE**: All properties are mandatory (both for Smtp and SendGrid). The `IsDefault` property is used to set the default email client.
+**NOTE**: The `IsDefault` property is used to set the default email client.
 In case you intend to use a single email sender, the class constructors allow the non-presence of `IsDefault`, and set it as `true`, **so be careful when using multiple email senders**, the engine will throws an exception if more than one sender is set as default.
+
+**Feel free to leave feedback about any outages or issues you may encounter with any of the properties.**
 
 **Usage**
 
@@ -204,21 +240,9 @@ Use this overload if you need to support multiple email clients:
 public static IServiceCollection AddMailEngine(this IServiceCollection services, params IMailAccessInfo[] mailAccessInfoParams)
 ```
 
-
-**Interfaces and Classes**
-
-- `IMailAccessInfo`: Base interface for email access information.
-- `SendGridAccessInfo`: Configuration class for SendGrid email client.
-- `SmtpAccessInfo`: Configuration class for SMTP email client.
-- `IMailAccessesInfo`: Interface for managing multiple email clients.
-- `IEmailService`: Interface for sending emails.
-- `ISmtpEmailService`: Specific interface for sending emails through SMTP.
-- `ISendGridEmailService`: Specific interface for sending emails through SendGrid.
-
-
 **Contributing**
 
-Contributions are welcome! Please feel free to open an issue or to ask anything if needed.
+Feedbacks and and Contributions are welcome! Also feel free to open an issue or to ask anything if needed.
 
 
 **License**

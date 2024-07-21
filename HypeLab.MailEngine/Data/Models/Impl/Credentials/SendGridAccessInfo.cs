@@ -1,7 +1,5 @@
 ﻿using HypeLab.MailEngine.Data.Enums;
 using HypeLab.MailEngine.Data.Models.Impl.Credentials.ValueTypes;
-using Microsoft.Extensions.Configuration;
-using System.Diagnostics.CodeAnalysis;
 
 namespace HypeLab.MailEngine.Data.Models.Impl.Credentials
 {
@@ -21,10 +19,7 @@ namespace HypeLab.MailEngine.Data.Models.Impl.Credentials
         /// <param name="version"></param>
         /// <param name="urlPath"></param>
         /// <param name="auth"></param>
-        /// <param name="maximumNumberOfRetries"></param>
-        /// <param name="minimumBackOff">In seconds</param>
-        /// <param name="deltaBackOff">In seconds</param>
-        /// <param name="maximumBackOff">In seconds</param>
+        /// <param name="reliability"></param>
         /// <param name="httpErrorAsException"></param>
         public SendGridAccessInfo(
             string clientId,
@@ -35,20 +30,14 @@ namespace HypeLab.MailEngine.Data.Models.Impl.Credentials
             string? version = null,
             string? urlPath = null,
             AuthHeaderValue? auth = null,
-            int? maximumNumberOfRetries = null,
-            int? minimumBackOff = null,
-            int? deltaBackOff = null,
-            int? maximumBackOff = null,
+            ReliabilityValue? reliability = null,
             bool? httpErrorAsException = null)
         {
             IsDefault = isDefault ?? true;
             ClientId = clientId;
             ApiKey = apiKey;
-            RequestHeaders = requestHeaders ?? [];
-            MaximumNumberOfRetries = maximumNumberOfRetries;
-            MinimumBackOff = minimumBackOff;
-            DeltaBackOff = deltaBackOff;
-            MaximumBackOff = maximumBackOff;
+            RequestHeaders = requestHeaders;
+            Reliability = reliability;
             Host = host;
             Version = version;
             UrlPath = urlPath;
@@ -77,27 +66,12 @@ namespace HypeLab.MailEngine.Data.Models.Impl.Credentials
         /// <summary>
         /// The request headers to use on HTTP Requests.
         /// </summary>
-        public HashSet<RequestHeaderKeyValue> RequestHeaders { get; }
+        public HashSet<RequestHeaderKeyValue>? RequestHeaders { get; }
 
         /// <summary>
         /// The reliability settings to use on HTTP Requests.
         /// </summary>
-        public int? MaximumNumberOfRetries { get; }
-
-        /// <summary>
-        /// The minimum amount of time to wait between HTTP retries.
-        /// </summary>
-        public int? MinimumBackOff { get; }
-
-        /// <summary>
-        /// The delta back off.
-        /// </summary>
-        public int? DeltaBackOff { get; }
-
-        /// <summary>
-        /// The maximum amount of time to wait between HTTP retries. Max value of 30 seconds.
-        /// </summary>
-        public int? MaximumBackOff { get; }
+        public ReliabilityValue? Reliability { get; }
 
         /// <summary>
         /// The base URL.
@@ -144,10 +118,7 @@ namespace HypeLab.MailEngine.Data.Models.Impl.Credentials
         /// <param name="version"></param>
         /// <param name="urlPath"></param>
         /// <param name="auth"></param>
-        /// <param name="maximumNumberOfRetries"></param>
-        /// <param name="minimumBackOff">In seconds</param>
-        /// <param name="deltaBackOff">In seconds</param>
-        /// <param name="maximumBackOff">In seconds</param>
+        /// <param name="reliability"></param>
         /// <param name="httpErrorAsException"></param>
         /// <returns></returns>
         public static SendGridAccessInfo Create(
@@ -159,13 +130,10 @@ namespace HypeLab.MailEngine.Data.Models.Impl.Credentials
             string? version = null,
             string? urlPath = null,
             AuthHeaderValue? auth = null,
-            int? maximumNumberOfRetries = null,
-            int? minimumBackOff = null,
-            int? deltaBackOff = null,
-            int? maximumBackOff = null,
+            ReliabilityValue? reliability = null,
             bool? httpErrorAsException = null)
         {
-            return new SendGridAccessInfo(clientId: clientId, apiKey: apiKey, isDefault: isDefault, requestHeaders: requestHeaders, host: host, version: version, urlPath: urlPath, auth: auth, maximumNumberOfRetries: maximumNumberOfRetries, minimumBackOff: minimumBackOff, deltaBackOff: deltaBackOff, maximumBackOff: maximumBackOff, httpErrorAsException: httpErrorAsException);
+            return new SendGridAccessInfo(clientId: clientId, apiKey: apiKey, isDefault: isDefault, requestHeaders: requestHeaders, host: host, version: version, urlPath: urlPath, auth: auth, reliability: reliability, httpErrorAsException: httpErrorAsException);
         }
     }
 }

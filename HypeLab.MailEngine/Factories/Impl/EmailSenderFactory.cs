@@ -12,7 +12,7 @@ namespace HypeLab.MailEngine.Factories.Impl
     {
         private readonly IServiceProvider _serviceProvider;
 
-        private readonly string _clientId;
+        private readonly string _defaultClientId;
 
         private readonly IMailAccessesInfo? _mailAccessesInfo;
         private readonly IMailAccessInfo? _mailAccessInfo;
@@ -31,12 +31,12 @@ namespace HypeLab.MailEngine.Factories.Impl
             if (mailAccessesInfo != null)
             {
                 _mailAccessesInfo = mailAccessesInfo;
-                _clientId = mailAccessesInfo.DefaultMailAccess.ClientId;
+                _defaultClientId = mailAccessesInfo.DefaultMailAccess.ClientId;
             }
             else if (mailAccessInfo != null)
             {
                 _mailAccessInfo = mailAccessInfo;
-                _clientId = mailAccessInfo.ClientId;
+                _defaultClientId = mailAccessInfo.ClientId;
             }
             else
             {
@@ -55,9 +55,9 @@ namespace HypeLab.MailEngine.Factories.Impl
         {
             return type switch
             {
-                EmailSenderType.Smtp => _serviceProvider.GetRequiredKeyedService<ISmtpEmailSender>(clientId ?? _clientId),
-                EmailSenderType.SendGrid => _serviceProvider.GetRequiredKeyedService<ISendGridEmailSender>(clientId ?? _clientId),
-                _ => throw new ArgumentException($"Invalid email sender type: {type} with id {clientId ?? _clientId}"),
+                EmailSenderType.Smtp => _serviceProvider.GetRequiredKeyedService<ISmtpEmailSender>(clientId ?? _defaultClientId),
+                EmailSenderType.SendGrid => _serviceProvider.GetRequiredKeyedService<ISendGridEmailSender>(clientId ?? _defaultClientId),
+                _ => throw new ArgumentException($"Invalid email sender type: {type} with id {clientId ?? _defaultClientId}"),
             };
         }
 

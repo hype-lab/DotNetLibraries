@@ -10,7 +10,7 @@ namespace HypeLab.MailEngine.Data.Models.Impl.Credentials.ValueTypes
     /// <param name="fileName"></param>
     /// <param name="password"></param>
     /// <param name="keyStorageFlags"></param>
-    public struct SmtpClientCert(string fileName, string? password = null, string? keyStorageFlags = null) : IEquatable<SmtpClientCert>
+    public struct SmtpClientCertValue(string fileName, string? password = null, string? keyStorageFlags = null) : IEquatable<SmtpClientCertValue>
     {
         private static X509KeyStorageFlags? ValidateKeyStorageFlags(string? ksf)
         {
@@ -65,7 +65,7 @@ namespace HypeLab.MailEngine.Data.Models.Impl.Credentials.ValueTypes
         /// <returns></returns>
         public override readonly bool Equals([NotNullWhen(true)] object? obj)
         {
-            if (obj is not SmtpClientCert smtpClientCert)
+            if (obj is not SmtpClientCertValue smtpClientCert)
                 return false;
 
             return Equals(smtpClientCert);
@@ -76,7 +76,7 @@ namespace HypeLab.MailEngine.Data.Models.Impl.Credentials.ValueTypes
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
-        public readonly bool Equals(SmtpClientCert other)
+        public readonly bool Equals(SmtpClientCertValue other)
         {
             return FileName == other.FileName && Password == other.Password && KeyStorageFlagsEnum == other.KeyStorageFlagsEnum;
         }
@@ -87,7 +87,7 @@ namespace HypeLab.MailEngine.Data.Models.Impl.Credentials.ValueTypes
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static bool operator ==(SmtpClientCert left, SmtpClientCert right)
+        public static bool operator ==(SmtpClientCertValue left, SmtpClientCertValue right)
         {
             return left.Equals(right);
         }
@@ -98,7 +98,7 @@ namespace HypeLab.MailEngine.Data.Models.Impl.Credentials.ValueTypes
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static bool operator !=(SmtpClientCert left, SmtpClientCert right)
+        public static bool operator !=(SmtpClientCertValue left, SmtpClientCertValue right)
         {
             return !(left == right);
         }
