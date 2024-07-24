@@ -1,4 +1,5 @@
 ﻿using HypeLab.MailEngine.Data.Models.Impl;
+using HypeLab.MailEngine.Data.Models.Impl.Base;
 
 namespace HypeLab.MailEngine.Services
 {
@@ -13,6 +14,6 @@ namespace HypeLab.MailEngine.Services
         /// <param name="message"></param>
         /// <param name="clientId"></param>
         /// <returns></returns>
-        Task<EmailServiceResponse> SendEmailAsync(CustomMailMessage message, string? clientId = null);
+        Task<EmailServiceResponse> SendEmailAsync(IMailMessage message, string? clientId = null);
     }
 }

@@ -21,12 +21,15 @@ namespace HypeLab.MailEngine.Data.Exceptions
         /// <summary>
         /// Constructor with message
         /// </summary>
+        /// <param name="message"></param>
         public DefaultEmailSenderNotFoundException(string? message)
             : base(message ?? ExceptionDefaults.DefaultEmailSenderNotFound.DefaultMessage) { }
 
         /// <summary>
-        /// Constructor with message
+        /// Constructor with message and inne exception
         /// </summary>
+        /// <param name="message"></param>
+        /// <param name="innerException"></param>
         public DefaultEmailSenderNotFoundException(string? message, Exception innerException)
             : base(message ?? ExceptionDefaults.DefaultEmailSenderNotFound.DefaultMessage, innerException) { }
 

@@ -13,12 +13,15 @@
         /// <summary>
         /// Constructor with message
         /// </summary>
+        /// <param name="message"></param>
         public SendGridEmailSenderException(string message)
             : base(message) { }
 
         /// <summary>
-        /// Constructor with message
+        /// Constructor with message and inner exception
         /// </summary>
+        /// <param name="message"></param>
+        /// <param name="inner"></param>
         public SendGridEmailSenderException(string message, Exception inner)
             : base(message, inner) { }
     }

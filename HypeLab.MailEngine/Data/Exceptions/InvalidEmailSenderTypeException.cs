@@ -27,6 +27,8 @@ namespace HypeLab.MailEngine.Data.Exceptions
         /// <summary>
         /// Constructor with message and inner exception
         /// </summary>
+        /// <param name="message"></param>
+        /// <param name="innerException"></param>
         public InvalidEmailSenderTypeException(string? message, Exception innerException)
             : base(message ?? ExceptionDefaults.InvalidEmailSenderType.DefaultMessage, innerException) { }
 
