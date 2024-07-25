@@ -1,4 +1,6 @@
-﻿namespace HypeLab.MailEngine.Helpers.Const
+﻿using System.Security;
+
+namespace HypeLab.MailEngine.Helpers.Const
 {
     /// <summary>
     /// Default exception properties.
@@ -125,6 +127,19 @@
             public const string DefaultMessage = "All reliability properties must be provided.";
         }
 
-
+        /// <summary>
+        /// Defaul texception properties for the <see cref="Data.Exceptions.UnknownMailMessageTypeException"/>.
+        /// </summary>
+        public static class UnknownMailMessageType
+        {
+            /// <summary>
+            /// The debugger display string to set.
+            /// </summary>
+            public const string DebuggerDisplay = "UnknownMailMessageTypeException: {Message}";
+            /// <summary>
+            /// The default exception message.
+            /// </summary>
+            public const string DefaultMessage = "Unknown mail message type.";
+        }
     }
 }

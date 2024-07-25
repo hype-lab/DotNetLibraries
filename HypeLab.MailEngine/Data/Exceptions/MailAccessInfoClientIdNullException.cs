@@ -20,6 +20,7 @@ namespace HypeLab.MailEngine.Data.Exceptions
         /// <summary>
         /// Constructor with message
         /// </summary>
+        /// <param name="message"></param>
         public MailAccessInfoClientIdNullException(string? message)
             : base(message ?? ExceptionDefaults.MailAccessInfoClientIdNull.DefaultMessage) { }
 

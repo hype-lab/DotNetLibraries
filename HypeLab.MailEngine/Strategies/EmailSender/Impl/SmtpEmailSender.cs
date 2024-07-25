@@ -30,8 +30,14 @@ namespace HypeLab.MailEngine.Strategies.EmailSender.Impl
         /// <param name="emailFromName"></param>
         /// <param name="ccs"></param>
         /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
         public async Task<EmailSenderResponse> SendEmailAsync(string emailTo, string htmlMessage, string subject, string emailFrom, string? plainTextContent = null, string? emailToName = null, string? emailFromName = null, params IEmailAddressInfo[]? ccs)
         {
+            ArgumentException.ThrowIfNullOrEmpty(emailTo);
+            ArgumentException.ThrowIfNullOrEmpty(htmlMessage);
+            ArgumentException.ThrowIfNullOrEmpty(subject);
+            ArgumentException.ThrowIfNullOrEmpty(emailFrom);
+
             try
             {
                 MailMessage mailMessage = new()
@@ -63,7 +69,7 @@ namespace HypeLab.MailEngine.Strategies.EmailSender.Impl
 
                 await smtpClient.SendMailAsync(mailMessage).ConfigureAwait(false);
 
-                return EmailSenderResponse.Success("Email sent successfully.");
+                return EmailSenderResponse.Success("Email sent.");
             }
             catch (SmtpEmailSenderException ex)
             {
@@ -72,6 +78,71 @@ namespace HypeLab.MailEngine.Strategies.EmailSender.Impl
             catch (Exception ex)
             {
                 return EmailSenderResponse.Failure($"Failed to send email: {ex.Message} {ex.InnerException?.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Sends an email to multiple addresses.
+        /// </summary>
+        /// <param name="emailToes"></param>
+        /// <param name="htmlMessage"></param>
+        /// <param name="subject"></param>
+        /// <param name="emailFrom"></param>
+        /// <param name="plainTextContent"></param>
+        /// <param name="emailToName"></param>
+        /// <param name="emailFromName"></param>
+        /// <param name="ccs"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        /// <exception cref="ArgumentException"></exception>
+        public async Task<EmailSenderResponse> SendEmailAsync(ICollection<string> emailToes, string htmlMessage, string subject, string emailFrom, string? plainTextContent = null, string? emailToName = null, string? emailFromName = null, params IEmailAddressInfo[]? ccs)
+        {
+            ArgumentNullException.ThrowIfNull(emailToes);
+            ArgumentOutOfRangeException.ThrowIfZero(emailToes.Count);
+            ArgumentException.ThrowIfNullOrEmpty(htmlMessage);
+            ArgumentException.ThrowIfNullOrEmpty(subject);
+            ArgumentException.ThrowIfNullOrEmpty(emailFrom);
+
+            try
+            {
+                MailMessage mailMessage = new()
+                {
+                    From = new MailAddress(emailFrom, emailFromName),
+                    Subject = subject,
+                    Body = htmlMessage,
+                    IsBodyHtml = true,
+                    BodyEncoding = Encoding.UTF8,
+                    SubjectEncoding = Encoding.UTF8
+                };
+
+                foreach (string emailTo in emailToes)
+                    mailMessage.To.Add(new MailAddress(emailTo, emailToName));
+
+                if (ccs?.Length > 0)
+                {
+                    foreach (IEmailAddressInfo cc in ccs)
+                    {
+                        if (cc.IsCc)
+                            mailMessage.CC.Add(new MailAddress(cc.Email, cc.Name));
+                        else if (cc.IsBcc)
+                            mailMessage.Bcc.Add(new MailAddress(cc.Email, cc.Name));
+                        else
+                            throw new SmtpEmailSenderException("Invalid email address type.");
+                    }
+                }
+
+                await smtpClient.SendMailAsync(mailMessage).ConfigureAwait(false);
+
+                return EmailSenderResponse.Success("Emails sent.");
+            }
+            catch (SmtpEmailSenderException ex)
+            {
+                return EmailSenderResponse.Failure($"Failed to send emails: {ex.Message} {ex.InnerException?.Message}");
+            }
+            catch (Exception ex)
+            {
+                return EmailSenderResponse.Failure($"Failed to send emails: {ex.Message} {ex.InnerException?.Message}");
             }
         }
     }

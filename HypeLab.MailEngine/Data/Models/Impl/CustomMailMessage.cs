@@ -1,45 +1,25 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using HypeLab.MailEngine.Data.Models.Impl.Base;
+using System.Diagnostics.CodeAnalysis;
 
 namespace HypeLab.MailEngine.Data.Models.Impl
 {
     /// <summary>
-    /// Represents the custom mail message.
+    /// Represents the custom mail message to a single mail address.
     /// </summary>
-    public class CustomMailMessage
+    /// <remarks>
+    /// Creates a new instance of the <see cref="CustomMailMessage"/> class that sets required members.
+    /// </remarks>
+    /// <param name="emailTo"></param>
+    /// <param name="emailSubject"></param>
+    /// <param name="emailFrom"></param>
+    /// <param name="htmlMessage"></param>
+    [method: SetsRequiredMembers]
+    public sealed class CustomMailMessage(string emailTo, string emailSubject, string emailFrom, string htmlMessage) : BaseMailMessage(emailSubject, emailFrom, htmlMessage)
     {
         /// <summary>
         /// The email to.
         /// </summary>
-        public string EmailTo { get; set; } = string.Empty;
-        /// <summary>
-        /// The email subject.
-        /// </summary>
-        public required string EmailSubject { get; set; }
-        /// <summary>
-        /// The email from.
-        /// </summary>
-        public required string EmailFrom { get; set; }
-        /// <summary>
-        /// The html message.
-        /// </summary>
-        public required string HtmlMessage { get; set; }
-        /// <summary>
-        /// The plain text content.
-        /// </summary>
-        public string? PlainTextContent { get; set; }
-        /// <summary>
-        /// The email to name.
-        /// </summary>
-        public string? EmailToName { get; set; }
-        /// <summary>
-        /// Represents the email from name.
-        /// </summary>W
-        public string? EmailFromName { get; set; }
-
-        /// <summary>
-        /// The other recipients.
-        /// </summary>
-        public IEmailAddressInfo[]? Ccs { get; set; }
+        public required string EmailTo { get; set; } = emailTo;
 
         /// <summary>
         /// Creates a new instance of the <see cref="CustomMailMessage"/> class.
@@ -55,12 +35,8 @@ namespace HypeLab.MailEngine.Data.Models.Impl
         /// <returns></returns>
         public static CustomMailMessage Create(string emailTo, string emailSubject, string emailFrom, string htmlMessage, [NotNullIfNotNull(nameof(PlainTextContent))] string? plainTextContent = null, [NotNullIfNotNull(nameof(EmailToName))] string? emailToName = null, [NotNullIfNotNull(nameof(EmailFromName))] string? emailFromName = null, IEmailAddressInfo[]? ccs = null)
         {
-            return new CustomMailMessage
+            return new CustomMailMessage(emailTo, emailSubject, emailFrom, htmlMessage)
             {
-                EmailTo = emailTo,
-                EmailSubject = emailSubject,
-                EmailFrom = emailFrom,
-                HtmlMessage = htmlMessage,
                 PlainTextContent = plainTextContent,
                 EmailToName = emailToName,
                 EmailFromName = emailFromName,

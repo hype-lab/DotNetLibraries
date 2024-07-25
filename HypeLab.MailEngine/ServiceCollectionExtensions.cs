@@ -21,6 +21,8 @@ namespace HypeLab.MailEngine
         /// <param name="services"></param>
         /// <param name="mailAccessInfo"></param>
         /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="MailAccessInfoClientIdNullException"></exception>
         /// <exception cref="InvalidEmailSenderTypeException"></exception>
         public static IServiceCollection AddMailEngine(this IServiceCollection services, IMailAccessInfo mailAccessInfo)
         {
@@ -42,7 +44,12 @@ namespace HypeLab.MailEngine
         /// <param name="services"></param>
         /// <param name="mailAccessInfoParams"></param>
         /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        /// <exception cref="MultipleDefaultEmailSendersFoundException"></exception>
+        /// <exception cref="DuplicateClientIdNamesException"></exception>
         /// <exception cref="DefaultEmailSenderNotFoundException"></exception>
+        /// <exception cref="InvalidEmailSenderTypeException"></exception>
         public static IServiceCollection AddMailEngine(this IServiceCollection services, params IMailAccessInfo[] mailAccessInfoParams)
         {
             ArgumentNullException.ThrowIfNull(mailAccessInfoParams);

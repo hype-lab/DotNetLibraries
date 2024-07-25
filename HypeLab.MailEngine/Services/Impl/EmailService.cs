@@ -1,8 +1,10 @@
 ﻿using HypeLab.MailEngine.Data.Models;
 using HypeLab.MailEngine.Data.Models.Impl;
+using HypeLab.MailEngine.Data.Models.Impl.Base;
 using HypeLab.MailEngine.Factories;
 using HypeLab.MailEngine.Helpers;
 using HypeLab.MailEngine.Strategies.EmailSender;
+using System.Net.Mail;
 
 namespace HypeLab.MailEngine.Services.Impl
 {
@@ -44,7 +46,7 @@ namespace HypeLab.MailEngine.Services.Impl
         /// <param name="clientId"></param>
         /// <returns></returns>
         /// <exception cref="InvalidOperationException"></exception>
-        public async Task<EmailServiceResponse> SendEmailAsync(CustomMailMessage message, string? clientId = null)
+        public async Task<EmailServiceResponse> SendEmailAsync(IMailMessage message, string? clientId = null)
         {
             if (!string.IsNullOrWhiteSpace(clientId))
                 _emailSender = clientId.DetermineSenderByClientId(_emailSenderFactory);
@@ -52,9 +54,18 @@ namespace HypeLab.MailEngine.Services.Impl
             if (_emailSender is null)
                 throw new InvalidOperationException("Email sender is not set.");
 
-            EmailSenderResponse response = await _emailSender
-                .SendEmailAsync(message.EmailTo, message.HtmlMessage, message.EmailSubject, message.EmailFrom, message.PlainTextContent, message.EmailToName, message.EmailFromName, message.Ccs)
-                .ConfigureAwait(false);
+            EmailSenderResponse response = message switch
+            {
+                CustomMailMessage singleMailMsg => await _emailSender
+                                        .SendEmailAsync(singleMailMsg.EmailTo, message.HtmlMessage, message.EmailSubject, message.EmailFrom, message.PlainTextContent, message.EmailToName, message.EmailFromName, message.Ccs)
+                                        .ConfigureAwait(false),
+
+                MultipleToesMailMessage multipleToesMsg => await _emailSender
+                                        .SendEmailAsync(multipleToesMsg.EmailToes, message.HtmlMessage, message.EmailSubject, message.EmailFrom, message.PlainTextContent, message.EmailToName, message.EmailFromName, message.Ccs)
+                                        .ConfigureAwait(false),
+
+                _ => throw new InvalidOperationException("Unknown message type."),
+            };
 
             if (!response.IsValid)
                 return new EmailServiceResponse(isValid: false, message: response.Message);
