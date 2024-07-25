@@ -134,6 +134,16 @@ public class MyService
 				emailToName: "Matt P",
 				emailFromName: "Info Hype-Lab");
 
+        // or if you need to define multiple to addresses
+        MultipleToesMailMessage mailMessage = MultipleToesMailMessage.Create(
+                emailToes: ["emailTo@n.1", "emailTo@n.2", "emailTo@n.3", "emailTo@n.4", "emailTo@n.5"],
+                emailSubject: "MailEngine .NET Library Email",
+                emailFrom: "noreply@hype-lab.it",
+                htmlMessage: "<h1>Test email from MailEngine .NET Library</h1>",
+                plainTextContent: "Test email from MailEngine .NET Library",
+                emailToName: "Matt P",
+                emailFromName: "Hype-Lab NoReply");
+
         EmailServiceResponse resp = await emailService.SendEmailAsync(mailMessage);
         if (resp.IsError)
 		throw new InvalidOperationException(resp.ErrorMessage);
@@ -192,6 +202,16 @@ public class MyService
 				emailToName: "Matt P",
 				emailFromName: "Info Hype-Lab");
 
+        // or if you need to define multiple to addresses
+        MultipleToesMailMessage mailMessage = MultipleToesMailMessage.Create(
+                emailToes: ["emailTo@n.1", "emailTo@n.2", "emailTo@n.3", "emailTo@n.4", "emailTo@n.5"],
+                emailSubject: "MailEngine .NET Library Email",
+                emailFrom: "noreply@hype-lab.it",
+                htmlMessage: "<h1>Test email from MailEngine .NET Library</h1>",
+                plainTextContent: "Test email from MailEngine .NET Library",
+                emailToName: "Matt P",
+                emailFromName: "Hype-Lab NoReply");
+
         EmailServiceResponse resp = await emailService.SendEmailAsync(mailMessage);
         if (resp.IsError)
 		throw new InvalidOperationException(resp.ErrorMessage);
@@ -213,6 +233,16 @@ public async Task SendEmailAsync(string? clientId = null)
 				plainTextContent: "Test email from MailEngine .NET Library",
 				emailToName: "Matt P",
 				emailFromName: "Info Hype-Lab");
+
+        // or if you need to define multiple to addresses
+        MultipleToesMailMessage mailMessage = MultipleToesMailMessage.Create(
+                emailToes: ["emailTo@n.1", "emailTo@n.2", "emailTo@n.3", "emailTo@n.4", "emailTo@n.5"],
+                emailSubject: "MailEngine .NET Library Email",
+                emailFrom: "noreply@hype-lab.it",
+                htmlMessage: "<h1>Test email from MailEngine .NET Library</h1>",
+                plainTextContent: "Test email from MailEngine .NET Library",
+                emailToName: "Matt P",
+                emailFromName: "Hype-Lab NoReply");
 
     EmailServiceResponse resp = await emailService.SendEmailAsync(mailMessage, clientId);
     if (resp.IsError)
