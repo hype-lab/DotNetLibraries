@@ -70,7 +70,7 @@ namespace HypeLab.MailEngine.Strategies.EmailSender.Impl
 
                 if (response.StatusCode == HttpStatusCode.Accepted || response.StatusCode == HttpStatusCode.OK)
                 {
-                    return EmailSenderResponse.Success($"Email sent. {content}");
+                    return EmailSenderResponse.Success($"Email sent.\n{content}");
                 }
                 else
                 {
@@ -143,20 +143,20 @@ namespace HypeLab.MailEngine.Strategies.EmailSender.Impl
 
                 if (response.StatusCode == HttpStatusCode.Accepted || response.StatusCode == HttpStatusCode.OK)
                 {
-                    return EmailSenderResponse.Success($"Email sent. {content}");
+                    return EmailSenderResponse.Success($"Emails sent. {content}");
                 }
                 else
                 {
-                    return EmailSenderResponse.Failure($"Failed to send email. Status Code: {response.StatusCode} Content: {content}");
+                    return EmailSenderResponse.Failure($"Failed to send emails. Status Code: {response.StatusCode} Content: {content}");
                 }
             }
             catch (SendGridEmailSenderException ex)
             {
-                return EmailSenderResponse.Failure($"Failed to send email: {ex.Message} {ex.InnerException?.Message}");
+                return EmailSenderResponse.Failure($"Failed to send emails: {ex.Message} {ex.InnerException?.Message}");
             }
             catch (Exception ex)
             {
-                return EmailSenderResponse.Failure($"Failed to send email: {ex.Message} {ex.InnerException?.Message}");
+                return EmailSenderResponse.Failure($"Failed to send emails: {ex.Message} {ex.InnerException?.Message}");
             }
         }
     }

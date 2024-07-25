@@ -69,7 +69,7 @@ namespace HypeLab.MailEngine.Strategies.EmailSender.Impl
 
                 await smtpClient.SendMailAsync(mailMessage).ConfigureAwait(false);
 
-                return EmailSenderResponse.Success("Email sent successfully.");
+                return EmailSenderResponse.Success("Email sent.");
             }
             catch (SmtpEmailSenderException ex)
             {
@@ -134,15 +134,15 @@ namespace HypeLab.MailEngine.Strategies.EmailSender.Impl
 
                 await smtpClient.SendMailAsync(mailMessage).ConfigureAwait(false);
 
-                return EmailSenderResponse.Success("Email sent successfully.");
+                return EmailSenderResponse.Success("Emails sent.");
             }
             catch (SmtpEmailSenderException ex)
             {
-                return EmailSenderResponse.Failure($"Failed to send email: {ex.Message} {ex.InnerException?.Message}");
+                return EmailSenderResponse.Failure($"Failed to send emails: {ex.Message} {ex.InnerException?.Message}");
             }
             catch (Exception ex)
             {
-                return EmailSenderResponse.Failure($"Failed to send email: {ex.Message} {ex.InnerException?.Message}");
+                return EmailSenderResponse.Failure($"Failed to send emails: {ex.Message} {ex.InnerException?.Message}");
             }
         }
     }
