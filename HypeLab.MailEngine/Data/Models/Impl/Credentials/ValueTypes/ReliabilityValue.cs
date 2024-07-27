@@ -1,5 +1,4 @@
 ﻿using HypeLab.MailEngine.Data.Exceptions;
-using Newtonsoft.Json;
 using System.Diagnostics.CodeAnalysis;
 
 namespace HypeLab.MailEngine.Data.Models.Impl.Credentials.ValueTypes
@@ -16,7 +15,7 @@ namespace HypeLab.MailEngine.Data.Models.Impl.Credentials.ValueTypes
         /// <summary>
         /// Validates the reliability settings.
         /// </summary>
-        /// <exception cref="InvalidOperationException"></exception>
+        /// <exception cref="InvalidReliabilityPropertiesException"></exception>
         [MemberNotNull(nameof(MaximumBackOffInSeconds), nameof(MaximumNumberOfRetries), nameof(DeltaBackOffInSeconds), nameof(MinimumBackOffInSeconds))]
         public readonly void Validate()
         {
