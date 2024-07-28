@@ -1,6 +1,7 @@
 ﻿using HypeLab.MailEngine.Data.Enums;
 using System.Net.Mail;
 using HypeLab.MailEngine.Data.Models.Impl.Credentials.ValueTypes;
+using Newtonsoft.Json;
 
 namespace HypeLab.MailEngine.Data.Models.Impl.Credentials
 {
@@ -144,7 +145,10 @@ namespace HypeLab.MailEngine.Data.Models.Impl.Credentials
         /// <returns></returns>
         public override string ToString()
         {
-            return $"ClientId: {ClientId}, Server: {Server}, Port: {Port}, Email: {Email}, Password: {Password}, EnableSsl: {EnableSsl}, IsDefault: {IsDefault}, Domain: {Domain}, UseDefaultCredentials: {UseDefaultCredentials}, Timeout: {Timeout}, PickupDirectoryLocation: {PickupDirectoryLocation}, TargetName: {TargetName}, DeliveryMethod: {DeliveryMethod}, DeliveryFormat: {DeliveryFormat}, ClientCertificates: {ClientCertificates}";
+            return JsonConvert.SerializeObject(this, Formatting.Indented, new JsonSerializerSettings()
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+            });
         }
 
         /// <summary>

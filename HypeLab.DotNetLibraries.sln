@@ -9,7 +9,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{2024A7A1-838
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HypeLab.MailEngine", "HypeLab.MailEngine\HypeLab.MailEngine.csproj", "{2CB50929-F67D-47EB-92AF-5E615056A37D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApiForLibraries", "TestApiForLibraries\TestApiForLibraries.csproj", "{9664EB1B-E9A6-4641-B99A-C9696C56FDE7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestApiForLibraries", "TestApiForLibraries\TestApiForLibraries.csproj", "{9664EB1B-E9A6-4641-B99A-C9696C56FDE7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "datalayer", "datalayer", "{FF497763-4694-469E-BE3F-EEF1C4D0CF38}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HypeLab.DataLayer", "HypeLab.DataLayer\HypeLab.DataLayer.csproj", "{C770EB59-B89D-498A-B302-6A49742DDD26}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,6 +33,10 @@ Global
 		{9664EB1B-E9A6-4641-B99A-C9696C56FDE7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9664EB1B-E9A6-4641-B99A-C9696C56FDE7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9664EB1B-E9A6-4641-B99A-C9696C56FDE7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C770EB59-B89D-498A-B302-6A49742DDD26}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C770EB59-B89D-498A-B302-6A49742DDD26}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C770EB59-B89D-498A-B302-6A49742DDD26}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C770EB59-B89D-498A-B302-6A49742DDD26}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -37,6 +45,8 @@ Global
 		{8631A2A9-8792-482B-ACA5-D00191676EF9} = {2024A7A1-838D-4047-9705-0800068B986C}
 		{2CB50929-F67D-47EB-92AF-5E615056A37D} = {2024A7A1-838D-4047-9705-0800068B986C}
 		{9664EB1B-E9A6-4641-B99A-C9696C56FDE7} = {2024A7A1-838D-4047-9705-0800068B986C}
+		{FF497763-4694-469E-BE3F-EEF1C4D0CF38} = {2024A7A1-838D-4047-9705-0800068B986C}
+		{C770EB59-B89D-498A-B302-6A49742DDD26} = {FF497763-4694-469E-BE3F-EEF1C4D0CF38}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {40997FA2-2F22-4C95-AA71-E8BF93B76214}
