@@ -1,4 +1,7 @@
-﻿using HypeLab.RxPatternsResolver.Constants;
+﻿using HypeLab.DnsLookupClient;
+using HypeLab.DnsLookupClient.Data.Clients;
+using HypeLab.DnsLookupClient.Data.Interfaces;
+using HypeLab.RxPatternsResolver.Constants;
 using HypeLab.RxPatternsResolver.Helpers;
 using HypeLab.RxPatternsResolver.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,13 +19,21 @@ namespace HypeLab.RxPatternsResolver
         /// </summary>
         public static void AddRegexResolver(this IServiceCollection services)
         {
+            services.AddSingleton<HypeLabUdpClient>();
+            services.AddSingleton<ILookupClient, LookupClient>(implementationFactory: serviceProvider => new LookupClient(serviceProvider.GetRequiredService<HypeLabUdpClient>()));
+
+            services.AddSingleton<HypeLabSmtpClient>();
+
             services.AddHttpClient(RxResolverDefaults.EmailCheckerHttpClientName);
 
             services.AddSingleton<IEmailChecker, EmailChecker>(serviceProvider =>
             {
+                HypeLabSmtpClient smtpClient = serviceProvider.GetRequiredService<HypeLabSmtpClient>();
+                ILookupClient lookUpClient = serviceProvider.GetRequiredService<ILookupClient>();
+
                 IHttpClientFactory httpClientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
                 HttpClient httpClient = httpClientFactory.CreateClient(RxResolverDefaults.EmailCheckerHttpClientName);
-                return new EmailChecker(httpClient);
+                return new EmailChecker(httpClient, smtpClient, lookUpClient);
             });
 
             services.AddSingleton(serviceProvider =>

@@ -2,7 +2,7 @@
 Provides a class capable of solve collections of regex patterns given an input string. Also equipped with a default patterns set.
 Also exposes a method that validateS the email address format and optionally validates domain.
 
-## (Optional) Register type
+## (Optional but recommended, especially if you intend to use email validation methods) Register type
 
 On startup:
 ```c#
@@ -32,10 +32,9 @@ using HypeLab.RxPatternsResolver.Constants;
 
 const string tst = @"Hi i do tes#TS s@ds a\a  b/b°?mlkm";
 
-RegexPatternsResolver resolver = new();
-resolver.AddPattern(RxResolverConst.DefaultBadCharsCollectionPattern1, string.Empty);
-resolver.AddPattern(@"[/\\]", " - ");
-string output = resolver.ResolveStringWithPatterns(tst);
+_rxResolver.AddPattern(RxResolverConst.DefaultBadCharsCollectionPattern1, string.Empty);
+_rxResolver.AddPattern(@"[/\\]", " - ");
+string output = _rxResolver.ResolveStringWithPatterns(tst);
 
 Console.WriteLine($"Old string:{Environment.NewLine}{tst}" +
     Environment.NewLine + Environment.NewLine +
@@ -51,13 +50,24 @@ Console.WriteLine($"Old string:{Environment.NewLine}{tst}" +
 
 ## Email address validation
 ```c#
-RegexPatternsResolver resolver = new();
-EmailCheckerResponse resp = await resolver.IsValidEmailAsync("john.doe@gmail.com", checkDomain: true).ConfigureAwait(false);
+EmailCheckerResponse resp = await _rxResolver.IsValidEmailAsync("john.doe@gmail.com", checkDomain: true);
 
 Console.WriteLine($"{resp.Message} - Status: {resp.ResponseStatus}");
 // OUTPUT: john.doe@gmail.com results as a valid email address - Status: EMAIL_VALID
 
-EmailCheckerResponse resp2 = resolver.IsValidEmail("john.doe@gmail.com");
+EmailCheckerResponse resp2 = _rxResolver.IsValidEmail("john.doe@gmail.com");
 Console.WriteLine($"{resp2.Message} - Status: {resp2.ResponseStatus}");
 // OUTPUT: john.doe@gmail.com results as a valid email address - Status: EMAIL_VALID
+```
+
+## Email address existence check
+```c#
+EmailCheckerResponse resp = await _rxResolver.IsEmailExistingAsync("john.doe@gmail.com");
+
+Console.WriteLine($"{resp.Message} - Status: {resp.ResponseStatus}");
+// OUTPUT: john.doe@gmail.com exists - Status: EMAIL_VALID
+
+EmailCheckerResponse resp2 = _rxResolver.IsEmailExisting("john.doe@gmail.com");
+Console.WriteLine($"{resp2.Message} - Status: {resp2.ResponseStatus}");
+// OUTPUT: john.doe@gmail.com exists - Status: EMAIL_VALID
 ```

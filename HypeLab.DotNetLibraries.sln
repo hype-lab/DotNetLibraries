@@ -11,7 +11,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HypeLab.MailEngine", "HypeL
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestApiForLibraries", "TestApiForLibraries\TestApiForLibraries.csproj", "{9664EB1B-E9A6-4641-B99A-C9696C56FDE7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HypeLab.BackgroundTasks", "HypeLab.BackgroundTasks\HypeLab.BackgroundTasks.csproj", "{09A05E73-4816-48EE-8CC4-6BB5DCFD183F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HypeLab.BackgroundTasks", "HypeLab.BackgroundTasks\HypeLab.BackgroundTasks.csproj", "{09A05E73-4816-48EE-8CC4-6BB5DCFD183F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "core", "core", "{0C5020D9-6A3C-471F-A764-0B31B3B57521}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HypeLab.DnsLookupClient", "HypeLab.DnsLookupClient\HypeLab.DnsLookupClient.csproj", "{00BEF3E8-A281-4103-8F86-0986CF83A2AB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,6 +39,10 @@ Global
 		{09A05E73-4816-48EE-8CC4-6BB5DCFD183F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{09A05E73-4816-48EE-8CC4-6BB5DCFD183F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{09A05E73-4816-48EE-8CC4-6BB5DCFD183F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{00BEF3E8-A281-4103-8F86-0986CF83A2AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{00BEF3E8-A281-4103-8F86-0986CF83A2AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{00BEF3E8-A281-4103-8F86-0986CF83A2AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{00BEF3E8-A281-4103-8F86-0986CF83A2AB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -44,6 +52,8 @@ Global
 		{2CB50929-F67D-47EB-92AF-5E615056A37D} = {2024A7A1-838D-4047-9705-0800068B986C}
 		{9664EB1B-E9A6-4641-B99A-C9696C56FDE7} = {2024A7A1-838D-4047-9705-0800068B986C}
 		{09A05E73-4816-48EE-8CC4-6BB5DCFD183F} = {2024A7A1-838D-4047-9705-0800068B986C}
+		{0C5020D9-6A3C-471F-A764-0B31B3B57521} = {2024A7A1-838D-4047-9705-0800068B986C}
+		{00BEF3E8-A281-4103-8F86-0986CF83A2AB} = {0C5020D9-6A3C-471F-A764-0B31B3B57521}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {40997FA2-2F22-4C95-AA71-E8BF93B76214}

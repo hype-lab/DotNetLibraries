@@ -1,4 +1,5 @@
 ﻿using HypeLab.RxPatternsResolver.Models;
+using System;
 using System.Threading.Tasks;
 
 namespace HypeLab.RxPatternsResolver.Interfaces
@@ -6,7 +7,7 @@ namespace HypeLab.RxPatternsResolver.Interfaces
     /// <summary>
     /// Interface for email checker
     /// </summary>
-    public interface IEmailChecker
+    public interface IEmailChecker : IDisposable
     {
         /// <summary>
         /// Check if email is valid
@@ -23,5 +24,10 @@ namespace HypeLab.RxPatternsResolver.Interfaces
         /// </summary>
         /// <param name="email">The email to check</param>
         bool EmailExists(string email);
+        /// <summary>
+        /// Check if email exists asynchronously
+        /// </summary>
+        /// <param name="email">The email to check</param>
+        Task<bool> EmailExistsAsync(string email);
     }
 }

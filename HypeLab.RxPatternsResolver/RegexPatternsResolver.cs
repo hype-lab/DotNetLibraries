@@ -116,11 +116,11 @@ namespace HypeLab.RxPatternsResolver
 			}
 			catch (ArgumentException argumentException)
 			{
-				throw new ArgumentException($"[Param: {argumentException.ParamName} - Source: {argumentException.Source}] - {argumentException.Message}", argumentException.InnerException);
+				throw new ArgumentException($"[Param: {argumentException.ParamName} - Source: {argumentException.Source}] - {argumentException.Message}", argumentException);
 			}
 			catch (Exception ex)
 			{
-				throw new RxPatternResolverException(ex.Message, ex.InnerException);
+				throw new RxPatternResolverException(ex.Message, ex);
 			}
 		}
 
@@ -164,15 +164,15 @@ namespace HypeLab.RxPatternsResolver
 			}
 			catch (ArgumentNullException e)
 			{
-				throw new ArgumentNullException(e.Message, e.InnerException);
+				throw new ArgumentNullException(e.Message, e);
 			}
 			catch (HttpRequestException e)
             {
-				throw new HttpRequestException(e.Message, e.InnerException);
+				throw new HttpRequestException(e.Message, e);
             }
 			catch (RegexMatchTimeoutException e)
 			{
-				throw new RegexMatchTimeoutException(e.Message, e.InnerException);
+				throw new RegexMatchTimeoutException(e.Message, e);
 			}
 			catch (Exception e)
 			{
@@ -203,12 +203,72 @@ namespace HypeLab.RxPatternsResolver
 			}
 			catch (RegexMatchTimeoutException e)
 			{
-				throw new RegexMatchTimeoutException(e.Message, e.InnerException);
+				throw new RegexMatchTimeoutException(e.Message, e);
 			}
 			catch (Exception e)
 			{
-				throw new RxPatternResolverException(e.Message, e.InnerException);
+				throw new RxPatternResolverException(e.Message, e);
 			}
 		}
+
+		/// <summary>
+		/// Check if email exists
+		/// </summary>
+		/// <param name="email">The email to check</param>
+		/// <exception cref="RxPatternResolverException"></exception>
+        public EmailCheckerResponse IsEmailExisting(string email)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+                return new EmailCheckerResponse("Input string is null or empty", EmailCheckerResponseStatus.INPUT_NULL_OR_EMPTY);
+
+			try
+			{
+				if (_emailChecker.IsValidEmailAddress(email.NormalizeEmailDomain()))
+				{
+					bool exists = _emailChecker.EmailExists(email);
+					return exists
+                        ? new EmailCheckerResponse($"{email} exists")
+                        : new EmailCheckerResponse($"{email} does not exist", EmailCheckerResponseStatus.EMAIL_NOT_EXISTS);
+				}
+				else
+                {
+                    return new EmailCheckerResponse($"Email address {email} is not valid", EmailCheckerResponseStatus.EMAIL_NOT_VALID);
+                }
+            }
+			catch (Exception e)
+			{
+                throw new RxPatternResolverException(e.Message, e);
+            }
+        }
+
+        /// <summary>
+        /// Check if email exists asynchronously
+        /// </summary>
+        /// <param name="email">The email to check</param>
+        /// <exception cref="RxPatternResolverException"></exception>
+        public async Task<EmailCheckerResponse> IsEmailExistingAsync(string email)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+                return new EmailCheckerResponse("Input string is null or empty", EmailCheckerResponseStatus.INPUT_NULL_OR_EMPTY);
+
+            try
+            {
+                if (_emailChecker.IsValidEmailAddress(email.NormalizeEmailDomain()))
+                {
+                    bool exists = await _emailChecker.EmailExistsAsync(email).ConfigureAwait(false);
+                    return exists
+                        ? new EmailCheckerResponse($"{email} exists")
+                        : new EmailCheckerResponse($"{email} does not exist", EmailCheckerResponseStatus.EMAIL_NOT_EXISTS);
+                }
+                else
+                {
+                    return new EmailCheckerResponse($"Email address {email} is not valid", EmailCheckerResponseStatus.EMAIL_NOT_VALID);
+                }
+            }
+            catch (Exception e)
+            {
+                throw new RxPatternResolverException(e.Message, e);
+            }
+        }
     }
 }

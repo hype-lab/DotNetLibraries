@@ -20,5 +20,19 @@ namespace HypeLab.RxPatternsResolver.Interfaces
         /// </summary>
         /// <param name="email"></param>
         EmailCheckerResponse IsValidEmail(string email);
+
+        /// <summary>
+        /// Checks if given email address is existing
+        /// </summary>
+        /// <param name="email"></param>
+        /// <returns></returns>
+        EmailCheckerResponse IsEmailExisting(string email);
+
+        /// <summary>
+        /// Checks if given email address is existing
+        /// </summary>
+        /// <param name="email"></param>
+        /// <returns></returns>
+        Task<EmailCheckerResponse> IsEmailExistingAsync(string email);
     }
 }
