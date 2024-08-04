@@ -4,6 +4,7 @@ using HypeLab.RxPatternsResolver.Interfaces;
 using HypeLab.RxPatternsResolver.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -16,19 +17,23 @@ namespace HypeLab.RxPatternsResolver
 	public class RegexPatternsResolver : IEmailValidable
 	{
 		private Stack<RegexPatternInstance>? _patterns;
+		private readonly IEmailChecker _emailChecker;
 
-		private readonly RegexOptions RegexOption = RegexOptions.None;
+		private readonly RegexOptions _defaultRegexOptions = RegexOptions.None;
 
 		/// <summary>
 		/// Class initialization without parameters. Must add patterns before resolve a string.
 		/// </summary>
-		public RegexPatternsResolver() { }
-
+		public RegexPatternsResolver()
+		{
+			_emailChecker = new EmailChecker();
+		}
 		/// <summary>
 		/// Class initialization with essential parameters.
 		/// </summary>
 		public RegexPatternsResolver(string pattern, string replacement)
 		{
+			_emailChecker = new EmailChecker();
 			AddPattern(pattern, replacement);
 		}
 
@@ -37,25 +42,34 @@ namespace HypeLab.RxPatternsResolver
 		/// </summary>
 		public RegexPatternsResolver(string pattern, string replacement, RegexOptions regexOption)
 		{
-			RegexOption = regexOption;
-			AddPattern(pattern, replacement, RegexOption);
+			_emailChecker = new EmailChecker();
+			_defaultRegexOptions = regexOption;
+			AddPattern(pattern, replacement, _defaultRegexOptions);
 		}
 
 		/// <summary>
-		/// Adds a new Regex pattern into patterns collection.
-		/// Throws exception if pattern is null.
+		/// Class initialization without parameters. Must add patterns before resolve a string.
 		/// </summary>
-		/// <exception cref="ArgumentNullException"></exception>
-		public void AddPattern(string pattern, string replacement, RegexOptions? regexOption = null)
+		public RegexPatternsResolver(IEmailChecker emailChecker)
+		{
+			_emailChecker = emailChecker;
+		}
+
+        /// <summary>
+        /// Adds a new Regex pattern into patterns collection.
+        /// Throws exception if pattern is null.
+        /// </summary>
+        /// <exception cref="ArgumentNullException"></exception>
+        public void AddPattern(string pattern, string replacement, RegexOptions? regexOption = null)
 		{
 			if (string.IsNullOrWhiteSpace(pattern))
 				throw new ArgumentException("Input string cannot be null or empty", nameof(pattern));
 
 			_patterns ??= new Stack<RegexPatternInstance>();
 
-			_patterns!.Push(new RegexPatternInstance()
+			_patterns.Push(new RegexPatternInstance()
 			{
-				Pattern = pattern, Replacement = replacement, RegexOption = regexOption ?? RegexOption
+				Pattern = pattern, Replacement = replacement, RegexOption = regexOption ?? _defaultRegexOptions
 			});
 		}
 
@@ -80,20 +94,20 @@ namespace HypeLab.RxPatternsResolver
 			string resolvedString = input;
 			try
 			{
-				if (_patterns!.Count > 0)
+				if (_patterns.Count > 0)
 				{
-					if (_patterns!.Count == 1)
+					if (_patterns.Count == 1)
 					{
-						RegexPatternInstance inst = _patterns!.Peek();
+						RegexPatternInstance inst = _patterns.Peek();
 						Regex codeTitleRegex = new Regex(inst.Pattern, inst.RegexOption);
 						resolvedString = codeTitleRegex.Replace(resolvedString, inst.Replacement ?? string.Empty);
 					}
 					else
 					{
-						foreach (RegexPatternInstance pattern in _patterns!)
+						for (int i = 0; i < _patterns.Count; i++)
 						{
-							Regex codeTitleRegex = new Regex(pattern.Pattern, pattern.RegexOption);
-							resolvedString = codeTitleRegex.Replace(resolvedString, pattern.Replacement ?? string.Empty);
+							Regex codeTitleRegex = new Regex(_patterns.ElementAt(i).Pattern, _patterns.ElementAt(i).RegexOption);
+							resolvedString = codeTitleRegex.Replace(resolvedString, _patterns.ElementAt(i).Replacement ?? string.Empty);
 						}
 					}
 				}
@@ -129,15 +143,13 @@ namespace HypeLab.RxPatternsResolver
 
             try
 			{
-				EmailChecker emailChecker = new EmailChecker();
-
 				// Normalize the domain
-                if (emailChecker.IsValidEmailAddress(email.NormalizeEmailDomain()))
+                if (_emailChecker.IsValidEmailAddress(email.NormalizeEmailDomain()))
                 {
 					if (checkDomain)
                     {
 						EmailCheckerResponseStatus domainStatus =
-                            await emailChecker.IsDomainValidAsync(EmailHelper.RetrieveRequestUrlWithGivenDomain(email.GetDomain())).ConfigureAwait(false);
+                            await _emailChecker.IsDomainValidAsync(EmailHelper.RetrieveRequestUrlWithGivenDomain(email.GetDomain())).ConfigureAwait(false);
 
 						if (domainStatus == EmailCheckerResponseStatus.DOMAIN_NOT_VALID)
 							return new EmailCheckerResponse($"Domain \"{email.GetDomain()}\" is not valid.", domainStatus);
@@ -183,10 +195,8 @@ namespace HypeLab.RxPatternsResolver
 
 			try
 			{
-				EmailChecker emailChecker = new EmailChecker();
-
 				// Normalize the domain
-				if (emailChecker.IsValidEmailAddress(email.NormalizeEmailDomain()))
+				if (_emailChecker.IsValidEmailAddress(email.NormalizeEmailDomain()))
 					return new EmailCheckerResponse($"{email} results as a valid email address");
 				else
 					return new EmailCheckerResponse("Email address is not valid", EmailCheckerResponseStatus.EMAIL_NOT_VALID);

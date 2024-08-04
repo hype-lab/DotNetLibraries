@@ -1,19 +1,23 @@
-﻿using HypeLab.RxPatternsResolver.Enums;
-using HypeLab.RxPatternsResolver.Interfaces;
+﻿using HypeLab.RxPatternsResolver.Interfaces;
 using HypeLab.RxPatternsResolver.Models;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Net.Http;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace HypeLab.RxPatternsResolver.Helpers
 {
-    internal class EmailChecker : IEmailValidityChecker, IEmailDomainChecker, IEmailExistanceChecker
+    internal class EmailChecker : IEmailChecker, IDisposable
     {
-        public bool EmailExists()
+        private readonly HttpClient _httpClient;
+
+        internal EmailChecker(HttpClient? httpClient = null)
+        {
+            _httpClient = httpClient ?? new HttpClient();
+        }
+
+        public bool EmailExists(string email)
         {
             // todo
             return true;
@@ -26,32 +30,56 @@ namespace HypeLab.RxPatternsResolver.Helpers
 
         public async Task<EmailCheckerResponseStatus> IsDomainValidAsync(string checkUrl)
         {
+            string? content = null;
             try
             {
-                using HttpClient client = new HttpClient();
-                HttpResponseMessage response = await client.GetAsync(checkUrl).ConfigureAwait(false);
+                HttpResponseMessage response = await _httpClient.GetAsync(checkUrl).ConfigureAwait(false);
+                content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                 response.EnsureSuccessStatusCode();
 
                 EmailCheckerApiResponse apiResponse =
-                    JsonConvert.DeserializeObject<EmailCheckerApiResponse>(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
+                    JsonConvert.DeserializeObject<EmailCheckerApiResponse>(content);
 
-                if (apiResponse.Status != 0)
-                    return EmailCheckerResponseStatus.DOMAIN_NOT_VALID;
-
-                return EmailCheckerResponseStatus.DOMAIN_VALID;
+                return apiResponse.Status == 0
+                    ? EmailCheckerResponseStatus.DOMAIN_VALID
+                    : EmailCheckerResponseStatus.DOMAIN_NOT_VALID;
             }
-            catch (ArgumentNullException)
+            catch (ArgumentNullException ex)
             {
-                throw;
+                throw new ArgumentNullException($"Error checking domain.\n{content}\n{ex.Message}", ex);
             }
-            catch (HttpRequestException)
+            catch (HttpRequestException ex)
             {
-                throw;
+                throw new HttpRequestException($"Error checking domain.\n{content}\n{ex.Message}", ex);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                throw new InvalidOperationException($"Error checking domain.\n{content}\n{ex.Message}", ex);
             }
         }
+
+        #region dispose
+        ~EmailChecker()
+        {
+            Dispose(false);
+        }
+
+        private bool _disposed;
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_disposed) return;
+
+            if (disposing)
+                _httpClient?.Dispose();
+
+            _disposed = true;
+        }
+        #endregion
     }
 }
