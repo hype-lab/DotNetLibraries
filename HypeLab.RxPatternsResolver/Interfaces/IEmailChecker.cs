@@ -17,8 +17,13 @@ namespace HypeLab.RxPatternsResolver.Interfaces
         /// <summary>
         /// Check if domain is valid
         /// </summary>
-        /// <param name="checkUrl">The api url where the domain will be validated</param>
-        Task<EmailCheckerResponseStatus> IsDomainValidAsync(string checkUrl);
+        /// <param name="domain">The email address domain</param>
+        Task<EmailCheckerResponseStatus> IsDomainValidAsync(string domain);
+        /// <summary>
+        /// Check if domain is valid
+        /// </summary>
+        /// <param name="domain">The email address domain</param>
+        EmailCheckerResponseStatus IsDomainValid(string domain);
         /// <summary>
         /// Check if email exists
         /// </summary>

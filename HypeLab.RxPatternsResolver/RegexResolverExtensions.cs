@@ -22,18 +22,18 @@ namespace HypeLab.RxPatternsResolver
             services.AddSingleton<HypeLabUdpClient>();
             services.AddSingleton<ILookupClient, LookupClient>(implementationFactory: serviceProvider => new LookupClient(serviceProvider.GetRequiredService<HypeLabUdpClient>()));
 
-            services.AddSingleton<HypeLabSmtpClient>();
+            services.AddSingleton<HypeLabTcpClient>();
 
             services.AddHttpClient(RxResolverDefaults.EmailCheckerHttpClientName);
 
             services.AddSingleton<IEmailChecker, EmailChecker>(serviceProvider =>
             {
-                HypeLabSmtpClient smtpClient = serviceProvider.GetRequiredService<HypeLabSmtpClient>();
+                HypeLabTcpClient tcpClient = serviceProvider.GetRequiredService<HypeLabTcpClient>();
                 ILookupClient lookUpClient = serviceProvider.GetRequiredService<ILookupClient>();
 
                 IHttpClientFactory httpClientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
                 HttpClient httpClient = httpClientFactory.CreateClient(RxResolverDefaults.EmailCheckerHttpClientName);
-                return new EmailChecker(httpClient, smtpClient, lookUpClient);
+                return new EmailChecker(httpClient, tcpClient, lookUpClient);
             });
 
             services.AddSingleton(serviceProvider =>
