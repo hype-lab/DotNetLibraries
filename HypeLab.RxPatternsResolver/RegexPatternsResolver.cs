@@ -116,11 +116,11 @@ namespace HypeLab.RxPatternsResolver
 			}
 			catch (ArgumentException argumentException)
 			{
-				throw new ArgumentException($"[Param: {argumentException.ParamName} - Source: {argumentException.Source}] - {argumentException.Message}", argumentException.InnerException);
+				throw new ArgumentException($"[Param: {argumentException.ParamName} - Source: {argumentException.Source}] - {argumentException.Message}", argumentException);
 			}
 			catch (Exception ex)
 			{
-				throw new RxPatternResolverException(ex.Message, ex.InnerException);
+				throw new RxPatternResolverException(ex.Message, ex);
 			}
 		}
 
@@ -148,8 +148,7 @@ namespace HypeLab.RxPatternsResolver
                 {
 					if (checkDomain)
                     {
-						EmailCheckerResponseStatus domainStatus =
-                            await _emailChecker.IsDomainValidAsync(EmailHelper.RetrieveRequestUrlWithGivenDomain(email.GetDomain())).ConfigureAwait(false);
+                        EmailCheckerResponseStatus domainStatus = await _emailChecker.IsDomainValidAsync(email.GetDomain()).ConfigureAwait(false);
 
 						if (domainStatus == EmailCheckerResponseStatus.DOMAIN_NOT_VALID)
 							return new EmailCheckerResponse($"Domain \"{email.GetDomain()}\" is not valid.", domainStatus);
@@ -164,15 +163,15 @@ namespace HypeLab.RxPatternsResolver
 			}
 			catch (ArgumentNullException e)
 			{
-				throw new ArgumentNullException(e.Message, e.InnerException);
+				throw new ArgumentNullException(e.Message, e);
 			}
 			catch (HttpRequestException e)
             {
-				throw new HttpRequestException(e.Message, e.InnerException);
+				throw new HttpRequestException(e.Message, e);
             }
 			catch (RegexMatchTimeoutException e)
 			{
-				throw new RegexMatchTimeoutException(e.Message, e.InnerException);
+				throw new RegexMatchTimeoutException(e.Message, e);
 			}
 			catch (Exception e)
 			{
@@ -180,15 +179,18 @@ namespace HypeLab.RxPatternsResolver
 			}
         }
 
-		/// <summary>
-		/// Determines whether the email format is valid for an email address.
-		/// see: https://docs.microsoft.com/en-us/dotnet/standard/base-types/how-to-verify-that-strings-are-in-valid-email-format
-		/// see: https://developers.google.com/speed/public-dns/docs/doh
-		/// </summary>
-		/// <param name="email">The provided email address</param>
-		/// <exception cref="RegexMatchTimeoutException"></exception>
-		/// <exception cref="Exception"></exception>
-		public EmailCheckerResponse IsValidEmail(string email)
+        /// <summary>
+        /// Determines whether the email format is valid for an email address.
+        /// see: https://docs.microsoft.com/en-us/dotnet/standard/base-types/how-to-verify-that-strings-are-in-valid-email-format
+        /// see: https://developers.google.com/speed/public-dns/docs/doh
+        /// </summary>
+        /// <param name="email">The provided email address</param>
+        /// <exception cref="RegexMatchTimeoutException"></exception>
+        /// <exception cref="Exception"></exception>
+#pragma warning disable S1133 // Deprecated code should be removed
+        [Obsolete("Prefer using IsValidEmail(string email, bool checkDomain)")]
+#pragma warning restore S1133 // Deprecated code should be removed
+        public EmailCheckerResponse IsValidEmail(string email)
         {
 			if (string.IsNullOrWhiteSpace(email))
 				return new EmailCheckerResponse("Input string is null or empty", EmailCheckerResponseStatus.INPUT_NULL_OR_EMPTY);
@@ -203,12 +205,111 @@ namespace HypeLab.RxPatternsResolver
 			}
 			catch (RegexMatchTimeoutException e)
 			{
-				throw new RegexMatchTimeoutException(e.Message, e.InnerException);
+				throw new RegexMatchTimeoutException(e.Message, e);
 			}
 			catch (Exception e)
 			{
-				throw new RxPatternResolverException(e.Message, e.InnerException);
+				throw new RxPatternResolverException(e.Message, e);
 			}
 		}
+
+        /// <summary>
+        /// Checks if given input string is a valid email address
+        /// </summary>
+        /// <param name="email"></param>
+        /// <param name="checkDomain"></param>
+        public EmailCheckerResponse IsValidEmail(string email, bool checkDomain)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+                return new EmailCheckerResponse("Input string is null or empty", EmailCheckerResponseStatus.INPUT_NULL_OR_EMPTY);
+
+            try
+            {
+                // Normalize the domain
+                if (_emailChecker.IsValidEmailAddress(email.NormalizeEmailDomain()))
+                {
+					if (checkDomain)
+                    {
+                        EmailCheckerResponseStatus domainStatus = _emailChecker.IsDomainValidAsync(email.GetDomain()).Result;
+
+                        if (domainStatus == EmailCheckerResponseStatus.DOMAIN_NOT_VALID)
+                            return new EmailCheckerResponse($"Domain \"{email.GetDomain()}\" is not valid.", domainStatus);
+                    }
+                    return new EmailCheckerResponse($"{email} results as a valid email address");
+                }
+                else
+                {
+                    return new EmailCheckerResponse("Email address is not valid", EmailCheckerResponseStatus.EMAIL_NOT_VALID);
+                }
+            }
+            catch (RegexMatchTimeoutException e)
+            {
+                throw new RegexMatchTimeoutException(e.Message, e);
+            }
+            catch (Exception e)
+            {
+                throw new RxPatternResolverException(e.Message, e);
+            }
+        }
+
+        /// <summary>
+        /// Check if email exists
+        /// </summary>
+        /// <param name="email">The email to check</param>
+        /// <exception cref="RxPatternResolverException"></exception>
+        public EmailCheckerResponse IsEmailExisting(string email)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+                return new EmailCheckerResponse("Input string is null or empty", EmailCheckerResponseStatus.INPUT_NULL_OR_EMPTY);
+
+			try
+			{
+				if (_emailChecker.IsValidEmailAddress(email.NormalizeEmailDomain()))
+				{
+					bool exists = _emailChecker.EmailExists(email);
+					return exists
+                        ? new EmailCheckerResponse($"{email} exists")
+                        : new EmailCheckerResponse($"{email} does not exist", EmailCheckerResponseStatus.EMAIL_NOT_EXISTS);
+				}
+				else
+                {
+                    return new EmailCheckerResponse($"Email address {email} is not valid", EmailCheckerResponseStatus.EMAIL_NOT_VALID);
+                }
+            }
+			catch (Exception e)
+			{
+                throw new RxPatternResolverException(e.Message, e);
+            }
+        }
+
+        /// <summary>
+        /// Check if email exists asynchronously
+        /// </summary>
+        /// <param name="email">The email to check</param>
+        /// <exception cref="RxPatternResolverException"></exception>
+        public async Task<EmailCheckerResponse> IsEmailExistingAsync(string email)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+                return new EmailCheckerResponse("Input string is null or empty", EmailCheckerResponseStatus.INPUT_NULL_OR_EMPTY);
+
+            try
+            {
+                if (_emailChecker.IsValidEmailAddress(email.NormalizeEmailDomain()))
+                {
+                    bool exists = await _emailChecker.EmailExistsAsync(email).ConfigureAwait(false);
+                    return exists
+                        ? new EmailCheckerResponse($"{email} exists")
+                        : new EmailCheckerResponse($"{email} does not exist", EmailCheckerResponseStatus.EMAIL_NOT_EXISTS);
+                }
+                else
+                {
+                    return new EmailCheckerResponse($"Email address {email} is not valid", EmailCheckerResponseStatus.EMAIL_NOT_VALID);
+                }
+            }
+            catch (Exception e)
+            {
+                throw new RxPatternResolverException(e.Message, e);
+            }
+        }
     }
 }
