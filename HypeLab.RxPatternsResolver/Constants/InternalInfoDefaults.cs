@@ -2,7 +2,7 @@
 {
     internal static class InternalInfoDefaults
     {
-        public const string EmailCheckerEmailFrom = "emailchecker@hype-lab.it";
+        public const string EmailCheckerEmailFrom = "emailchecker@gmail.com";
         public const string EmailCheckerEmailSubject = "Email existence check";
     }
 }

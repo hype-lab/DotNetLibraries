@@ -1,7 +1,7 @@
-﻿using HypeLab.DnsLookupClient;
-using HypeLab.DnsLookupClient.Data.Enums;
+﻿using HypeLab.DnsLookupClient.Data.Enums;
 using HypeLab.DnsLookupClient.Data.Interfaces;
 using HypeLab.DnsLookupClient.Data.Models;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

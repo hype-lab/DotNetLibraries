@@ -29,9 +29,7 @@ namespace HypeLab.DnsLookupClient
             foreach (DnsRecord record in dnsResponse.Answers)
             {
                 if (record is MxRecord mxRecord)
-                {
                     mxRecords.Add(mxRecord);
-                }
             }
 
             return new DnsQueryResult(mxRecords);
