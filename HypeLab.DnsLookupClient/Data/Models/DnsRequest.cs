@@ -57,44 +57,35 @@ namespace HypeLab.DnsLookupClient.Data.Models
             return ParseDnsResponse(responseBytes);
         }
 
-        public static byte[] GetBytesBigEndian(ushort value)
-        {
-            byte[] bytes = BitConverter.GetBytes(value);
-            if (BitConverter.IsLittleEndian)
-                Array.Reverse(bytes);
-
-            return bytes;
-        }
-
         private byte[] CreateDnsQueryPacket(string domain, DnsQueryType queryType)
         {
             List<byte> packet = new List<byte>();
 
             // Transaction ID
             ushort transactionId = (ushort)new Random().Next(ushort.MaxValue);
-            packet.AddRange(GetBytesBigEndian(transactionId));
+            packet.AddRange(transactionId.GetBytesBigEndian());
             //packet.AddRange(BitConverter.GetBytes(transactionId))
 
             // Flags
             const ushort flags = 0x0100; // Standard query
-            packet.AddRange(GetBytesBigEndian(flags));
+            packet.AddRange(flags.GetBytesBigEndian());
             ////packet.AddRange(BitConverter.GetBytes(flags))
 
             // Questions
             const ushort questions = 1;
             //packet.AddRange(BitConverter.GetBytes(questions))
-            packet.AddRange(GetBytesBigEndian(questions));
+            packet.AddRange(questions.GetBytesBigEndian());
 
             // Answer RRs, Authority RRs, Additional RRs
             const ushort answerRRs = 0;
             const ushort authorityRRs = 0;
             const ushort additionalRRs = 0;
             //packet.AddRange(BitConverter.GetBytes(answerRRs))
-            packet.AddRange(GetBytesBigEndian(answerRRs));
+            packet.AddRange(answerRRs.GetBytesBigEndian());
             //packet.AddRange(BitConverter.GetBytes(authorityRRs))
             //packet.AddRange(BitConverter.GetBytes(additionalRRs))
-            packet.AddRange(GetBytesBigEndian(authorityRRs));
-            packet.AddRange(GetBytesBigEndian(additionalRRs));
+            packet.AddRange(authorityRRs.GetBytesBigEndian());
+            packet.AddRange(additionalRRs.GetBytesBigEndian());
 
             // Query
             foreach (string part in domain.Split('.'))
@@ -108,12 +99,12 @@ namespace HypeLab.DnsLookupClient.Data.Models
             // Query Type
             ushort queryTypeValue = (ushort)queryType;
             //packet.AddRange(BitConverter.GetBytes(queryTypeValue))
-            packet.AddRange(GetBytesBigEndian(queryTypeValue));
+            packet.AddRange(queryTypeValue.GetBytesBigEndian());
 
             // Query Class
             const ushort queryClass = 1; // IN (Internet)
             //packet.AddRange(BitConverter.GetBytes(queryClass))
-            packet.AddRange(GetBytesBigEndian(queryClass));
+            packet.AddRange(queryClass.GetBytesBigEndian());
 
             return packet.ToArray();
         }

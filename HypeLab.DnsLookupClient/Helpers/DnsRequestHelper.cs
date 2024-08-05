@@ -1,4 +1,6 @@
-﻿namespace HypeLab.DnsLookupClient.Helpers
+﻿using System;
+
+namespace HypeLab.DnsLookupClient.Helpers
 {
     internal static class DnsRequestHelper
     {
@@ -13,6 +15,15 @@
                    ((value << 8) & 0x00FF0000) |
                    ((value >> 8) & 0x0000FF00) |
                    (value << 24);
+        }
+
+        internal static byte[] GetBytesBigEndian(this ushort value)
+        {
+            byte[] bytes = BitConverter.GetBytes(value);
+            if (BitConverter.IsLittleEndian)
+                Array.Reverse(bytes);
+
+            return bytes;
         }
     }
 }
