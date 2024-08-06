@@ -16,7 +16,6 @@ namespace HypeLab.MailEngine.Data.Models.Impl
     [method: SetsRequiredMembers]
     public sealed class MultipleToesMailMessage(ICollection<string> emailToes, string emailSubject, string emailFrom, string htmlMessage) : BaseMailMessage(emailSubject, emailFrom, htmlMessage)
     {
-
         /// <summary>
         /// The email toes.
         /// </summary>

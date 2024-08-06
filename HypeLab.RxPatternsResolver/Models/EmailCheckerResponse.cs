@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace HypeLab.RxPatternsResolver.Models
+﻿namespace HypeLab.RxPatternsResolver.Models
 {
     /// <summary>
     /// Enum that represents the possible status could be returned
@@ -38,7 +34,7 @@ namespace HypeLab.RxPatternsResolver.Models
     /// <summary>
     /// Response of the email check
     /// </summary>
-    public struct EmailCheckerResponse
+    public readonly struct EmailCheckerResponse
     {
         /// <summary>
         /// Initialize it with response result items

@@ -37,5 +37,9 @@
         /// Default pattern combination #8
         /// </summary>
         public const string DefaultBadCharsCollectionPattern8 = "[=°§#@:*^ç£$%&]";
+        /// <summary>
+        /// Default name for the email checker internal used HttpClient
+        /// </summary>
+        public const string EmailCheckerHttpClientName = "EmailCheckerHttpClient";
     }
 }

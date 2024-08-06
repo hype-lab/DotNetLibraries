@@ -1,8 +1,5 @@
 ﻿using HypeLab.RxPatternsResolver.Enums;
-using System;
-using System.Collections.Generic;
 using System.Net.Mail;
-using System.Text;
 
 namespace HypeLab.RxPatternsResolver.Helpers
 {

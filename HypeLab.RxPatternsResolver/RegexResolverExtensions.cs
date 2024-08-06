@@ -1,4 +1,8 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using HypeLab.DnsLookupClient;
+using HypeLab.DnsLookupClient.Data.Interfaces;
+using HypeLab.RxPatternsResolver.Helpers;
+using HypeLab.RxPatternsResolver.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace HypeLab.RxPatternsResolver
 {
@@ -12,7 +16,20 @@ namespace HypeLab.RxPatternsResolver
         /// </summary>
         public static void AddRegexResolver(this IServiceCollection services)
         {
-            services.AddSingleton<RegexPatternsResolver>();
+            services.AddSingleton<ILookupClient, LookupClient>(implementationFactory: _ => new LookupClient());
+
+            services.AddSingleton<IEmailChecker, EmailChecker>(serviceProvider =>
+            {
+                ILookupClient lookUpClient = serviceProvider.GetRequiredService<ILookupClient>();
+
+                return new EmailChecker(lookUpClient);
+            });
+
+            services.AddSingleton(serviceProvider =>
+            {
+                IEmailChecker emailChecker = serviceProvider.GetRequiredService<IEmailChecker>();
+                return new RegexPatternsResolver(emailChecker);
+            });
         }
     }
 }
