@@ -1,6 +1,6 @@
 ﻿using HypeLab.DnsLookupClient;
-using HypeLab.DnsLookupClient.Data.Clients;
 using HypeLab.DnsLookupClient.Data.Interfaces;
+using HypeLab.DnsLookupClient.Helpers.Const;
 using HypeLab.RxPatternsResolver.Constants;
 using HypeLab.RxPatternsResolver.Interfaces;
 using HypeLab.RxPatternsResolver.Models;
@@ -18,14 +18,10 @@ namespace HypeLab.RxPatternsResolver.Helpers
 {
     internal class EmailChecker : IEmailChecker
     {
-        private readonly HttpClient _httpClient;
-        private readonly HypeLabTcpClient _tcpClient;
         private readonly ILookupClient _lookupClient;
 
-        internal EmailChecker(HttpClient? httpClient = null, HypeLabTcpClient? tcpClient = null, ILookupClient? lookupClient = null)
+        internal EmailChecker(ILookupClient? lookupClient = null)
         {
-            _httpClient = httpClient ?? new HttpClient();
-            _tcpClient = tcpClient ?? new HypeLabTcpClient();
             _lookupClient = lookupClient ?? new LookupClient();
         }
 
@@ -36,50 +32,37 @@ namespace HypeLab.RxPatternsResolver.Helpers
         /// <exception cref="InvalidOperationException"></exception>
         public async Task<bool> EmailExistsAsync(string email)
         {
+            if (string.IsNullOrEmpty(email))
+                throw new ArgumentNullException(nameof(email));
+
             try
             {
                 // Extract the domain part of the email address
                 string domain = email.GetDomain();
 
                 // Get MX records for the domain
-                List<string> mxRecords = await _lookupClient.GetMXRecordsAsync(domain).ConfigureAwait(false);
+                List<string> mxRecords = await _lookupClient.GetMxRecordsAsync(domain).ConfigureAwait(false);
 
                 if (mxRecords == null || mxRecords.Count == 0)
                     return false;
 
-                // Try to connect to the first MX record
-                await _tcpClient.ConnectAsync(mxRecords[0], 25).ConfigureAwait(false);
-                await using NetworkStream networkStream = _tcpClient.GetStream();
+                using TcpClient tcpClient = new TcpClient();
+                await tcpClient.ConnectAsync(mxRecords[0], 25).ConfigureAwait(false);
+                await using NetworkStream networkStream = tcpClient.GetStream();
                 using StreamReader reader = new StreamReader(networkStream);
                 await using StreamWriter writer = new StreamWriter(networkStream) { AutoFlush = true };
-                // Read server response
-                await reader.ReadLineAsync().ConfigureAwait(false);
 
-                // Send HELO command
-                await writer.WriteLineAsync($"HELO {Dns.GetHostName()}").ConfigureAwait(false);
                 await reader.ReadLineAsync().ConfigureAwait(false);
-
-                // Send MAIL FROM command
-                await writer.WriteLineAsync($"MAIL FROM:<{InternalInfoDefaults.EmailCheckerEmailFrom}>").ConfigureAwait(false);
+                await writer.WriteLineAsync($"{SmtpDefaults.SmtpHeloCommand} {Dns.GetHostName()}").ConfigureAwait(false);
                 await reader.ReadLineAsync().ConfigureAwait(false);
-
-                // Send RCPT TO command
-                await writer.WriteLineAsync($"RCPT TO:<{email}>").ConfigureAwait(false);
+                await writer.WriteLineAsync(string.Format(SmtpDefaults.SmtpMailFromCommand, InternalInfoDefaults.EmailCheckerEmailFrom)).ConfigureAwait(false);
+                await reader.ReadLineAsync().ConfigureAwait(false);
+                await writer.WriteLineAsync(string.Format(SmtpDefaults.SmtpRcptToCommand, email)).ConfigureAwait(false);
                 string response = await reader.ReadLineAsync().ConfigureAwait(false);
 
-                // Check if the response indicates the email exists
-                if (response.StartsWith("250"))
-                {
-                    // Send QUIT command
-                    await writer.WriteLineAsync("QUIT").ConfigureAwait(false);
-                    return true;
-                }
-                else
-                {
-                    // Send QUIT command
-                    await writer.WriteLineAsync("QUIT").ConfigureAwait(false);
-                    return false;
-                }
+                await writer.WriteLineAsync(SmtpDefaults.SmtpQuitCommand).ConfigureAwait(false);
+
+                return response.StartsWith("250");
             }
             catch (Exception ex)
             {
@@ -95,50 +78,38 @@ namespace HypeLab.RxPatternsResolver.Helpers
         /// <exception cref="InvalidOperationException"></exception>
         public bool EmailExists(string email)
         {
+            if (string.IsNullOrEmpty(email))
+                throw new ArgumentNullException(nameof(email));
+
             try
             {
                 // Extract the domain part of the email address
                 string domain = email.GetDomain();
 
                 // Get MX records for the domain
-                List<string> mxRecords = _lookupClient.GetMXRecords(domain);
+                List<string> mxRecords = _lookupClient.GetMxRecords(domain);
 
                 if (mxRecords == null || mxRecords.Count == 0)
                     return false;
 
                 // Try to connect to the first MX record
-                _tcpClient.Connect(mxRecords[0], 25);
-                using NetworkStream networkStream = _tcpClient.GetStream();
+                using TcpClient tcpClient = new TcpClient();
+                tcpClient.Connect(mxRecords[0], 25);
+                using NetworkStream networkStream = tcpClient.GetStream();
                 using StreamReader reader = new StreamReader(networkStream);
                 using StreamWriter writer = new StreamWriter(networkStream) { AutoFlush = true };
-                // Read server response
-                reader.ReadLine();
 
-                // Send HELO command
-                writer.WriteLine($"HELO {Dns.GetHostName()}");
                 reader.ReadLine();
-
-                // Send MAIL FROM command
-                writer.WriteLine($"MAIL FROM:<{InternalInfoDefaults.EmailCheckerEmailFrom}>");
+                writer.WriteLine($"{SmtpDefaults.SmtpHeloCommand} {Dns.GetHostName()}");
                 reader.ReadLine();
-
-                // Send RCPT TO command
-                writer.WriteLine($"RCPT TO:<{email}>");
+                writer.WriteLine(string.Format(SmtpDefaults.SmtpMailFromCommand, InternalInfoDefaults.EmailCheckerEmailFrom));
+                reader.ReadLine();
+                writer.WriteLine(string.Format(SmtpDefaults.SmtpRcptToCommand, email));
                 string response = reader.ReadLine();
 
-                // Check if the response indicates the email exists
-                if (response.StartsWith("250"))
-                {
-                    // Send QUIT command
-                    writer.WriteLine("QUIT");
-                    return true;
-                }
-                else
-                {
-                    // Send QUIT command
-                    writer.WriteLine("QUIT");
-                    return false;
-                }
+                writer.WriteLine(SmtpDefaults.SmtpQuitCommand);
+
+                return response.StartsWith("250");
             }
             catch (SmtpException ex)
             {
@@ -152,6 +123,9 @@ namespace HypeLab.RxPatternsResolver.Helpers
 
         public bool IsValidEmailAddress(string email)
         {
+            if (string.IsNullOrEmpty(email))
+                throw new ArgumentNullException(nameof(email));
+
             return Regex.IsMatch(email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$", RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(250));
         }
 
@@ -169,7 +143,7 @@ namespace HypeLab.RxPatternsResolver.Helpers
 
             try
             {
-                List<string> mxRecords = await _lookupClient.GetMXRecordsAsync(domain).ConfigureAwait(false);
+                List<string> mxRecords = await _lookupClient.GetMxRecordsAsync(domain).ConfigureAwait(false);
                 return mxRecords?.Count > 0
                     ? EmailCheckerResponseStatus.DOMAIN_VALID
                     : EmailCheckerResponseStatus.DOMAIN_NOT_VALID;
@@ -202,7 +176,7 @@ namespace HypeLab.RxPatternsResolver.Helpers
 
             try
             {
-                List<string> mxRecords = _lookupClient.GetMXRecords(domain);
+                List<string> mxRecords = _lookupClient.GetMxRecords(domain);
                 return mxRecords?.Count > 0
                     ? EmailCheckerResponseStatus.DOMAIN_VALID
                     : EmailCheckerResponseStatus.DOMAIN_NOT_VALID;
@@ -220,34 +194,5 @@ namespace HypeLab.RxPatternsResolver.Helpers
                 throw new InvalidOperationException($"Error checking domain.\n{ex.Message}", ex);
             }
         }
-
-        #region dispose
-        ~EmailChecker()
-        {
-            Dispose(false);
-        }
-
-        private bool _disposed;
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (_disposed)
-                return;
-
-            if (disposing)
-            {
-                _httpClient?.Dispose();
-                _tcpClient?.Dispose();
-                _lookupClient?.Dispose();
-            }
-
-            _disposed = true;
-        }
-        #endregion
     }
 }

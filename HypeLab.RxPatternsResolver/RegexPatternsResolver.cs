@@ -59,7 +59,7 @@ namespace HypeLab.RxPatternsResolver
         /// Adds a new Regex pattern into patterns collection.
         /// Throws exception if pattern is null.
         /// </summary>
-        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="ArgumentException"></exception>
         public void AddPattern(string pattern, string replacement, RegexOptions? regexOption = null)
 		{
 			if (string.IsNullOrWhiteSpace(pattern))
@@ -73,17 +73,18 @@ namespace HypeLab.RxPatternsResolver
 			});
 		}
 
-		/// <summary>
-		/// Returns input string replaced using patterns previously added.
-		/// </summary>
-		/// <returns>
-		/// Throws exception if patterns collection is null.
-		/// Returns just input string if patterns collection is empty.
-		/// Otherwise returns the elaborated string.
-		/// </returns>
-		/// <exception cref="ArgumentException"></exception>
-		/// <exception cref="Exception"></exception>
-		public string ResolveStringWithPatterns(string input)
+        /// <summary>
+        /// Returns input string replaced using patterns previously added.
+        /// </summary>
+        /// <returns>
+        /// Throws exception if patterns collection is null.
+        /// Returns just input string if patterns collection is empty.
+        /// Otherwise returns the elaborated string.
+        /// </returns>
+        /// <exception cref="ArgumentException"></exception>
+        /// <exception cref="InvalidOperationException"></exception>
+        /// <exception cref="RxPatternResolverException"></exception>
+        public string ResolveStringWithPatterns(string input)
 		{
 			if (string.IsNullOrWhiteSpace(input))
 				throw new ArgumentException("String to replace cannot be null or empty", nameof(input));
@@ -124,19 +125,19 @@ namespace HypeLab.RxPatternsResolver
 			}
 		}
 
-		/// <summary>
-		/// Determines whether the email format is valid for an email address.
-		/// Also offers the possibility to check email domain sending a request to the google dns to verify if domain is valid.
-		/// see: https://docs.microsoft.com/en-us/dotnet/standard/base-types/how-to-verify-that-strings-are-in-valid-email-format
-		/// see: https://developers.google.com/speed/public-dns/docs/doh
-		/// </summary>
-		/// <param name="email">The provided email address</param>
-		/// <param name="checkDomain">If true checks for domain validity</param>
-		/// <exception cref="ArgumentNullException"></exception>
-		/// <exception cref="HttpRequestException"></exception>
-		/// <exception cref="RegexMatchTimeoutException"></exception>
-		/// <exception cref="Exception"></exception>
-		public async Task<EmailCheckerResponse> IsValidEmailAsync(string email, bool checkDomain = false)
+        /// <summary>
+        /// Determines whether the email format is valid for an email address.
+        /// Also offers the possibility to check email domain sending a request to the google dns to verify if domain is valid.
+        /// see: https://docs.microsoft.com/en-us/dotnet/standard/base-types/how-to-verify-that-strings-are-in-valid-email-format
+        /// see: https://developers.google.com/speed/public-dns/docs/doh
+        /// </summary>
+        /// <param name="email">The provided email address</param>
+        /// <param name="checkDomain">If true checks for domain validity</param>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="HttpRequestException"></exception>
+        /// <exception cref="RegexMatchTimeoutException"></exception>
+        /// <exception cref="RxPatternResolverException"></exception>
+        public async Task<EmailCheckerResponse> IsValidEmailAsync(string email, bool checkDomain = false)
         {
 			if (string.IsNullOrWhiteSpace(email))
                 return new EmailCheckerResponse("Input string is null or empty", EmailCheckerResponseStatus.INPUT_NULL_OR_EMPTY);
@@ -182,14 +183,10 @@ namespace HypeLab.RxPatternsResolver
         /// <summary>
         /// Determines whether the email format is valid for an email address.
         /// see: https://docs.microsoft.com/en-us/dotnet/standard/base-types/how-to-verify-that-strings-are-in-valid-email-format
-        /// see: https://developers.google.com/speed/public-dns/docs/doh
         /// </summary>
         /// <param name="email">The provided email address</param>
         /// <exception cref="RegexMatchTimeoutException"></exception>
-        /// <exception cref="Exception"></exception>
-#pragma warning disable S1133 // Deprecated code should be removed
-        [Obsolete("Prefer using IsValidEmail(string email, bool checkDomain)")]
-#pragma warning restore S1133 // Deprecated code should be removed
+        /// <exception cref="RxPatternResolverException"></exception>
         public EmailCheckerResponse IsValidEmail(string email)
         {
 			if (string.IsNullOrWhiteSpace(email))
@@ -214,10 +211,13 @@ namespace HypeLab.RxPatternsResolver
 		}
 
         /// <summary>
-        /// Checks if given input string is a valid email address
+        /// Determines whether the email format is valid for an email address.
+        /// see: https://docs.microsoft.com/en-us/dotnet/standard/base-types/how-to-verify-that-strings-are-in-valid-email-format
         /// </summary>
-        /// <param name="email"></param>
-        /// <param name="checkDomain"></param>
+        /// <param name="email">The provided email address</param>
+		/// <param name="checkDomain">If true checks for domain validity</param>
+        /// <exception cref="RegexMatchTimeoutException"></exception>
+        /// <exception cref="RxPatternResolverException"></exception>
         public EmailCheckerResponse IsValidEmail(string email, bool checkDomain)
         {
             if (string.IsNullOrWhiteSpace(email))
@@ -230,7 +230,7 @@ namespace HypeLab.RxPatternsResolver
                 {
 					if (checkDomain)
                     {
-                        EmailCheckerResponseStatus domainStatus = _emailChecker.IsDomainValidAsync(email.GetDomain()).Result;
+                        EmailCheckerResponseStatus domainStatus = _emailChecker.IsDomainValid(email.GetDomain());
 
                         if (domainStatus == EmailCheckerResponseStatus.DOMAIN_NOT_VALID)
                             return new EmailCheckerResponse($"Domain \"{email.GetDomain()}\" is not valid.", domainStatus);
@@ -255,7 +255,7 @@ namespace HypeLab.RxPatternsResolver
         /// <summary>
         /// Check if email exists
         /// </summary>
-        /// <param name="email">The email to check</param>
+        /// <param name="email">The provided email address</param>
         /// <exception cref="RxPatternResolverException"></exception>
         public EmailCheckerResponse IsEmailExisting(string email)
         {
@@ -285,7 +285,7 @@ namespace HypeLab.RxPatternsResolver
         /// <summary>
         /// Check if email exists asynchronously
         /// </summary>
-        /// <param name="email">The email to check</param>
+        /// <param name="email">The provided email address</param>
         /// <exception cref="RxPatternResolverException"></exception>
         public async Task<EmailCheckerResponse> IsEmailExistingAsync(string email)
         {

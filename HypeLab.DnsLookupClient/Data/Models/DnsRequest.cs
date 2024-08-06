@@ -23,9 +23,10 @@ namespace HypeLab.DnsLookupClient.Data.Models
             _queryType = queryType;
         }
 
-        public async Task<DnsResponse> ResolveAsync(HypeLabUdpClient udpClient)
+        public async Task<DnsResponse> ResolveAsync()
         {
-            udpClient.Connect(DnsLookupDefaults.DnsServer, DnsLookupDefaults.DnsServerPort);
+            using HypeLabUdpClient hypeLabUdpClient = new HypeLabUdpClient();
+            hypeLabUdpClient.Connect(DnsLookupDefaults.DnsServer, DnsLookupDefaults.DnsServerPort);
 
             byte[] requestBytes = CreateDnsQueryPacket(_domain, _queryType);
 
@@ -34,9 +35,9 @@ namespace HypeLab.DnsLookupClient.Data.Models
             // Log the request bytes
             //Console.WriteLine("Request Bytes: " + BitConverter.ToString(requestBytes))
 
-            await udpClient.SendAsync(requestBytes, requestBytes.Length).ConfigureAwait(false);
+            _ = await hypeLabUdpClient.SendAsync(requestBytes, requestBytes.Length).ConfigureAwait(false);
 
-            UdpReceiveResult udpReceiveResult = await udpClient.ReceiveAsync().ConfigureAwait(false);
+            UdpReceiveResult udpReceiveResult = await hypeLabUdpClient.ReceiveAsync().ConfigureAwait(false);
 
             // Log the response bytes
             //Console.WriteLine("Response Bytes: " + BitConverter.ToString(udpReceiveResult.Buffer))
@@ -44,15 +45,16 @@ namespace HypeLab.DnsLookupClient.Data.Models
             return ParseDnsResponse(udpReceiveResult.Buffer);
         }
 
-        public DnsResponse Resolve(HypeLabUdpClient udpClient)
+        public DnsResponse Resolve()
         {
-            udpClient.Connect(DnsLookupDefaults.DnsServer, DnsLookupDefaults.DnsServerPort);
+            using HypeLabUdpClient hypeLabUdpClient = new HypeLabUdpClient();
+            hypeLabUdpClient.Connect(DnsLookupDefaults.DnsServer, DnsLookupDefaults.DnsServerPort);
 
             byte[] requestBytes = CreateDnsQueryPacket(_domain, _queryType);
-            udpClient.Send(requestBytes, requestBytes.Length);
+            hypeLabUdpClient.Send(requestBytes, requestBytes.Length);
 
             IPEndPoint endpoint = new IPEndPoint(IPAddress.Any, DnsLookupDefaults.DnsServerPort);
-            byte[] responseBytes = udpClient.Receive(ref endpoint);
+            byte[] responseBytes = hypeLabUdpClient.Receive(ref endpoint);
 
             return ParseDnsResponse(responseBytes);
         }

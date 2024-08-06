@@ -7,7 +7,7 @@ namespace HypeLab.RxPatternsResolver.Interfaces
     /// <summary>
     /// Interface for email checker
     /// </summary>
-    public interface IEmailChecker : IDisposable
+    public interface IEmailChecker
     {
         /// <summary>
         /// Check if email is valid
