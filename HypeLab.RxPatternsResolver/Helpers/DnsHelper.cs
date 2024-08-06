@@ -8,7 +8,7 @@ namespace HypeLab.RxPatternsResolver.Helpers
 {
     internal static class DnsHelper
     {
-        public static async Task<List<string>> GetMXRecordsAsync(this ILookupClient lookupClient, string domain)
+        public static async Task<List<string>> GetMxRecordsAsync(this ILookupClient lookupClient, string domain)
         {
             List<string> mxRecords = new List<string>();
             DnsQueryResult result = await lookupClient.QueryAsync(domain, DnsQueryType.MX).ConfigureAwait(false);
@@ -21,7 +21,7 @@ namespace HypeLab.RxPatternsResolver.Helpers
             return mxRecords;
         }
 
-        public static List<string> GetMXRecords(this ILookupClient lookupClient, string domain)
+        public static List<string> GetMxRecords(this ILookupClient lookupClient, string domain)
         {
             List<string> mxRecords = new List<string>();
             DnsQueryResult result = lookupClient.Query(domain, DnsQueryType.MX);
