@@ -1,8 +1,8 @@
 # HypeLab.RxPatternsResolver
 Provides a class capable of solve collections of regex patterns given an input string. Also equipped with a default patterns set.
-Also exposes a method that validateS the email address format and optionally validates domain.
+Also exposes methods that validate the email address format and optionally validates domain; also checks if an email address exists.
 
-## (Optional but recommended, especially if you intend to use email validation methods) Register type
+## (Optional) Register type
 
 On startup:
 ```c#
@@ -11,7 +11,6 @@ builder.Services.AddRegexResolver();
 
 **Using with DI**
 ```c#
-
 public class Example
 {
    private readonly RegexPatternsResolver _rxResolver;
@@ -65,7 +64,6 @@ Console.WriteLine($"{resp3.Message} - Status: {resp3.ResponseStatus}");
 ## Email address existence check
 ```c#
 EmailCheckerResponse resp = await _rxResolver.IsEmailExistingAsync("john.doe@gmail.com");
-
 Console.WriteLine($"{resp.Message} - Status: {resp.ResponseStatus}");
 // OUTPUT: john.doe@gmail.com exists - Status: EMAIL_VALID
 
