@@ -1,10 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<PackageVersion>0.2.0</PackageVersion>
+		<PackageVersion>0.2.1</PackageVersion>
 		<Title>Hype-Lab.RxPatternsResolver</Title>
 		<Description>
 			Provides a class capable of solve collections of regex patterns given an input string. Also equipped with a default patterns set.
-			Also exposes a method that validates the email address format and optionally validates domain and also checks if the given email address actually exists.
+			Also exposes methods that validate the email address format and optionally validates domain; also checks if an email address exists.
 		</Description>
 		<Authors>Hype-Lab</Authors>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -24,8 +24,8 @@
 		<RepositoryUrl>https://github.com/hype-lab/DotNetLibraries/tree/main/HypeLab.RxPatternsResolver</RepositoryUrl>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<RepositoryType>git</RepositoryType>
-		<Version>0.2.0</Version>
-		<AssemblyVersion>0.0.2.0</AssemblyVersion>
+		<Version>0.2.1</Version>
+		<AssemblyVersion>0.0.2.1</AssemblyVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
