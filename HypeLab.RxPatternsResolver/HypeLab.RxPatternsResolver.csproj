@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<PackageVersion>0.2.1</PackageVersion>
+		<PackageVersion>0.3.1</PackageVersion>
 		<Title>Hype-Lab.RxPatternsResolver</Title>
 		<Description>
 			Provides a class capable of solve collections of regex patterns given an input string. Also equipped with a default patterns set.
@@ -10,7 +10,7 @@
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
 		<PackageProjectUrl>https://github.com/hype-lab/DotNetLibraries/tree/main/HypeLab.RxPatternsResolver</PackageProjectUrl>
-		<PackageReleaseNotes>Added email existence checking methods; improved registration on DI container; updated README.md.</PackageReleaseNotes>
+		<PackageReleaseNotes>Added more controls and timeout period on DnsRequest queries; switched to a more thread safe regex patterns collection.</PackageReleaseNotes>
 		<Copyright>©2024 Hype-Lab</Copyright>
 		<PackageTags>regex, regular expressions, email, validation, c#, .net standard 2.1</PackageTags>
 	</PropertyGroup>
@@ -24,8 +24,8 @@
 		<RepositoryUrl>https://github.com/hype-lab/DotNetLibraries/tree/main/HypeLab.RxPatternsResolver</RepositoryUrl>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<RepositoryType>git</RepositoryType>
-		<Version>0.2.1</Version>
-		<AssemblyVersion>0.0.2.1</AssemblyVersion>
+		<Version>0.3.1</Version>
+		<AssemblyVersion>0.0.3.1</AssemblyVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
