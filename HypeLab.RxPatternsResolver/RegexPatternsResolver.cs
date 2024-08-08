@@ -3,8 +3,7 @@ using HypeLab.RxPatternsResolver.Helpers;
 using HypeLab.RxPatternsResolver.Interfaces;
 using HypeLab.RxPatternsResolver.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Collections.Concurrent;
 using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -16,8 +15,8 @@ namespace HypeLab.RxPatternsResolver
 	/// </summary>
 	public class RegexPatternsResolver : IEmailValidable
 	{
-		private Stack<RegexPatternInstance>? _patterns;
-		private readonly IEmailChecker _emailChecker;
+        private ConcurrentDictionary<string, RegexPatternInstance>? _patterns;
+        private readonly IEmailChecker _emailChecker;
 
 		private readonly RegexOptions _defaultRegexOptions = RegexOptions.None;
 
@@ -61,17 +60,21 @@ namespace HypeLab.RxPatternsResolver
         /// </summary>
         /// <exception cref="ArgumentException"></exception>
         public void AddPattern(string pattern, string replacement, RegexOptions? regexOption = null)
-		{
-			if (string.IsNullOrWhiteSpace(pattern))
-				throw new ArgumentException("Input string cannot be null or empty", nameof(pattern));
+        {
+            if (string.IsNullOrWhiteSpace(pattern))
+                throw new ArgumentException("Input string cannot be null or empty", nameof(pattern));
 
-			_patterns ??= new Stack<RegexPatternInstance>();
+            _patterns ??= new ConcurrentDictionary<string, RegexPatternInstance>();
 
-			_patterns.Push(new RegexPatternInstance()
-			{
-				Pattern = pattern, Replacement = replacement, RegexOption = regexOption ?? _defaultRegexOptions
-			});
-		}
+            RegexPatternInstance patternInstance = new RegexPatternInstance()
+            {
+                Pattern = pattern,
+                Replacement = replacement,
+                RegexOption = regexOption ?? _defaultRegexOptions
+            };
+
+            _patterns.TryAdd(pattern, patternInstance);
+        }
 
         /// <summary>
         /// Returns input string replaced using patterns previously added.
@@ -85,45 +88,34 @@ namespace HypeLab.RxPatternsResolver
         /// <exception cref="InvalidOperationException"></exception>
         /// <exception cref="RxPatternResolverException"></exception>
         public string ResolveStringWithPatterns(string input)
-		{
-			if (string.IsNullOrWhiteSpace(input))
-				throw new ArgumentException("String to replace cannot be null or empty", nameof(input));
+        {
+            if (string.IsNullOrWhiteSpace(input))
+                throw new ArgumentException("String to replace cannot be null or empty", nameof(input));
 
-			if (_patterns == null)
-				throw new InvalidOperationException("Patterns collection is null. Do you have added some patterns before resolve?");
+            if (_patterns == null)
+                throw new InvalidOperationException("Patterns collection is null. Do you have added some patterns before resolve?");
 
-			string resolvedString = input;
-			try
-			{
-				if (_patterns.Count > 0)
-				{
-					if (_patterns.Count == 1)
-					{
-						RegexPatternInstance inst = _patterns.Peek();
-						Regex codeTitleRegex = new Regex(inst.Pattern, inst.RegexOption);
-						resolvedString = codeTitleRegex.Replace(resolvedString, inst.Replacement ?? string.Empty);
-					}
-					else
-					{
-						for (int i = 0; i < _patterns.Count; i++)
-						{
-							Regex codeTitleRegex = new Regex(_patterns.ElementAt(i).Pattern, _patterns.ElementAt(i).RegexOption);
-							resolvedString = codeTitleRegex.Replace(resolvedString, _patterns.ElementAt(i).Replacement ?? string.Empty);
-						}
-					}
-				}
+            string resolvedString = input;
+            try
+            {
+                foreach (RegexPatternInstance patternInstance in _patterns.Values)
+                {
+                    Regex codeTitleRegex = new Regex(patternInstance.Pattern, patternInstance.RegexOption | RegexOptions.Compiled);
+                    resolvedString = codeTitleRegex.Replace(resolvedString, patternInstance.Replacement ?? string.Empty);
+                }
 
-				return resolvedString;
-			}
-			catch (ArgumentException argumentException)
-			{
-				throw new ArgumentException($"[Param: {argumentException.ParamName} - Source: {argumentException.Source}] - {argumentException.Message}", argumentException);
-			}
-			catch (Exception ex)
-			{
-				throw new RxPatternResolverException(ex.Message, ex);
-			}
-		}
+                return resolvedString;
+            }
+            catch (ArgumentException argumentException)
+            {
+                throw new ArgumentException($"[Param: {argumentException.ParamName} - Source: {argumentException.Source}] - {argumentException.Message}", argumentException);
+            }
+            catch (Exception ex)
+            {
+                throw new RxPatternResolverException(ex.Message, ex);
+            }
+        }
+
 
         /// <summary>
         /// Determines whether the email format is valid for an email address.

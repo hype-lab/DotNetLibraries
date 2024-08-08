@@ -31,7 +31,7 @@ using HypeLab.RxPatternsResolver.Constants;
 
 const string tst = @"Hi i do tes#TS s@ds a\a  b/b°?mlkm";
 
-_rxResolver.AddPattern(RxResolverConst.DefaultBadCharsCollectionPattern1, string.Empty);
+_rxResolver.AddPattern(RxResolverDefaults.DefaultBadCharsCollectionPattern1, string.Empty);
 _rxResolver.AddPattern(@"[/\\]", " - ");
 string output = _rxResolver.ResolveStringWithPatterns(tst);
 
