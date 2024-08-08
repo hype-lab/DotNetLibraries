@@ -25,38 +25,81 @@ namespace HypeLab.DnsLookupClient.Data.Models
 
         public async Task<DnsResponse> ResolveAsync()
         {
-            using HypeLabUdpClient hypeLabUdpClient = new HypeLabUdpClient();
-            hypeLabUdpClient.Connect(DnsLookupDefaults.DnsServer, DnsLookupDefaults.DnsServerPort);
+            try
+            {
+                using HypeLabUdpClient hypeLabUdpClient = new HypeLabUdpClient();
+                hypeLabUdpClient.Connect(DnsLookupDefaults.DnsServer, DnsLookupDefaults.DnsServerPort);
 
-            byte[] requestBytes = CreateDnsQueryPacket(_domain, _queryType);
+                byte[] requestBytes = CreateDnsQueryPacket(_domain, _queryType);
 
-            //IPEndPoint endpoint = new IPEndPoint(IPAddress.Any, DnsLookupDefaults.DnsServerPort)
+                // Log the request bytes
+                // Console.WriteLine("Request Bytes: " + BitConverter.ToString(requestBytes))
 
-            // Log the request bytes
-            //Console.WriteLine("Request Bytes: " + BitConverter.ToString(requestBytes))
+                int bytesSent = await hypeLabUdpClient.SendAsync(requestBytes, requestBytes.Length).ConfigureAwait(false);
+                if (bytesSent != requestBytes.Length)
+                    throw new InvalidOperationException("Failed to send the entire DNS query packet.");
 
-            _ = await hypeLabUdpClient.SendAsync(requestBytes, requestBytes.Length).ConfigureAwait(false);
+                // Set a timeout for the receive operation
+                Task<UdpReceiveResult> receiveTask = hypeLabUdpClient.ReceiveAsync();
+                if (await Task.WhenAny(receiveTask, Task.Delay(5000)) == receiveTask)
+                {
+                    UdpReceiveResult udpReceiveResult = await receiveTask.ConfigureAwait(false);
 
-            UdpReceiveResult udpReceiveResult = await hypeLabUdpClient.ReceiveAsync().ConfigureAwait(false);
+                    // Log the response bytes
+                    // Console.WriteLine("Response Bytes: " + BitConverter.ToString(udpReceiveResult.Buffer))
 
-            // Log the response bytes
-            //Console.WriteLine("Response Bytes: " + BitConverter.ToString(udpReceiveResult.Buffer))
-
-            return ParseDnsResponse(udpReceiveResult.Buffer);
+                    return ParseDnsResponse(udpReceiveResult.Buffer);
+                }
+                else
+                {
+                    throw new TimeoutException("The DNS query timed out.");
+                }
+            }
+            catch (SocketException ex)
+            {
+                if (ex.SocketErrorCode == SocketError.TimedOut)
+                    throw new TimeoutException("The DNS query timed out.", ex);
+                else
+                    throw new InvalidOperationException($"Error queryng dns.\n{ex.Message}\n{ex.InnerException?.Message}", ex);
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException($"Error queryng dns.\n{ex.Message}\n{ex.InnerException?.Message}", ex);
+            }
         }
 
+        /// <summary>
+        /// Resolve the DNS query.
+        /// </summary>
+        /// <exception cref="InvalidOperationException"></exception>
         public DnsResponse Resolve()
         {
-            using HypeLabUdpClient hypeLabUdpClient = new HypeLabUdpClient();
-            hypeLabUdpClient.Connect(DnsLookupDefaults.DnsServer, DnsLookupDefaults.DnsServerPort);
+            try
+            {
+                using HypeLabUdpClient hypeLabUdpClient = new HypeLabUdpClient();
+                hypeLabUdpClient.Connect(DnsLookupDefaults.DnsServer, DnsLookupDefaults.DnsServerPort);
 
-            byte[] requestBytes = CreateDnsQueryPacket(_domain, _queryType);
-            hypeLabUdpClient.Send(requestBytes, requestBytes.Length);
+                byte[] requestBytes = CreateDnsQueryPacket(_domain, _queryType);
+                hypeLabUdpClient.Send(requestBytes, requestBytes.Length);
 
-            IPEndPoint endpoint = new IPEndPoint(IPAddress.Any, DnsLookupDefaults.DnsServerPort);
-            byte[] responseBytes = hypeLabUdpClient.Receive(ref endpoint);
+                // imposta il timeout per la ricezione
+                hypeLabUdpClient.Client.ReceiveTimeout = 5000; // 5 secondi
 
-            return ParseDnsResponse(responseBytes);
+                IPEndPoint endpoint = new IPEndPoint(IPAddress.Any, DnsLookupDefaults.DnsServerPort);
+                try
+                {
+                    byte[] responseBytes = hypeLabUdpClient.Receive(ref endpoint);
+                    return ParseDnsResponse(responseBytes);
+                }
+                catch (SocketException ex) when (ex.SocketErrorCode == SocketError.TimedOut)
+                {
+                    throw new TimeoutException("The DNS query timed out.", ex);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException($"Error queryng dns.\n{ex.Message}\n{ex.InnerException?.Message}", ex);
+            }
         }
 
         private byte[] CreateDnsQueryPacket(string domain, DnsQueryType queryType)
