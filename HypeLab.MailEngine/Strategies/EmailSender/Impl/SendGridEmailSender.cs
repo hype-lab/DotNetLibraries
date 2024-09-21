@@ -1,9 +1,11 @@
 ﻿using HypeLab.MailEngine.Data.Exceptions;
 using HypeLab.MailEngine.Data.Models;
 using HypeLab.MailEngine.Data.Models.Impl;
+using HypeLab.MailEngine.Data.Models.Impl.Attachments;
 using SendGrid;
 using SendGrid.Helpers.Mail;
 using System.Net;
+using System.Text;
 
 namespace HypeLab.MailEngine.Strategies.EmailSender.Impl
 {
@@ -27,9 +29,10 @@ namespace HypeLab.MailEngine.Strategies.EmailSender.Impl
         /// <param name="emailToName"></param>
         /// <param name="emailFromName"></param>
         /// <param name="ccs"></param>
+        /// <param name="attachments"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentException"></exception>
-        public async Task<EmailSenderResponse> SendEmailAsync(string emailTo, string htmlMessage, string subject, string emailFrom, string? plainTextContent = null, string? emailToName = null, string? emailFromName = null, params IEmailAddressInfo[]? ccs)
+        public async Task<EmailSenderResponse> SendEmailAsync(string emailTo, string htmlMessage, string subject, string emailFrom, string? plainTextContent = null, string? emailToName = null, string? emailFromName = null, ICollection<IEmailAddressInfo>? ccs = null, ICollection<IAttachment>? attachments = null)
         {
             ArgumentException.ThrowIfNullOrEmpty(emailTo);
             ArgumentException.ThrowIfNullOrEmpty(htmlMessage);
@@ -50,7 +53,7 @@ namespace HypeLab.MailEngine.Strategies.EmailSender.Impl
 
                 msg.AddTo(new EmailAddress(emailTo, emailToName));
 
-                if (ccs?.Length > 0)
+                if (ccs?.Count > 0)
                 {
                     foreach (IEmailAddressInfo cc in ccs)
                     {
@@ -62,6 +65,24 @@ namespace HypeLab.MailEngine.Strategies.EmailSender.Impl
                             msg.AddBcc(new EmailAddress(cc.Email, cc.Name));
                         else
                             throw new SendGridEmailSenderException("Invalid email address type.");
+                    }
+                }
+
+                if (attachments?.Count > 0)
+                {
+                    foreach (IAttachment attachment in attachments)
+                    {
+                        if (attachments is not SendGridAttachment sendGridAttachment)
+                            throw new SendGridEmailSenderException("Invalid attachment type.");
+
+                        msg.AddAttachment(new Attachment()
+                        {
+                            Content = Convert.ToBase64String(sendGridAttachment.Content),
+                            Filename = sendGridAttachment.Name,
+                            Type = sendGridAttachment.Type,
+                            Disposition = sendGridAttachment.Disposition ?? "attachment",
+                            ContentId = sendGridAttachment.ContentId ?? Guid.NewGuid().ToString()
+                        });
                     }
                 }
 
@@ -98,11 +119,12 @@ namespace HypeLab.MailEngine.Strategies.EmailSender.Impl
         /// <param name="emailToName"></param>
         /// <param name="emailFromName"></param>
         /// <param name="ccs"></param>
+        /// <param name="attachments"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         /// <exception cref="ArgumentException"></exception>
-        public async Task<EmailSenderResponse> SendEmailAsync(ICollection<string> emailToes, string htmlMessage, string subject, string emailFrom, string? plainTextContent = null, string? emailToName = null, string? emailFromName = null, params IEmailAddressInfo[]? ccs)
+        public async Task<EmailSenderResponse> SendEmailAsync(ICollection<string> emailToes, string htmlMessage, string subject, string emailFrom, string? plainTextContent = null, string? emailToName = null, string? emailFromName = null, ICollection<IEmailAddressInfo>? ccs = null, ICollection<IAttachment>? attachments = null)
         {
             ArgumentNullException.ThrowIfNull(emailToes);
             ArgumentOutOfRangeException.ThrowIfZero(emailToes.Count);
@@ -125,7 +147,7 @@ namespace HypeLab.MailEngine.Strategies.EmailSender.Impl
                 foreach (string emailTo in emailToes)
                     msg.AddTo(new EmailAddress(emailTo, emailToName));
 
-                if (ccs?.Length > 0)
+                if (ccs?.Count > 0)
                 {
                     foreach (IEmailAddressInfo cc in ccs)
                     {
@@ -135,6 +157,24 @@ namespace HypeLab.MailEngine.Strategies.EmailSender.Impl
                             msg.AddBcc(new EmailAddress(cc.Email, cc.Name));
                         else
                             throw new SendGridEmailSenderException("Invalid email address type.");
+                    }
+                }
+
+                if (attachments?.Count > 0)
+                {
+                    foreach (IAttachment attachment in attachments)
+                    {
+                        if (attachments is not SendGridAttachment sendGridAttachment)
+                            throw new SendGridEmailSenderException("Invalid attachment type.");
+
+                        msg.AddAttachment(new Attachment()
+                        {
+                            Content = Convert.ToBase64String(sendGridAttachment.Content),
+                            Filename = sendGridAttachment.Name,
+                            Type = sendGridAttachment.Type,
+                            Disposition = sendGridAttachment.Disposition ?? "attachment",
+                            ContentId = sendGridAttachment.ContentId ?? Guid.NewGuid().ToString()
+                        });
                     }
                 }
 

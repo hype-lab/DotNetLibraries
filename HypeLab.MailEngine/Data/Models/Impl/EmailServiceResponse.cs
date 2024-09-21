@@ -22,19 +22,18 @@ namespace HypeLab.MailEngine.Data.Models.Impl
 
         /// <summary>
         /// Constructor with message.
+        /// It sets the status to success.
         /// </summary>
         /// <param name="message"></param>
         public EmailServiceResponse(string? message)
-        {
-            Message = message;
-        }
+            : this(EmailServiceStatus.Success, message) { }
 
-        /// <summary>
-        /// Constructor with IsValid and message.
-        /// </summary>
-        /// <param name="isValid"></param>
-        /// <param name="message"></param>
-        public EmailServiceResponse(bool isValid, string? message)
+    /// <summary>
+    /// Constructor with IsValid and message.
+    /// </summary>
+    /// <param name="isValid"></param>
+    /// <param name="message"></param>
+    public EmailServiceResponse(bool isValid, string? message)
             : this(isValid ? EmailServiceStatus.Success : EmailServiceStatus.Error, message) { }
 
         /// <summary>
@@ -59,7 +58,7 @@ namespace HypeLab.MailEngine.Data.Models.Impl
         public string? Message { get; set; }
 
         /// <summary>
-        /// Indicates whether the response is valid.
+        /// Indicates whether the response got a message.
         /// </summary>
         public bool HasMessage
         {
@@ -68,7 +67,7 @@ namespace HypeLab.MailEngine.Data.Models.Impl
         }
 
         /// <summary>
-        /// Indicates whether the response is valid.
+        /// Indicates whether the response is error.
         /// </summary>
         public bool IsError
             => ServiceStatus == EmailServiceStatus.Error;
