@@ -1,18 +1,18 @@
 ﻿using HypeLab.MailEngine.Data.Exceptions;
-using HypeLab.MailEngine.Data.Models.Impl.Credentials;
 using HypeLab.MailEngine.Data.Models;
+using HypeLab.MailEngine.Data.Models.Impl.Credentials;
+using HypeLab.MailEngine.Data.Models.Impl.Credentials.ValueTypes;
 using HypeLab.MailEngine.Factories;
+using HypeLab.MailEngine.Factories.Impl;
+using HypeLab.MailEngine.SendGrid;
+using HypeLab.MailEngine.Services;
+using HypeLab.MailEngine.Services.Impl;
 using HypeLab.MailEngine.SmtpClients;
 using HypeLab.MailEngine.Strategies.EmailSender;
 using HypeLab.MailEngine.Strategies.EmailSender.Impl;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using SendGrid;
-using HypeLab.MailEngine.SendGrid;
-using HypeLab.MailEngine.Services.Impl;
-using HypeLab.MailEngine.Services;
-using HypeLab.MailEngine.Factories.Impl;
-using HypeLab.MailEngine.Data.Models.Impl.Credentials.ValueTypes;
 using SendGrid.Helpers.Reliability;
 using System.Net.Http.Headers;
 

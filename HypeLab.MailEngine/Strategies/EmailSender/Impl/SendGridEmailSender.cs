@@ -5,7 +5,6 @@ using HypeLab.MailEngine.Data.Models.Impl.Attachments;
 using SendGrid;
 using SendGrid.Helpers.Mail;
 using System.Net;
-using System.Text;
 
 namespace HypeLab.MailEngine.Strategies.EmailSender.Impl
 {
@@ -72,7 +71,7 @@ namespace HypeLab.MailEngine.Strategies.EmailSender.Impl
                 {
                     foreach (IAttachment attachment in attachments)
                     {
-                        if (attachments is not SendGridAttachment sendGridAttachment)
+                        if (attachment is not SendGridAttachment sendGridAttachment)
                             throw new SendGridEmailSenderException("Invalid attachment type.");
 
                         msg.AddAttachment(new Attachment()
@@ -164,7 +163,7 @@ namespace HypeLab.MailEngine.Strategies.EmailSender.Impl
                 {
                     foreach (IAttachment attachment in attachments)
                     {
-                        if (attachments is not SendGridAttachment sendGridAttachment)
+                        if (attachment is not SendGridAttachment sendGridAttachment)
                             throw new SendGridEmailSenderException("Invalid attachment type.");
 
                         msg.AddAttachment(new Attachment()

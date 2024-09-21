@@ -1,30 +1,35 @@
 ﻿namespace HypeLab.MailEngine.Data.Models.Impl.Attachments
 {
-    public class SendGridAttachment : IAttachment
+    /// <summary>
+    /// Represents a SendGrid attachment.
+    /// </summary>
+    /// <remarks>
+    /// Constructor.
+    /// </remarks>
+    /// <param name="name"></param>
+    /// <param name="type"></param>
+    /// <param name="content"></param>
+    public class SendGridAttachment(string name, string type, byte[] content) : IAttachment
     {
-        public SendGridAttachment() { }
-
-        public SendGridAttachment(string name, string type, byte[] content, string disposition)
-        {
-            Name = name;
-            Type = type;
-            Content = content;
-            Disposition = disposition;
-        }
-
-        public SendGridAttachment(string name, string type, byte[] content, string disposition, string contentId)
-        {
-            Name = name;
-            Type = type;
-            Content = content;
-            Disposition = disposition;
-            ContentId = contentId;
-        }
-
-        public string Name { get; set; }
+        /// <summary>
+        /// The name of the attachment.
+        /// </summary>
+        public string Name { get; set; } = name;
+        /// <summary>
+        /// The content id of the attachment.
+        /// </summary>
         public string? ContentId { get; set; }
-        public string Type { get; set; }
-        public byte[] Content { get; set; }
-        public string Disposition { get; set; }
+        /// <summary>
+        /// The type of the attachment.
+        /// </summary>
+        public string Type { get; set; } = type;
+        /// <summary>
+        /// The content of the attachment.
+        /// </summary>
+        public byte[] Content { get; set; } = content;
+        /// <summary>
+        /// The disposition of the attachment.
+        /// </summary>
+        public string? Disposition { get; set; }
     }
 }

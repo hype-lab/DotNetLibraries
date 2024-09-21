@@ -18,7 +18,6 @@ namespace HypeLab.MailEngine.Strategies.EmailSender.Impl
     /// <param name="smtpClient"></param>
     public sealed class SmtpEmailSender(HypeLabSmtpClient smtpClient) : ISmtpEmailSender
     {
-
         // Implementation for sending email using SmtpClient
         /// <summary>
         /// Sends an email.
