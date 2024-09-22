@@ -1,8 +1,10 @@
 ﻿using HypeLab.MailEngine.Data.Exceptions;
 using HypeLab.MailEngine.Data.Models;
 using HypeLab.MailEngine.Data.Models.Impl;
+using HypeLab.MailEngine.Data.Models.Impl.Attachments;
 using HypeLab.MailEngine.SmtpClients;
 using System.Net.Mail;
+using System.Net.Mime;
 using System.Text;
 
 namespace HypeLab.MailEngine.Strategies.EmailSender.Impl
@@ -16,7 +18,6 @@ namespace HypeLab.MailEngine.Strategies.EmailSender.Impl
     /// <param name="smtpClient"></param>
     public sealed class SmtpEmailSender(HypeLabSmtpClient smtpClient) : ISmtpEmailSender
     {
-
         // Implementation for sending email using SmtpClient
         /// <summary>
         /// Sends an email.
@@ -29,9 +30,11 @@ namespace HypeLab.MailEngine.Strategies.EmailSender.Impl
         /// <param name="emailToName"></param>
         /// <param name="emailFromName"></param>
         /// <param name="ccs"></param>
+        /// <param name="attachments"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentException"></exception>
-        public async Task<EmailSenderResponse> SendEmailAsync(string emailTo, string htmlMessage, string subject, string emailFrom, string? plainTextContent = null, string? emailToName = null, string? emailFromName = null, params IEmailAddressInfo[]? ccs)
+        /// <exception cref="SmtpEmailSenderException"></exception>
+        public async Task<EmailSenderResponse> SendEmailAsync(string emailTo, string htmlMessage, string subject, string emailFrom, string? plainTextContent = null, string? emailToName = null, string? emailFromName = null, ICollection<IEmailAddressInfo>? ccs = null, ICollection<IAttachment>? attachments = null)
         {
             ArgumentException.ThrowIfNullOrEmpty(emailTo);
             ArgumentException.ThrowIfNullOrEmpty(htmlMessage);
@@ -52,7 +55,7 @@ namespace HypeLab.MailEngine.Strategies.EmailSender.Impl
 
                 mailMessage.To.Add(new MailAddress(emailTo, emailToName));
 
-                if (ccs?.Length > 0)
+                if (ccs?.Count > 0)
                 {
                     foreach (IEmailAddressInfo cc in ccs)
                     {
@@ -64,6 +67,24 @@ namespace HypeLab.MailEngine.Strategies.EmailSender.Impl
                             mailMessage.Bcc.Add(new MailAddress(cc.Email, cc.Name));
                         else
                             throw new SmtpEmailSenderException("Invalid email address type.");
+                    }
+                }
+
+                if (attachments?.Count > 0)
+                {
+                    foreach (IAttachment attachment in attachments)
+                    {
+                        if (attachment is not SmtpClientAttachment smtpAttachment)
+                            throw new SmtpEmailSenderException("Invalid attachment type.");
+
+                        mailMessage.Attachments.Add(new Attachment(smtpAttachment.FilePath, smtpAttachment.MediaType)
+                        {
+                            ContentType = new ContentType(smtpAttachment.ContentType),
+                            Name = smtpAttachment.Name,
+                            ContentId = smtpAttachment.ContentId ?? Guid.NewGuid().ToString(),
+                            NameEncoding = smtpAttachment.NameEncoding ?? Encoding.UTF8,
+                            TransferEncoding = smtpAttachment.TransferEncoding ?? TransferEncoding.Base64,
+                        });
                     }
                 }
 
@@ -92,11 +113,13 @@ namespace HypeLab.MailEngine.Strategies.EmailSender.Impl
         /// <param name="emailToName"></param>
         /// <param name="emailFromName"></param>
         /// <param name="ccs"></param>
+        /// <param name="attachments"></param>
         /// <returns></returns>
+        /// <exception cref="SmtpEmailSenderException"></exception>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         /// <exception cref="ArgumentException"></exception>
-        public async Task<EmailSenderResponse> SendEmailAsync(ICollection<string> emailToes, string htmlMessage, string subject, string emailFrom, string? plainTextContent = null, string? emailToName = null, string? emailFromName = null, params IEmailAddressInfo[]? ccs)
+        public async Task<EmailSenderResponse> SendEmailAsync(ICollection<string> emailToes, string htmlMessage, string subject, string emailFrom, string? plainTextContent = null, string? emailToName = null, string? emailFromName = null, ICollection<IEmailAddressInfo>? ccs = null, ICollection<IAttachment>? attachments = null)
         {
             ArgumentNullException.ThrowIfNull(emailToes);
             ArgumentOutOfRangeException.ThrowIfZero(emailToes.Count);
@@ -119,7 +142,7 @@ namespace HypeLab.MailEngine.Strategies.EmailSender.Impl
                 foreach (string emailTo in emailToes)
                     mailMessage.To.Add(new MailAddress(emailTo, emailToName));
 
-                if (ccs?.Length > 0)
+                if (ccs?.Count > 0)
                 {
                     foreach (IEmailAddressInfo cc in ccs)
                     {
@@ -129,6 +152,24 @@ namespace HypeLab.MailEngine.Strategies.EmailSender.Impl
                             mailMessage.Bcc.Add(new MailAddress(cc.Email, cc.Name));
                         else
                             throw new SmtpEmailSenderException("Invalid email address type.");
+                    }
+                }
+
+                if (attachments?.Count > 0)
+                {
+                    foreach (IAttachment attachment in attachments)
+                    {
+                        if (attachment is not SmtpClientAttachment smtpAttachment)
+                            throw new SmtpEmailSenderException("Attachment is not valid.");
+
+                        mailMessage.Attachments.Add(new Attachment(smtpAttachment.FilePath, smtpAttachment.MediaType)
+                        {
+                            ContentType = new ContentType(smtpAttachment.ContentType),
+                            Name = smtpAttachment.Name,
+                            ContentId = smtpAttachment.ContentId ?? Guid.NewGuid().ToString(),
+                            NameEncoding = smtpAttachment.NameEncoding ?? Encoding.UTF8,
+                            TransferEncoding = smtpAttachment.TransferEncoding ?? TransferEncoding.Base64,
+                        });
                     }
                 }
 

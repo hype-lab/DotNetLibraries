@@ -32,15 +32,17 @@ namespace HypeLab.MailEngine.Data.Models.Impl
         /// <param name="emailToName"></param>
         /// <param name="emailFromName"></param>
         /// <param name="ccs"></param>
+        /// <param name="attachments"></param>
         /// <returns></returns>
-        public static MultipleToesMailMessage Create(ICollection<string> emailToes, string emailSubject, string emailFrom, string htmlMessage, string? plainTextContent = null, string? emailToName = null, string? emailFromName = null, IEmailAddressInfo[]? ccs = null)
+        public static MultipleToesMailMessage Create(ICollection<string> emailToes, string emailSubject, string emailFrom, string htmlMessage, string? plainTextContent = null, string? emailToName = null, string? emailFromName = null, ICollection<IEmailAddressInfo>? ccs = null, ICollection<IAttachment>? attachments = null)
         {
             return new MultipleToesMailMessage(emailToes, emailSubject, emailFrom, htmlMessage)
             {
                 PlainTextContent = plainTextContent,
                 EmailToName = emailToName,
                 EmailFromName = emailFromName,
-                Ccs = ccs
+                Ccs = ccs,
+                Attachments = attachments
             };
         }
     }

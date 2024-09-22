@@ -57,11 +57,11 @@ namespace HypeLab.MailEngine.Services.Impl
             EmailSenderResponse response = message switch
             {
                 CustomMailMessage singleMailMsg => await _emailSender
-                                        .SendEmailAsync(singleMailMsg.EmailTo, message.HtmlMessage, message.EmailSubject, message.EmailFrom, message.PlainTextContent, message.EmailToName, message.EmailFromName, message.Ccs)
+                                        .SendEmailAsync(singleMailMsg.EmailTo, message.HtmlMessage, message.EmailSubject, message.EmailFrom, message.PlainTextContent, message.EmailToName, message.EmailFromName, message.Ccs, message.Attachments)
                                         .ConfigureAwait(false),
 
                 MultipleToesMailMessage multipleToesMsg => await _emailSender
-                                        .SendEmailAsync(multipleToesMsg.EmailToes, message.HtmlMessage, message.EmailSubject, message.EmailFrom, message.PlainTextContent, message.EmailToName, message.EmailFromName, message.Ccs)
+                                        .SendEmailAsync(multipleToesMsg.EmailToes, message.HtmlMessage, message.EmailSubject, message.EmailFrom, message.PlainTextContent, message.EmailToName, message.EmailFromName, message.Ccs, message.Attachments)
                                         .ConfigureAwait(false),
 
                 _ => throw new InvalidOperationException("Unknown message type."),

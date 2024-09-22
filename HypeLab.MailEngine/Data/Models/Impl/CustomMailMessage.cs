@@ -32,15 +32,17 @@ namespace HypeLab.MailEngine.Data.Models.Impl
         /// <param name="emailToName"></param>
         /// <param name="emailFromName"></param>
         /// <param name="ccs"></param>
+        /// <param name="attachments"></param>
         /// <returns></returns>
-        public static CustomMailMessage Create(string emailTo, string emailSubject, string emailFrom, string htmlMessage, [NotNullIfNotNull(nameof(PlainTextContent))] string? plainTextContent = null, [NotNullIfNotNull(nameof(EmailToName))] string? emailToName = null, [NotNullIfNotNull(nameof(EmailFromName))] string? emailFromName = null, IEmailAddressInfo[]? ccs = null)
+        public static CustomMailMessage Create(string emailTo, string emailSubject, string emailFrom, string htmlMessage, [NotNullIfNotNull(nameof(PlainTextContent))] string? plainTextContent = null, [NotNullIfNotNull(nameof(EmailToName))] string? emailToName = null, [NotNullIfNotNull(nameof(EmailFromName))] string? emailFromName = null, ICollection<IEmailAddressInfo>? ccs = null, ICollection<IAttachment>? attachments = null)
         {
             return new CustomMailMessage(emailTo, emailSubject, emailFrom, htmlMessage)
             {
                 PlainTextContent = plainTextContent,
                 EmailToName = emailToName,
                 EmailFromName = emailFromName,
-                Ccs = ccs
+                Ccs = ccs,
+                Attachments = attachments
             };
         }
     }

@@ -54,6 +54,11 @@ namespace HypeLab.MailEngine.Data.Models.Impl.Base
         /// <summary>
         /// The other recipients.
         /// </summary>
-        public IEmailAddressInfo[]? Ccs { get; set; }
+        public ICollection<IEmailAddressInfo>? Ccs { get; set; }
+
+        /// <summary>
+        /// The attachments.
+        /// </summary>
+        public ICollection<IAttachment>? Attachments { get; set; }
     }
 }

@@ -38,6 +38,11 @@
         /// <summary>
         /// The ccs.
         /// </summary>
-        public IEmailAddressInfo[]? Ccs { get; set; }
+        public ICollection<IEmailAddressInfo>? Ccs { get; set; }
+
+        /// <summary>
+        /// The attachments.
+        /// </summary>
+        public ICollection<IAttachment>? Attachments { get; set; }
     }
 }
