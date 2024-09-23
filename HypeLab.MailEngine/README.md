@@ -125,64 +125,64 @@ public class MyService
 
 	public async Task SendEmailAsync()
 	{
-      List<IEmailAddressInfo> ccs =
-      [
-          new EmailAddressInfo()
-          {
-              Email = "emailCc@n.1",
-              IsBcc = false,
-              IsCc = true,
-              IsTo = false,
-              Name = "Email CC 1"
-          }
-      ];
+              List<IEmailAddressInfo> ccs =
+              [
+                  new EmailAddressInfo()
+                  {
+                      Email = "emailCc@n.1",
+                      IsBcc = false,
+                      IsCc = true,
+                      IsTo = false,
+                      Name = "Email CC 1"
+                  }
+              ];
 
-      byte[] fileBytes = []; // your file bytes
-      List<IAttachment> attachments =
-      [
-          new SendGridAttachment(name: "testattachment.txt", type: "text/plain", content: fileBytes)
-          {
-              Disposition = "inline", // nullable; default is "attachment"
-              ContentId = Guid.NewGuid().ToString() // nullable
-          }
-          // OR if it's a smtp client attachment
-          new SmtpClientAttachment(name: "testattachment.txt", filePath: "C:\\tst\\testattachment.txt", contentType: "text/plain"/* primary MIME type*/)
-          {
-              MediaType = "text/plain", // nullable; optional, more specific MIME type
-              ContentId = Guid.NewGuid().ToString(), // nullable
-              NameEncoding = Encoding.UTF8, // nullable
-              TransferEncoding = TransferEncoding.Base64 // nullable
-          }
-      ];
+              byte[] fileBytes = []; // your file bytes
+              List<IAttachment> attachments =
+              [
+                  new SendGridAttachment(name: "testattachment.txt", type: "text/plain", content: fileBytes)
+                  {
+                      Disposition = "inline", // nullable; default is "attachment"
+                      ContentId = Guid.NewGuid().ToString() // nullable
+                  }
+                  // OR if it's a smtp client attachment
+                  new SmtpClientAttachment(name: "testattachment.txt", filePath: "C:\\tst\\testattachment.txt", contentType: "text/plain"/* primary MIME type*/)
+                  {
+                      MediaType = "text/plain", // nullable; optional, more specific MIME type
+                      ContentId = Guid.NewGuid().ToString(), // nullable
+                      NameEncoding = Encoding.UTF8, // nullable
+                      TransferEncoding = TransferEncoding.Base64 // nullable
+                  }
+              ];
 
-      CustomMailMessage mailMessage = CustomMailMessage.Create(
-          emailTo: "your_email@to",
-          emailSubject: "MailEngine .NET Library Email",
-          emailFrom: "info@hype-lab.it",
-          htmlMessage: "<h1>Test email from MailEngine .NET Library</h1>",
-          plainTextContent: "Test email from MailEngine .NET Library",
-          emailToName: "Matt P",
-          emailFromName: "Info Hype-Lab"
-          ccs: ccs,
-          attachments: attachments);
+              CustomMailMessage mailMessage = CustomMailMessage.Create(
+                  emailTo: "your_email@to",
+                  emailSubject: "MailEngine .NET Library Email",
+                  emailFrom: "info@hype-lab.it",
+                  htmlMessage: "<h1>Test email from MailEngine .NET Library</h1>",
+                  plainTextContent: "Test email from MailEngine .NET Library",
+                  emailToName: "Matt P",
+                  emailFromName: "Info Hype-Lab"
+                  ccs: ccs,
+                  attachments: attachments);
 
-      // or if you need to define multiple to addresses
-      MultipleToesMailMessage mailMessage = MultipleToesMailMessage.Create(
-          emailToes: ["emailTo@n.1", "emailTo@n.2", "emailTo@n.3", "emailTo@n.4", "emailTo@n.5"],
-          emailSubject: "MailEngine .NET Library Email",
-          emailFrom: "noreply@hype-lab.it",
-          htmlMessage: "<h1>Test email from MailEngine .NET Library</h1>",
-          plainTextContent: "Test email from MailEngine .NET Library",
-          emailToName: "Matt P",
-          emailFromName: "Hype-Lab NoReply"
-          ccs: ccs,
-          attachments: attachments);
+              // or if you need to define multiple to addresses
+              MultipleToesMailMessage mailMessage = MultipleToesMailMessage.Create(
+                  emailToes: ["emailTo@n.1", "emailTo@n.2", "emailTo@n.3", "emailTo@n.4", "emailTo@n.5"],
+                  emailSubject: "MailEngine .NET Library Email",
+                  emailFrom: "noreply@hype-lab.it",
+                  htmlMessage: "<h1>Test email from MailEngine .NET Library</h1>",
+                  plainTextContent: "Test email from MailEngine .NET Library",
+                  emailToName: "Matt P",
+                  emailFromName: "Hype-Lab NoReply"
+                  ccs: ccs,
+                  attachments: attachments);
 
-      EmailServiceResponse resp = await emailService.SendEmailAsync(mailMessage);
-      if (resp.IsError)
-      throw new InvalidOperationException(resp.ErrorMessage);
+              EmailServiceResponse resp = await emailService.SendEmailAsync(mailMessage);
+              if (resp.IsError)
+              throw new InvalidOperationException(resp.ErrorMessage);
 
-      // ...
+              // ...
 	}
 }
 ```
@@ -227,64 +227,64 @@ public class MyService
 
 	public async Task SendEmailAsync()
 	{
-      List<IEmailAddressInfo> ccs =
-      [
-          new EmailAddressInfo()
-          {
-              Email = "emailCc@n.1",
-              IsBcc = false,
-              IsCc = true,
-              IsTo = false,
-              Name = "Email CC 1"
-          }
-      ];
+              List<IEmailAddressInfo> ccs =
+              [
+                  new EmailAddressInfo()
+                  {
+                      Email = "emailCc@n.1",
+                      IsBcc = false,
+                      IsCc = true,
+                      IsTo = false,
+                      Name = "Email CC 1"
+                  }
+              ];
 
-      byte[] fileBytes = []; // your file bytes
-      List<IAttachment> attachments =
-      [
-          new SendGridAttachment(name: "testattachment.txt", type: "text/plain", content: fileBytes)
-          {
-              Disposition = "inline", // nullable; default is "attachment"
-              ContentId = Guid.NewGuid().ToString() // nullable
-          }
-          // OR if it's a smtp client attachment
-          new SmtpClientAttachment(name: "testattachment.txt", filePath: "C:\\tst\\testattachment.txt", contentType: "text/plain"/* primary MIME type*/)
-          {
-              MediaType = "text/plain", // nullable; optional, more specific MIME type
-              ContentId = Guid.NewGuid().ToString(), // nullable
-              NameEncoding = Encoding.UTF8, // nullable
-              TransferEncoding = TransferEncoding.Base64 // nullable
-          }
-      ];
+              byte[] fileBytes = []; // your file bytes
+              List<IAttachment> attachments =
+              [
+                  new SendGridAttachment(name: "testattachment.txt", type: "text/plain", content: fileBytes)
+                  {
+                      Disposition = "inline", // nullable; default is "attachment"
+                      ContentId = Guid.NewGuid().ToString() // nullable
+                  }
+                  // OR if it's a smtp client attachment
+                  new SmtpClientAttachment(name: "testattachment.txt", filePath: "C:\\tst\\testattachment.txt", contentType: "text/plain"/* primary MIME type*/)
+                  {
+                      MediaType = "text/plain", // nullable; optional, more specific MIME type
+                      ContentId = Guid.NewGuid().ToString(), // nullable
+                      NameEncoding = Encoding.UTF8, // nullable
+                      TransferEncoding = TransferEncoding.Base64 // nullable
+                  }
+              ];
 
-      CustomMailMessage mailMessage = CustomMailMessage.Create(
-          emailTo: "your_email@to",
-          emailSubject: "MailEngine .NET Library Email",
-          emailFrom: "info@hype-lab.it",
-          htmlMessage: "<h1>Test email from MailEngine .NET Library</h1>",
-          plainTextContent: "Test email from MailEngine .NET Library",
-          emailToName: "Matt P",
-          emailFromName: "Info Hype-Lab"
-          ccs: ccs,
-          attachments: attachments);
+              CustomMailMessage mailMessage = CustomMailMessage.Create(
+                  emailTo: "your_email@to",
+                  emailSubject: "MailEngine .NET Library Email",
+                  emailFrom: "info@hype-lab.it",
+                  htmlMessage: "<h1>Test email from MailEngine .NET Library</h1>",
+                  plainTextContent: "Test email from MailEngine .NET Library",
+                  emailToName: "Matt P",
+                  emailFromName: "Info Hype-Lab"
+                  ccs: ccs,
+                  attachments: attachments);
 
-      // OR if you need to define multiple to addresses
-      MultipleToesMailMessage mailMessage = MultipleToesMailMessage.Create(
-          emailToes: ["emailTo@n.1", "emailTo@n.2", "emailTo@n.3", "emailTo@n.4", "emailTo@n.5"],
-          emailSubject: "MailEngine .NET Library Email",
-          emailFrom: "noreply@hype-lab.it",
-          htmlMessage: "<h1>Test email from MailEngine .NET Library</h1>",
-          plainTextContent: "Test email from MailEngine .NET Library",
-          emailToName: "Matt P",
-          emailFromName: "Hype-Lab NoReply"
-          ccs: ccs,
-          attachments: attachments);
+              // OR if you need to define multiple to addresses
+              MultipleToesMailMessage mailMessage = MultipleToesMailMessage.Create(
+                  emailToes: ["emailTo@n.1", "emailTo@n.2", "emailTo@n.3", "emailTo@n.4", "emailTo@n.5"],
+                  emailSubject: "MailEngine .NET Library Email",
+                  emailFrom: "noreply@hype-lab.it",
+                  htmlMessage: "<h1>Test email from MailEngine .NET Library</h1>",
+                  plainTextContent: "Test email from MailEngine .NET Library",
+                  emailToName: "Matt P",
+                  emailFromName: "Hype-Lab NoReply"
+                  ccs: ccs,
+                  attachments: attachments);
 
-      EmailServiceResponse resp = await emailService.SendEmailAsync(mailMessage);
-      if (resp.IsError)
-      throw new InvalidOperationException(resp.ErrorMessage);
+              EmailServiceResponse resp = await emailService.SendEmailAsync(mailMessage);
+              if (resp.IsError)
+              throw new InvalidOperationException(resp.ErrorMessage);
 
-      // ...
+              // ...
 	}
 }
 ```
