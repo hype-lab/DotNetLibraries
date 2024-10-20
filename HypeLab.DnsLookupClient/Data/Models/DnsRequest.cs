@@ -102,7 +102,7 @@ namespace HypeLab.DnsLookupClient.Data.Models
             }
         }
 
-        private byte[] CreateDnsQueryPacket(string domain, DnsQueryType queryType)
+        private static byte[] CreateDnsQueryPacket(string domain, DnsQueryType queryType)
         {
             List<byte> packet = new List<byte>();
 

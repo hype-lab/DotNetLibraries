@@ -190,3 +190,8 @@ Temporary Items
 /TestApiForLibraries/DAL/Repository/IFamilyRepository.cs
 /TestApiForLibraries/DAL/Repository/Impl/FamilyRepository.cs
 /TestApiForLibraries/DAL/TstDbContext.cs
+/TestApiForLibraries/Deliri/ActivateUserProductRequest.cs
+/TestApiForLibraries/Deliri/IActivateUserProductRequest.cs
+/TestApiForLibraries/Deliri/IRequest.cs
+/TestApiForLibraries/Deliri/RequestBaseUser.cs
+/TestApiForLibraries/Deliri/RequestUser.cs
