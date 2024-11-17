@@ -161,12 +161,12 @@ namespace HypeLab.DnsLookupClient.Data.Models
             while (length != 0)
             {
                 if (offset >= responseBytes.Length)
-                    throw new OffsettHigherThanResponseBytesException("Offset is outside the bounds of the array.");
+                    throw new OffsetHigherThanResponseBytesException("Offset is outside the bounds of the array.");
 
                 if (length >= 192) // Check for pointer
                 {
                     if (offset + 1 >= responseBytes.Length)
-                        throw new OffsettHigherThanResponseBytesException("Pointer offset is outside the bounds of the array.");
+                        throw new OffsetHigherThanResponseBytesException("Pointer offset is outside the bounds of the array.");
 
                     int pointerOffset = ((length - 192) << 8) + responseBytes[offset + 1];
                     offset += 2;
@@ -180,14 +180,14 @@ namespace HypeLab.DnsLookupClient.Data.Models
                 {
                     offset++;
                     if (offset + length > responseBytes.Length)
-                        throw new OffsettHigherThanResponseBytesException("Length is outside the bounds of the array.");
+                        throw new OffsetHigherThanResponseBytesException("Length is outside the bounds of the array.");
 
                     domainName.Append(Encoding.ASCII.GetString(responseBytes, offset, length));
                     offset += length;
                     if (offset < responseBytes.Length)
                         length = responseBytes[offset];
                     else
-                        throw new OffsettHigherThanResponseBytesException("Offset is outside the bounds of the array.");
+                        throw new OffsetHigherThanResponseBytesException("Offset is outside the bounds of the array.");
 
                     if (length != 0)
                         domainName.Append('.');
