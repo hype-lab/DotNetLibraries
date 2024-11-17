@@ -1,4 +1,4 @@
 ﻿namespace HypeLab.BackgroundTasks.Services
 {
-    public interface IHostedService { }
+    public interface IHostedService;
 }
