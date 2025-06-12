@@ -204,3 +204,4 @@ Temporary Items
 /HypeLab.IO.Csv
 /HypeLab.IO.Excel
 /.editorconfig
+/HypeLab.IO.Core/Data/Options/IWriterOptions.cs
