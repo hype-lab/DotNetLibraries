@@ -205,3 +205,5 @@ Temporary Items
 /HypeLab.IO.Excel
 /.editorconfig
 /HypeLab.IO.Core/Data/Options/IWriterOptions.cs
+/Tests.Common/Tests.Common.csproj
+/Tests.Common/Models
