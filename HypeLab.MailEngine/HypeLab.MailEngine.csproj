@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<PackageVersion>1.0.0</PackageVersion>
+		<PackageVersion>1.0.1</PackageVersion>
 		<Title>Hype-Lab Mail Engine</Title>
 		<Description>
 			A flexible and modular .NET library for managing multiple email clients, including support for both SMTP and SendGrid for now. The package allows to configure and use multiple email clients with distinct settings, leveraging dependency injection for seamless integration.
@@ -9,13 +9,23 @@
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
 		<PackageProjectUrl>https://github.com/hype-lab/DotNetLibraries/tree/main/HypeLab.MailEngine</PackageProjectUrl>
-		<PackageReleaseNotes>Added support for attachments.</PackageReleaseNotes>
-		<Copyright>©2024 Hype-Lab</Copyright>
+		<PackageReleaseNotes>Added support for .net9.</PackageReleaseNotes>
+		<Copyright>©2025 Hype-Lab</Copyright>
 		<PackageTags>SMTP, SendGrid, C#, .NET8, Multiple, Email, Sending</PackageTags>
+
+		<DebugType>none</DebugType>
+		<EmbedUntrackedSources>false</EmbedUntrackedSources>
+		<PublishRepositoryUrl>false</PublishRepositoryUrl>
+		<IncludeSymbols>false</IncludeSymbols>
+	</PropertyGroup>
+	<PropertyGroup>
+		<TargetFrameworks>net8.0;net9.0</TargetFrameworks>
 	</PropertyGroup>
 
+	<ItemGroup>
+		<None Include="README.md" Pack="true" PackagePath="" />
+	</ItemGroup>
 	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
@@ -29,8 +39,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1" />
-		<PackageReference Include="Microsoft.Extensions.Http" Version="8.0.1" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.6" />
+		<PackageReference Include="Microsoft.Extensions.Http" Version="9.0.6" />
 		<PackageReference Include="SendGrid" Version="9.29.3" />
 	</ItemGroup>
 
@@ -41,3 +51,4 @@
 		</None>
 	</ItemGroup>
 </Project>
+
