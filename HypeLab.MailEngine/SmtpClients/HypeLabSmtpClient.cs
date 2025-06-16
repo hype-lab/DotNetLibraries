@@ -50,18 +50,25 @@ namespace HypeLab.MailEngine.SmtpClients
                 {
                     foreach (SmtpClientCertValue certificate in smtpAccessInfo.ClientCertificates)
                     {
+                        X509Certificate2 cert;
                         if (certificate.KeyStorageFlagsEnum.HasValue && !string.IsNullOrEmpty(certificate.Password))
                         {
-                            ClientCertificates.Add(new X509Certificate(certificate.FileName, certificate.Password, certificate.KeyStorageFlagsEnum.Value));
+                            cert = X509Certificate2.CreateFromEncryptedPemFile(certificate.FileName, certificate.Password);
                         }
                         else if (!string.IsNullOrEmpty(certificate.Password))
                         {
-                            ClientCertificates.Add(new X509Certificate(certificate.FileName, certificate.Password));
+                            cert = X509Certificate2.CreateFromEncryptedPemFile(certificate.FileName, certificate.Password);
                         }
                         else
                         {
-                            ClientCertificates.Add(new X509Certificate(certificate.FileName));
+#if NET9_0_OR_GREATER
+                            cert = X509CertificateLoader.LoadCertificateFromFile(certificate.FileName);
+#else
+                            cert = new X509Certificate2(certificate.FileName);
+#endif
                         }
+
+                        ClientCertificates.Add(cert);
                     }
                 }
             }
@@ -72,7 +79,7 @@ namespace HypeLab.MailEngine.SmtpClients
         }
 
         /// <summary>
-        /// The name of the SMTP client.
+        /// Gets the name of the SMTP client.
         /// </summary>
         public static string Name => "Hype-Lab SMTP Client";
     }

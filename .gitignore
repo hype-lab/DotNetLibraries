@@ -195,3 +195,15 @@ Temporary Items
 /TestApiForLibraries/Deliri/IRequest.cs
 /TestApiForLibraries/Deliri/RequestBaseUser.cs
 /TestApiForLibraries/Deliri/RequestUser.cs
+/ExcelTests/ExcelTests.csproj
+/ExcelTests/Program.cs
+/ExcelTests/TestModel.cs
+/HypeLab.Csv
+/HypeLab.Excel
+/HypeLab.IO.Core
+/HypeLab.IO.Csv
+/HypeLab.IO.Excel
+/.editorconfig
+/HypeLab.IO.Core/Data/Options/IWriterOptions.cs
+/Tests.Common/Tests.Common.csproj
+/Tests.Common/Models

@@ -1,18 +1,28 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<PackageVersion>0.3.1</PackageVersion>
+		<PackageVersion>0.3.3</PackageVersion>
+		<PackageId>HypeLab.RxPatternsResolver</PackageId>
 		<Title>Hype-Lab.RxPatternsResolver</Title>
 		<Description>
 			Provides a class capable of solve collections of regex patterns given an input string. Also equipped with a default patterns set.
 			Also exposes methods that validate the email address format and optionally validates domain; also checks if an email address exists.
 		</Description>
-		<Authors>Hype-Lab</Authors>
+		<Authors>Matt P</Authors>
+		<Company>Hype-Lab</Company>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
 		<PackageProjectUrl>https://github.com/hype-lab/DotNetLibraries/tree/main/HypeLab.RxPatternsResolver</PackageProjectUrl>
-		<PackageReleaseNotes>Added more controls and timeout period on DnsRequest queries; switched to a more thread safe regex patterns collection.</PackageReleaseNotes>
-		<Copyright>©2024 Hype-Lab</Copyright>
+		<PackageReleaseNotes>Fixed DnsLookupClient package dependency error.</PackageReleaseNotes>
+		<Copyright>©2025 Hype-Lab</Copyright>
 		<PackageTags>regex, regular expressions, email, validation, c#, .net standard 2.1</PackageTags>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<DocumentationFile>bin\$(Configuration)\$(TargetFramework)\HypeLab.RxPatternsResolver.xml</DocumentationFile>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+
+		<DebugType>none</DebugType>
+		<EmbedUntrackedSources>false</EmbedUntrackedSources>
+		<PublishRepositoryUrl>false</PublishRepositoryUrl>
+		<IncludeSymbols>false</IncludeSymbols>
 	</PropertyGroup>
 
 	<PropertyGroup>
@@ -24,17 +34,14 @@
 		<RepositoryUrl>https://github.com/hype-lab/DotNetLibraries/tree/main/HypeLab.RxPatternsResolver</RepositoryUrl>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<RepositoryType>git</RepositoryType>
-		<Version>0.3.1</Version>
-		<AssemblyVersion>0.0.3.1</AssemblyVersion>
+		<Version>0.3.3</Version>
+		<AssemblyVersion>0.0.3.3</AssemblyVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.2" />
+	  <PackageReference Include="HypeLab.DnsLookupClient" Version="0.0.9" />
+	  <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.6" />
 	  <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <ProjectReference Include="..\HypeLab.DnsLookupClient\HypeLab.DnsLookupClient.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
