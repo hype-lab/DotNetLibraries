@@ -3,12 +3,44 @@
 	<PropertyGroup>
 		<TargetFramework>netstandard2.1</TargetFramework>
 		<Nullable>enable</Nullable>
-		<Version>0.3.1</Version>
-		<AssemblyVersion>0.0.3.1</AssemblyVersion>
+		<Version>0.0.9</Version>
+		<AssemblyVersion>0.0.0.9</AssemblyVersion>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<PackageVersion>0.0.9</PackageVersion>
+		<PackageId>HypeLab.DnsLookupClient</PackageId>
+		<Title>Hype-Lab.DnsLookupClient</Title>
+		<Description>
+			Provides a client for DNS lookups.
+		</Description>
+		<Authors>Matt P</Authors>
+		<Company>Hype-Lab</Company>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+		<PackageProjectUrl>https://github.com/hype-lab/DotNetLibraries/tree/main/HypeLab.DnsLookupClient</PackageProjectUrl>
+		<PackageReleaseNotes>Added package.</PackageReleaseNotes>
+		<Copyright>©2025 Hype-Lab</Copyright>
+		<PackageTags>dns, lookup, c#, .net standard 2.1</PackageTags>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<DocumentationFile>bin\$(Configuration)\$(TargetFramework)\HypeLab.DnsLookupClient.xml</DocumentationFile>
+
+		<DebugType>none</DebugType>
+		<EmbedUntrackedSources>false</EmbedUntrackedSources>
+		<PublishRepositoryUrl>false</PublishRepositoryUrl>
+		<IncludeSymbols>false</IncludeSymbols>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="README.md">
+	    <PackagePath>\</PackagePath>
+	    <Pack>True</Pack>
+	  </None>
 	</ItemGroup>
 
 </Project>
