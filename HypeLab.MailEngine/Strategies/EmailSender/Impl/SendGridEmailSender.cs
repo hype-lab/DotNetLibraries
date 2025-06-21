@@ -9,28 +9,47 @@ using System.Net;
 namespace HypeLab.MailEngine.Strategies.EmailSender.Impl
 {
     /// <summary>
-    /// Represents a SendGrid email sender.
+    /// Provides functionality for sending emails using the SendGrid service.
     /// </summary>
-    /// <remarks>
-    /// Constructor for SendGridEmailSender.
-    /// </remarks>
-    public sealed class SendGridEmailSender(ISendGridClient client) : ISendGridEmailSender
+    /// <remarks>This class serves as a wrapper around the SendGrid API, enabling the sending of emails with
+    /// support for HTML and plain text content,  CC/BCC recipients, and file attachments. It validates input parameters
+    /// and handles errors related to email sending operations.</remarks>
+    public sealed class SendGridEmailSender : ISendGridEmailSender
     {
+        private readonly ISendGridClient _client;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SendGridEmailSender"/> class.
+        /// </summary>
+        /// <param name="client">The <see cref="ISendGridClient"/> instance used to send emails via the SendGrid service. This parameter
+        /// cannot be null.</param>
+        public SendGridEmailSender(ISendGridClient client)
+        {
+            _client = client;
+        }
+
         // Implementation for sending email using SendGrid
         /// <summary>
-        /// Sends an email.
+        /// Sends an email asynchronously using the SendGrid service.
         /// </summary>
-        /// <param name="emailTo"></param>
-        /// <param name="htmlMessage"></param>
-        /// <param name="subject"></param>
-        /// <param name="emailFrom"></param>
-        /// <param name="plainTextContent"></param>
-        /// <param name="emailToName"></param>
-        /// <param name="emailFromName"></param>
-        /// <param name="ccs"></param>
-        /// <param name="attachments"></param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentException"></exception>
+        /// <remarks>This method uses the SendGrid API to send emails. It supports HTML and plain text
+        /// content, optional CC/BCC recipients, and file attachments. Ensure that all required parameters are provided
+        /// and valid.</remarks>
+        /// <param name="emailTo">The recipient's email address. Cannot be null or empty.</param>
+        /// <param name="htmlMessage">The HTML content of the email. Cannot be null or empty.</param>
+        /// <param name="subject">The subject of the email. Cannot be null or empty.</param>
+        /// <param name="emailFrom">The sender's email address. Cannot be null or empty.</param>
+        /// <param name="plainTextContent">Optional plain text content of the email. If provided, it will be included alongside the HTML content.</param>
+        /// <param name="emailToName">Optional name of the recipient. If provided, it will be used in the email's "To" field.</param>
+        /// <param name="emailFromName">Optional name of the sender. If provided, it will be used in the email's "From" field.</param>
+        /// <param name="ccs">Optional collection of CC, BCC, or additional "To" email addresses. Each address must specify its type
+        /// (e.g., CC, BCC, or To). If provided, these addresses will be added to the email.</param>
+        /// <param name="attachments">Optional collection of attachments to include in the email. Each attachment must conform to the expected
+        /// format and type.</param>
+        /// <returns>An <see cref="EmailSenderResponse"/> indicating the result of the email sending operation. Returns a success
+        /// response if the email is sent successfully, or a failure response with details if the operation fails.</returns>
+        /// <exception cref="ArgumentException">Thrown if any of the required parameters are null or empty.</exception>
+        /// <exception cref="SendGridEmailSenderException">Thrown if there is an error while sending the email, such as invalid email address types or attachment issues.</exception>
         public async Task<EmailSenderResponse> SendEmailAsync(string emailTo, string htmlMessage, string subject, string emailFrom, string? plainTextContent = null, string? emailToName = null, string? emailFromName = null, ICollection<IEmailAddressInfo>? ccs = null, ICollection<IAttachment>? attachments = null)
         {
             ArgumentException.ThrowIfNullOrEmpty(emailTo);
@@ -85,7 +104,7 @@ namespace HypeLab.MailEngine.Strategies.EmailSender.Impl
                     }
                 }
 
-                Response response = await client.SendEmailAsync(msg).ConfigureAwait(false);
+                Response response = await _client.SendEmailAsync(msg).ConfigureAwait(false);
                 string content = await response.Body.ReadAsStringAsync().ConfigureAwait(false);
 
                 if (response.StatusCode == HttpStatusCode.Accepted || response.StatusCode == HttpStatusCode.OK)
@@ -108,21 +127,26 @@ namespace HypeLab.MailEngine.Strategies.EmailSender.Impl
         }
 
         /// <summary>
-        /// Sends an email to multiple addresses.
+        /// Sends an email asynchronously to one or more recipients with the specified content, subject, and optional
+        /// parameters.
         /// </summary>
-        /// <param name="emailToes"></param>
-        /// <param name="htmlMessage"></param>
-        /// <param name="subject"></param>
-        /// <param name="emailFrom"></param>
-        /// <param name="plainTextContent"></param>
-        /// <param name="emailToName"></param>
-        /// <param name="emailFromName"></param>
-        /// <param name="ccs"></param>
-        /// <param name="attachments"></param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentNullException"></exception>
-        /// <exception cref="ArgumentOutOfRangeException"></exception>
-        /// <exception cref="ArgumentException"></exception>
+        /// <remarks>This method uses the SendGrid API to send emails. It supports HTML and plain text
+        /// content, CC and BCC recipients, and file attachments. The method validates input parameters and throws
+        /// exceptions for invalid or missing values.</remarks>
+        /// <param name="emailToes">A collection of recipient email addresses. Cannot be null or empty.</param>
+        /// <param name="htmlMessage">The HTML content of the email. Cannot be null or empty.</param>
+        /// <param name="subject">The subject of the email. Cannot be null or empty.</param>
+        /// <param name="emailFrom">The sender's email address. Cannot be null or empty.</param>
+        /// <param name="plainTextContent">Optional plain text content of the email. If provided, it will be included in the email.</param>
+        /// <param name="emailToName">Optional name of the recipient(s). If provided, it will be associated with the recipient email addresses.</param>
+        /// <param name="emailFromName">Optional name of the sender. If provided, it will be associated with the sender's email address.</param>
+        /// <param name="ccs">Optional collection of CC and BCC email addresses. Each address must specify whether it is a CC or BCC.</param>
+        /// <param name="attachments">Optional collection of file attachments. Attachments must be of type <see cref="IAttachment"/>.</param>
+        /// <returns>An <see cref="EmailSenderResponse"/> indicating the success or failure of the email sending operation. If
+        /// successful, the response contains a success message; otherwise, it contains an error message.</returns>
+        /// <exception cref="ArgumentException">Thrown if any of the required parameters are null or empty.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown if the collection of recipient email addresses is empty.</exception>
+        /// <exception cref="SendGridEmailSenderException">Thrown if there is an error while sending the email, such as invalid email address types or attachment issues.</exception>
         public async Task<EmailSenderResponse> SendEmailAsync(ICollection<string> emailToes, string htmlMessage, string subject, string emailFrom, string? plainTextContent = null, string? emailToName = null, string? emailFromName = null, ICollection<IEmailAddressInfo>? ccs = null, ICollection<IAttachment>? attachments = null)
         {
             ArgumentNullException.ThrowIfNull(emailToes);
@@ -177,7 +201,7 @@ namespace HypeLab.MailEngine.Strategies.EmailSender.Impl
                     }
                 }
 
-                Response response = await client.SendEmailAsync(msg).ConfigureAwait(false);
+                Response response = await _client.SendEmailAsync(msg).ConfigureAwait(false);
                 string content = await response.Body.ReadAsStringAsync().ConfigureAwait(false);
 
                 if (response.StatusCode == HttpStatusCode.Accepted || response.StatusCode == HttpStatusCode.OK)

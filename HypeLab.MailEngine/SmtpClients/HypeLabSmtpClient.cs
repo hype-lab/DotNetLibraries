@@ -8,14 +8,26 @@ using HypeLab.MailEngine.Data.Exceptions;
 namespace HypeLab.MailEngine.SmtpClients
 {
     /// <summary>
-    /// Represents a custom SMTP client.
+    /// Represents an SMTP client configured with advanced options for secure email delivery.
     /// </summary>
+    /// <remarks>The <see cref="HypeLabSmtpClient"/> class extends the functionality of the <see
+    /// cref="SmtpClient"/> class to provide enhanced configuration capabilities, including support for client
+    /// certificates, custom delivery methods, and secure communication settings.</remarks>
     public class HypeLabSmtpClient : SmtpClient
     {
         /// <summary>
-        /// Constructor for CustomSmtpClient.
+        /// Initializes a new instance of the <see cref="HypeLabSmtpClient"/> class using the specified SMTP access
+        /// information.
         /// </summary>
-        /// <param name="smtpAccessInfo"></param>
+        /// <remarks>This constructor configures the SMTP client based on the provided <paramref
+        /// name="smtpAccessInfo"/>. It sets properties such as the server host, port, SSL settings, credentials, and
+        /// delivery method. If client certificates are provided, they are added to the client for secure communication.
+        /// If an error occurs during configuration, an <see cref="SmptClientFailedSettingOptionException"/> is
+        /// thrown.</remarks>
+        /// <param name="smtpAccessInfo">The SMTP access information used to configure the client. This includes server details, credentials, SSL
+        /// settings, delivery options, and optional client certificates.</param>
+        /// <exception cref="SmptClientFailedSettingOptionException">Thrown if an error occurs while configuring the SMTP client, such as invalid certificate files or missing
+        /// required parameters.</exception>
         public HypeLabSmtpClient(SmtpAccessInfo smtpAccessInfo)
         {
             try

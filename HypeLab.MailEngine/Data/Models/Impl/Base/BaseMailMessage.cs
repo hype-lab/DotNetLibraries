@@ -3,8 +3,12 @@
 namespace HypeLab.MailEngine.Data.Models.Impl.Base
 {
     /// <summary>
-    /// Represents the base mail message.
+    /// Represents the base class for constructing and managing email messages.
     /// </summary>
+    /// <remarks>This abstract class provides common properties and functionality for email messages,
+    /// including required fields such as the subject, sender, and HTML content, as well as optional fields like plain
+    /// text content, recipient names, CCs, and attachments. Derived classes can extend this functionality to implement
+    /// specific email-related behaviors.</remarks>
     public abstract class BaseMailMessage : IMailMessage
     {
         /// <summary>
@@ -13,51 +17,64 @@ namespace HypeLab.MailEngine.Data.Models.Impl.Base
         protected BaseMailMessage() { }
 
         /// <summary>
-        /// Base mail message constructor that sets required members.
+        /// Initializes a new instance of the <see cref="BaseMailMessage"/> class with the specified subject, sender,
+        /// and HTML message content.
         /// </summary>
-        /// <param name="emailSubject"></param>
-        /// <param name="emailFrom"></param>
-        /// <param name="htmlMessage"></param>
+        /// <remarks>This constructor sets required members of the <see cref="BaseMailMessage"/> class.
+        /// Ensure that all parameters are valid and non-empty before calling this constructor.</remarks>
+        /// <param name="emailSubject">The subject of the email. Cannot be null or empty.</param>
+        /// <param name="emailFrom">The sender's email address. Cannot be null or empty.</param>
+        /// <param name="htmlMessage">The HTML content of the email message. Cannot be null or empty.</param>
+        /// <exception cref="ArgumentException">Thrown when any of the parameters are null or empty.</exception>
         [SetsRequiredMembers]
         protected BaseMailMessage(string emailSubject, string emailFrom, string htmlMessage)
         {
+            ArgumentException.ThrowIfNullOrWhiteSpace(emailSubject);
+            ArgumentException.ThrowIfNullOrWhiteSpace(emailFrom);
+            ArgumentException.ThrowIfNullOrWhiteSpace(htmlMessage);
+
             EmailSubject = emailSubject;
             EmailFrom = emailFrom;
             HtmlMessage = htmlMessage;
         }
 
         /// <summary>
-        /// The email subject.
+        /// Gets or sets the subject line of the email.
         /// </summary>
         public required string EmailSubject { get; set; }
+
         /// <summary>
-        /// The email from.
+        /// Gets or sets the email address of the recipient.
         /// </summary>
         public required string EmailFrom { get; set; }
+
         /// <summary>
-        /// The html message.
+        /// Gets or sets the HTML content of the email message.
         /// </summary>
         public required string HtmlMessage { get; set; }
+
         /// <summary>
-        /// The plain text content.
+        /// Gets or sets the plain text content of the email message.
         /// </summary>
         public string? PlainTextContent { get; set; }
+
         /// <summary>
-        /// The email to name.
+        /// Gets or sets the name of the recipient for the email.
         /// </summary>
         public string? EmailToName { get; set; }
+
         /// <summary>
-        /// Represents the email from name.
+        /// Gets or sets the name of the sender for the email.
         /// </summary>W
         public string? EmailFromName { get; set; }
 
         /// <summary>
-        /// The other recipients.
+        /// Gets or sets the collection of email addresses to be included as CC (carbon copy) recipients.
         /// </summary>
         public ICollection<IEmailAddressInfo>? Ccs { get; set; }
 
         /// <summary>
-        /// The attachments.
+        /// Gets or sets the collection of attachments to be included in the email.
         /// </summary>
         public ICollection<IAttachment>? Attachments { get; set; }
     }

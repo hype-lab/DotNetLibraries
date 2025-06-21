@@ -4,28 +4,29 @@ using System.Diagnostics;
 namespace HypeLab.MailEngine.Data.Exceptions
 {
     /// <summary>
-    /// Exception class for when the mail message type is unknown
+    /// Represents an exception that is thrown when an unknown or unsupported mail message type is encountered.
     /// </summary>
     [DebuggerDisplay(ExceptionDefaults.InvalidEmailSenderType.DebuggerDisplay)]
     public class UnknownMailMessageTypeException : Exception
     {
         /// <summary>
-        /// Default constructor
+        /// Creates an instance of <see cref="UnknownMailMessageTypeException"/> with the default error message.
         /// </summary>
         public UnknownMailMessageTypeException()
             : base(ExceptionDefaults.UnknownMailMessageType.DefaultMessage) { }
 
         /// <summary>
-        /// Constructor with message
+        /// Creates an instance of <see cref="UnknownMailMessageTypeException"/> with a specified error message.
         /// </summary>
+        /// <param name="message">The error message that explains the reason for the exception.</param>
         public UnknownMailMessageTypeException(string? message)
             : base (message ?? ExceptionDefaults.UnknownMailMessageType.DefaultMessage) { }
 
         /// <summary>
-        /// Constructor with message and inner exception
+        /// Creates an instance of <see cref="UnknownMailMessageTypeException"/> with a specified error message and an inner exception.
         /// </summary>
-        /// <param name="message"></param>
-        /// <param name="innerException"></param>
+        /// <param name="message">The error message that explains the reason for the exception.</param>
+        /// <param name="innerException">The exception that is the cause of the current exception, or a null reference if no inner exception is specified.</param>
         public UnknownMailMessageTypeException(string? message, Exception innerException)
             : base(message ?? ExceptionDefaults.UnknownMailMessageType.DefaultMessage, innerException) { }
     }

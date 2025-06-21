@@ -3,20 +3,21 @@
 namespace HypeLab.MailEngine.Data.Models
 {
     /// <summary>
-    /// Represents an email access info.
+    /// Represents the access information required for sending emails, including sender type, client identification, and
+    /// default status.
     /// </summary>
     public interface IMailAccessInfo
     {
         /// <summary>
-        /// The email sender type.
+        /// Gets the type of email sender used for sending emails.
         /// </summary>
         public EmailSenderType EmailSenderType { get; }
         /// <summary>
-        /// Indicates if the email access info is the default.
+        /// Gets a value indicating whether this email access info is the default one.
         /// </summary>
         public bool IsDefault { get; }
         /// <summary>
-        /// The client ID for this email access info.
+        /// Gets the client ID associated with this email access info.
         /// </summary>
         public string ClientId { get; }
     }

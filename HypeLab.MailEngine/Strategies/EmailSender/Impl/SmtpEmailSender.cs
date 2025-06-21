@@ -10,30 +10,47 @@ using System.Text;
 namespace HypeLab.MailEngine.Strategies.EmailSender.Impl
 {
     /// <summary>
-    /// Represents an SMTP email sender.
+    /// Provides functionality for sending emails using the SMTP protocol.
     /// </summary>
-    /// <remarks>
-    /// Constructor for SmtpEmailSender.
-    /// </remarks>
-    /// <param name="smtpClient"></param>
-    public sealed class SmtpEmailSender(HypeLabSmtpClient smtpClient) : ISmtpEmailSender
+    /// <remarks>This class is designed to send emails asynchronously using an underlying SMTP client. It
+    /// supports sending emails with HTML content,  optional plain text content, multiple recipients, CC and BCC
+    /// addresses, and file attachments. The class ensures that required parameters  are validated before sending emails
+    /// and provides detailed responses indicating the success or failure of the operation.</remarks>
+    public sealed class SmtpEmailSender : ISmtpEmailSender
     {
+        private readonly HypeLabSmtpClient _smtpClient;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SmtpEmailSender"/> class, using the specified SMTP client.
+        /// </summary>
+        /// <param name="smtpClient">The SMTP client used to send emails. This parameter cannot be <see langword="null"/>.</param>
+        public SmtpEmailSender(HypeLabSmtpClient smtpClient)
+        {
+            ArgumentNullException.ThrowIfNull(smtpClient, nameof(smtpClient));
+            _smtpClient = smtpClient;
+        }
+
         // Implementation for sending email using SmtpClient
         /// <summary>
-        /// Sends an email.
+        /// Sends an email asynchronously using the specified parameters.
         /// </summary>
-        /// <param name="emailTo"></param>
-        /// <param name="htmlMessage"></param>
-        /// <param name="subject"></param>
-        /// <param name="emailFrom"></param>
-        /// <param name="plainTextContent"></param>
-        /// <param name="emailToName"></param>
-        /// <param name="emailFromName"></param>
-        /// <param name="ccs"></param>
-        /// <param name="attachments"></param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentException"></exception>
-        /// <exception cref="SmtpEmailSenderException"></exception>
+        /// <remarks>This method supports sending emails with optional plain text content, CC and BCC recipients, and file
+        /// attachments. The email body is sent as HTML by default. Ensure that all required parameters are provided and
+        /// valid.</remarks>
+        /// <param name="emailTo">The recipient's email address. Cannot be null or empty.</param>
+        /// <param name="htmlMessage">The HTML content of the email body. Cannot be null or empty.</param>
+        /// <param name="subject">The subject of the email. Cannot be null or empty.</param>
+        /// <param name="emailFrom">The sender's email address. Cannot be null or empty.</param>
+        /// <param name="plainTextContent">Optional plain text content for the email body. If provided, it may be used as an alternative to the HTML content.</param>
+        /// <param name="emailToName">Optional display name for the recipient.</param>
+        /// <param name="emailFromName">Optional display name for the sender.</param>
+        /// <param name="ccs">Optional collection of CC, BCC, or additional "To" recipients. Each recipient must implement <see
+        /// cref="IEmailAddressInfo"/>.</param>
+        /// <param name="attachments">Optional collection of file attachments. Each attachment must implement <see cref="IAttachment"/>.</param>
+        /// <returns>An <see cref="EmailSenderResponse"/> indicating the success or failure of the email sending operation. If
+        /// successful, the response contains a success message. If failed, the response contains an error message.</returns>
+        /// <exception cref="ArgumentException">Thrown if any required parameter is null.</exception>
+        /// <exception cref="SmtpEmailSenderException">Thrown if there is an error while sending the email.</exception>
         public async Task<EmailSenderResponse> SendEmailAsync(string emailTo, string htmlMessage, string subject, string emailFrom, string? plainTextContent = null, string? emailToName = null, string? emailFromName = null, ICollection<IEmailAddressInfo>? ccs = null, ICollection<IAttachment>? attachments = null)
         {
             ArgumentException.ThrowIfNullOrEmpty(emailTo);
@@ -88,7 +105,7 @@ namespace HypeLab.MailEngine.Strategies.EmailSender.Impl
                     }
                 }
 
-                await smtpClient.SendMailAsync(mailMessage).ConfigureAwait(false);
+                await _smtpClient.SendMailAsync(mailMessage).ConfigureAwait(false);
 
                 return EmailSenderResponse.Success("Email sent.");
             }
@@ -103,22 +120,26 @@ namespace HypeLab.MailEngine.Strategies.EmailSender.Impl
         }
 
         /// <summary>
-        /// Sends an email to multiple addresses.
+        /// Sends an email message to one or more recipients with the specified content, subject, and optional
+        /// attachments.
         /// </summary>
-        /// <param name="emailToes"></param>
-        /// <param name="htmlMessage"></param>
-        /// <param name="subject"></param>
-        /// <param name="emailFrom"></param>
-        /// <param name="plainTextContent"></param>
-        /// <param name="emailToName"></param>
-        /// <param name="emailFromName"></param>
-        /// <param name="ccs"></param>
-        /// <param name="attachments"></param>
-        /// <returns></returns>
-        /// <exception cref="SmtpEmailSenderException"></exception>
-        /// <exception cref="ArgumentNullException"></exception>
-        /// <exception cref="ArgumentOutOfRangeException"></exception>
-        /// <exception cref="ArgumentException"></exception>
+        /// <remarks>This method supports sending HTML-formatted emails and optionally plain text content.
+        /// It allows specifying multiple recipients, CCs, BCCs, and attachments. Ensure that all required parameters are provided and
+        /// valid.</remarks>
+        /// <param name="emailToes">A collection of recipient email addresses. Cannot be null or empty.</param>
+        /// <param name="htmlMessage">The HTML content of the email body. Cannot be null or empty.</param>
+        /// <param name="subject">The subject of the email. Cannot be null or empty.</param>
+        /// <param name="emailFrom">The sender's email address. Cannot be null or empty.</param>
+        /// <param name="plainTextContent">Optional plain text content of the email body. If provided, it is included as an alternative view.</param>
+        /// <param name="emailToName">Optional display name for the recipient(s).</param>
+        /// <param name="emailFromName">Optional display name for the sender.</param>
+        /// <param name="ccs">Optional collection of CC and BCC email addresses. Each address must specify whether it is a CC or BCC.</param>
+        /// <param name="attachments">Optional collection of attachments to include in the email. Attachments must conform to the expected format.</param>
+        /// <returns>An <see cref="EmailSenderResponse"/> indicating the success or failure of the email sending operation. If
+        /// successful, the response contains a success message; otherwise, it contains an error message.</returns>
+        /// <exception cref="ArgumentException">Thrown if any required parameter is null.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown if the collection of recipient email addresses is empty.</exception>
+        /// <exception cref="SmtpEmailSenderException">Thrown if there is an error while sending the email.</exception>
         public async Task<EmailSenderResponse> SendEmailAsync(ICollection<string> emailToes, string htmlMessage, string subject, string emailFrom, string? plainTextContent = null, string? emailToName = null, string? emailFromName = null, ICollection<IEmailAddressInfo>? ccs = null, ICollection<IAttachment>? attachments = null)
         {
             ArgumentNullException.ThrowIfNull(emailToes);
@@ -173,7 +194,7 @@ namespace HypeLab.MailEngine.Strategies.EmailSender.Impl
                     }
                 }
 
-                await smtpClient.SendMailAsync(mailMessage).ConfigureAwait(false);
+                await _smtpClient.SendMailAsync(mailMessage).ConfigureAwait(false);
 
                 return EmailSenderResponse.Success("Emails sent.");
             }
