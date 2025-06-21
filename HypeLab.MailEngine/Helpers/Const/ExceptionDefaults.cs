@@ -3,7 +3,7 @@
 namespace HypeLab.MailEngine.Helpers.Const
 {
     /// <summary>
-    /// Default exception properties.
+    /// Provides default properties for various exception types used in the application.
     /// </summary>
     public static class ExceptionDefaults
     {

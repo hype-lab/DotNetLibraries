@@ -1,27 +1,27 @@
 ﻿namespace HypeLab.MailEngine.Data.Exceptions
 {
     /// <summary>
-    /// Exception class for when the SendGrid email sender fails
+    /// Represents an exception that occurs during the process of sending emails using SendGrid.
     /// </summary>
     public class SendGridEmailSenderException : Exception
     {
         /// <summary>
-        /// Default constructor
+        /// Creates a new instance of the <see cref="SendGridEmailSenderException"/> class.
         /// </summary>
         public SendGridEmailSenderException() { }
 
         /// <summary>
-        /// Constructor with message
+        /// Creates a new instance of the <see cref="SendGridEmailSenderException"/> class with a specified error message.
         /// </summary>
-        /// <param name="message"></param>
+        /// <param name="message">The error message that explains the reason for the exception.</param>
         public SendGridEmailSenderException(string message)
             : base(message) { }
 
         /// <summary>
-        /// Constructor with message and inner exception
+        /// Creates a new instance of the <see cref="SendGridEmailSenderException"/> class with a specified error message and a reference to the inner exception that is the cause of this exception.
         /// </summary>
-        /// <param name="message"></param>
-        /// <param name="inner"></param>
+        /// <param name="message">The error message that explains the reason for the exception.</param>
+        /// <param name="inner">The exception that is the cause of the current exception, or a null reference if no inner exception is specified.</param>
         public SendGridEmailSenderException(string message, Exception inner)
             : base(message, inner) { }
     }

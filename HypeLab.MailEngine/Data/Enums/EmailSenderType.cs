@@ -1,20 +1,22 @@
 ﻿namespace HypeLab.MailEngine.Data.Enums
 {
     /// <summary>
-    /// Email sender type
+    /// Specifies the type of email sender used for sending emails.
     /// </summary>
-    public enum EmailSenderType : sbyte
+    /// <remarks>This enumeration defines the available mechanisms for sending emails, such as SMTP or
+    /// SendGrid.</remarks>
+    public enum EmailSenderType : byte
     {
         /// <summary>
-        /// Unknown
+        /// Represents an unknown state or value.
         /// </summary>
         Unknown = 0,
         /// <summary>
-        /// Smtp
+        /// Specifies the Simple Mail Transfer Protocol (SMTP) as the communication protocol.
         /// </summary>
         Smtp = 1,
         /// <summary>
-        /// SendGrid
+        /// Represents the SendGrid email service provider.
         /// </summary>
         SendGrid = 2
     }
