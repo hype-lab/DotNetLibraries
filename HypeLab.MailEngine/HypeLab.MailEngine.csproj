@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<PackageVersion>1.0.2</PackageVersion>
+		<PackageVersion>1.0.3</PackageVersion>
 		<Title>Hype-Lab Mail Engine</Title>
 		<Description>
 			A flexible and modular .NET library for managing multiple email clients, including support for both SMTP and SendGrid for now. The package allows to configure and use multiple email clients with distinct settings, leveraging dependency injection for seamless integration.
@@ -10,12 +10,13 @@
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
 		<PackageProjectUrl>https://github.com/hype-lab/DotNetLibraries/tree/main/HypeLab.MailEngine</PackageProjectUrl>
-		<PackageReleaseNotes>Added documentation</PackageReleaseNotes>
+		<PackageReleaseNotes>Updated documentation</PackageReleaseNotes>
 		<Copyright>©2025 Hype-Lab</Copyright>
 		<PackageTags>SMTP, SendGrid, C#, .NET8, Multiple, Email, Sending</PackageTags>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<DocumentationFile>bin\$(Configuration)\$(TargetFramework)\HypeLab.MailEngine.xml</DocumentationFile>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 
 		<DebugType>none</DebugType>
 		<EmbedUntrackedSources>false</EmbedUntrackedSources>
@@ -32,14 +33,13 @@
 	<PropertyGroup>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-		<GenerateDocumentationFile>True</GenerateDocumentationFile>
-		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<LangVersion>latest</LangVersion>
 		<NeutralLanguage>en-US</NeutralLanguage>
 		<RepositoryUrl>https://github.com/hype-lab/DotNetLibraries/tree/main/HypeLab.MailEngine</RepositoryUrl>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<RepositoryType>git</RepositoryType>
-		<Version>1.0.2</Version>
-		<AssemblyVersion>1.0.2.0</AssemblyVersion>
+		<Version>1.0.3</Version>
+		<AssemblyVersion>1.0.3.0</AssemblyVersion>
 	</PropertyGroup>
 
 	<ItemGroup>

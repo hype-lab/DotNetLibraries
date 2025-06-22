@@ -1,5 +1,5 @@
-﻿[![NuGet](https://img.shields.io/nuget/v/HypeLab.IO.Excel.svg)](https://www.nuget.org/packages/HypeLab.IO.Excel)
-![Target Framework](https://img.shields.io/badge/target-.NET%20Standard%202.0-blue)
+﻿[![NuGet](https://img.shields.io/nuget/v/HypeLab.IO.Excel.svg?style=flat-square)](https://www.nuget.org/packages/HypeLab.IO.Excel)
+![Target Framework](https://img.shields.io/badge/target-.NET%20Standard%202.0-blue?style=flat-square)
 
 # HypeLab.IO.Excel
 

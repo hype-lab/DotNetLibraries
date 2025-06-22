@@ -1,9 +1,10 @@
 [![NuGet version (HypeLab.MailEngine)](https://img.shields.io/nuget/v/HypeLab.MailEngine.svg?style=flat-square)](https://www.nuget.org/packages/HypeLab.MailEngine/)
+![Target Frameworks](https://img.shields.io/badge/targets-.NET%208.0%20%7C%20.NET%209.0-blue?style=flat-square)
 
 # Hype-Lab Mail Engine
-## Note: This library targets .NET 8, so it's not compatible with lower versions of .NET.
+## Note: This library targets .NET 8 and .NET 9, so it's not compatible with lower versions of .NET.
 
-HypeLab.MailEngine is a flexible and modular .NET library **that targets .NET 8** for managing multiple email clients, including support for both SMTP and SendGrid for now.
+HypeLab.MailEngine is a flexible and modular .NET library **that targets .NET 8 and .NET 9** for managing multiple email clients, including support for both SMTP and SendGrid for now.
 The package allows to configure and use multiple email clients with distinct settings, leveraging dependency injection for seamless integration.
 
 
