@@ -5,6 +5,9 @@
 
 **HypeLab.IO.Excel** is a powerful .NET library for reading, writing, and parsing Excel files using only the OpenXML standard, without external dependencies.
 
+## Important note
+Version 1.0.4 **fixed a styling bug** that caused the library to not work correctly with Excel files that had styles applied on multiple sheets. **Older versions are going to be deprecated soon**.
+
 ## Key Features
 
 - ✅ Strongly-typed parsing with attributes support (`ExcelColumn`,`ExcelColumnIndex`,`ExcelIgnore`)
