@@ -209,3 +209,4 @@ Temporary Items
 /Tests.Common/Models
 /ExcelTestsLocal
 /HypeLab.LibraryBenchmarks
+/Tests.Common/Models/SampleExcel.cs
