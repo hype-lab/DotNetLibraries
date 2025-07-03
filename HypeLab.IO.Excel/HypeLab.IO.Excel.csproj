@@ -1,0 +1,47 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<PackageId>HypeLab.IO.Excel</PackageId>
+		<Title>Hype-Lab.IO.Excel</Title>
+		<AssemblyVersion>1.0.5.0</AssemblyVersion>
+		<PackageVersion>1.0.5</PackageVersion>
+		<Version>1.0.5</Version>
+		<Authors>Matt P</Authors>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<Company>Hype-Lab</Company>
+		<Description>Powerful .NET library for reading and writing Excel files using OpenXML, with strongly-typed mapping, styles, and advanced parsing options.</Description>
+		<PackageTags>excel;openxml;reader;writer;import;export;parser;hype-lab;dotnet</PackageTags>
+		<PackageProjectUrl>https://hype-lab.it/strumenti-per-sviluppatori/excel</PackageProjectUrl>
+		<Copyright>©2025 Hype-Lab</Copyright>
+		<PackageReleaseNotes>Added MultipleTrueFalseWords type to support multiple true/false boolean casting within multiple columns of the same sheet.</PackageReleaseNotes>
+		<RepositoryUrl>https://github.com/hype-lab/DotNetLibraries/tree/main/HypeLab.IO.Excel</RepositoryUrl>
+		<!-- anche privata va bene -->
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<!-- o LicenseUrl se usi un file -->
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<DocumentationFile>bin\$(Configuration)\$(TargetFramework)\HypeLab.IO.Excel.xml</DocumentationFile>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+
+		<!--<DebugType>none</DebugType>
+		<EmbedUntrackedSources>false</EmbedUntrackedSources>
+		<IncludeSymbols>false</IncludeSymbols>-->
+	</PropertyGroup>
+	
+	<PropertyGroup>
+		<TargetFrameworks>netstandard2.0;net6.0;net7.0;net8.0;net9.0</TargetFrameworks>
+		<LangVersion>latest</LangVersion>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+	</PropertyGroup>
+	
+	<ItemGroup>
+		<None Include="README.md" Pack="true" PackagePath="" />
+	</ItemGroup>
+	
+	<!--<ItemGroup>
+	  <PackageReference Include="HypeLab.IO.Core" Version="1.0.4" />
+	</ItemGroup>-->
+	
+	<ItemGroup>
+	  <ProjectReference Include="..\HypeLab.IO.Core\HypeLab.IO.Core.csproj" />
+	</ItemGroup>
+</Project>

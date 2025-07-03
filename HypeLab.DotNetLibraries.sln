@@ -38,6 +38,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.Common", "Tests.Commo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExcelTestsLocal", "ExcelTestsLocal\ExcelTestsLocal.csproj", "{B9C2DD7E-CFBC-46BF-9F8B-4D5DD93FBA69}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "benchmarks", "benchmarks", "{6F728D83-F8C7-440F-931F-376DBC57B13C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HypeLab.LibraryBenchmarks", "HypeLab.LibraryBenchmarks\HypeLab.LibraryBenchmarks.csproj", "{26469CC2-FBAA-47C5-8A5F-221A68146214}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -88,6 +92,10 @@ Global
 		{B9C2DD7E-CFBC-46BF-9F8B-4D5DD93FBA69}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B9C2DD7E-CFBC-46BF-9F8B-4D5DD93FBA69}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B9C2DD7E-CFBC-46BF-9F8B-4D5DD93FBA69}.Release|Any CPU.Build.0 = Release|Any CPU
+		{26469CC2-FBAA-47C5-8A5F-221A68146214}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{26469CC2-FBAA-47C5-8A5F-221A68146214}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{26469CC2-FBAA-47C5-8A5F-221A68146214}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{26469CC2-FBAA-47C5-8A5F-221A68146214}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -107,6 +115,8 @@ Global
 		{C524B437-F13A-4C26-9940-6EBDADF76055} = {43CBACF2-14E8-4BF0-9DC5-16C772433907}
 		{7E741460-5493-434C-A19F-58BB1EAF6C1F} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{B9C2DD7E-CFBC-46BF-9F8B-4D5DD93FBA69} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{6F728D83-F8C7-440F-931F-376DBC57B13C} = {2024A7A1-838D-4047-9705-0800068B986C}
+		{26469CC2-FBAA-47C5-8A5F-221A68146214} = {6F728D83-F8C7-440F-931F-376DBC57B13C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {40997FA2-2F22-4C95-AA71-E8BF93B76214}
