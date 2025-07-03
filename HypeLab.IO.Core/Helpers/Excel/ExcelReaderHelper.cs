@@ -6,6 +6,7 @@ using HypeLab.IO.Core.Helpers.Const;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 using System.IO.Compression;
+using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -33,26 +34,34 @@ namespace HypeLab.IO.Core.Helpers.Excel
         public static List<string> LoadSharedStrings(ZipArchive archive)
         {
             ZipArchiveEntry? entry = archive.GetEntry(ExcelDefaults.SharedStringsFileName);
+
             if (entry == null)
                 return [];
 
-            List<string>? strings = null;
-            using (StreamReader reader = new(entry.Open()))
+            List<string> sharedStrings = [];
+            using var reader = XmlReader.Create(entry.Open());
+            while (reader.Read())
             {
-                XDocument xDocument = XDocument.Load(reader);
+                if (reader.NodeType == XmlNodeType.Element && reader.Name == "si")
+                {
+                    StringBuilder currentText = new();
 
-                // each <si> (shared items) can contain multiple <t> (text) or <r></r> (rich text) </t> elements if it's formatted text
-                //strings = xDocument.Descendants(XName.Get(ExcelDefaults.LocalNames.Si, ExcelDefaults.Namespaces.Urls.SpreadsheetML))
-                strings = [.. xDocument.Descendants(ExcelDefaults.Namespaces.SpreadsheetML + ExcelDefaults.LocalNames.Si)
-                    .Select(si =>
+                    using (var subtree = reader.ReadSubtree())
                     {
-                        //string textNode = si.Elements(XName.Get(ExcelDefaults.LocalNames.T, ExcelDefaults.Namespaces.Urls.SpreadsheetML)).FirstOrDefault()?.Value
-                        string? textNode = si.Elements(ExcelDefaults.Namespaces.SpreadsheetML + ExcelDefaults.LocalNames.T).FirstOrDefault()?.Value;
-                        return textNode ?? string.Empty;
-                    })];
+                        while (subtree.Read())
+                        {
+                            if (subtree.NodeType == XmlNodeType.Element && subtree.Name == "t")
+                            {
+                                currentText.Append(subtree.ReadElementContentAsString());
+                            }
+                        }
+                    }
+
+                    sharedStrings.Add(currentText.ToString());
+                }
             }
 
-            return strings ?? [];
+            return sharedStrings;
         }
 
         /// <summary>
@@ -149,19 +158,20 @@ namespace HypeLab.IO.Core.Helpers.Excel
 
                     if (options.HasHeaderRow && currentRowIndex == options.HeaderRowIndex)
                     {
-                        result.Headers = rowBuffer.ToList(); // copy the row buffer to headers
+                        result.Headers = rowBuffer.ToArray(); // copy the row buffer to headers
                     }
                     else if (currentRowIndex > options.HeaderRowIndex || !options.HasHeaderRow)
                     {
-                        if (options.HasHeaderRow && colCount > result.Headers.Count)
+                        if (options.HasHeaderRow && colCount > result.Headers.Length)
                         {
-                            string msg = $"Warning: Row has more columns ({colCount}) than header ({result.Headers.Count}). Extra columns will be ignored.";
+                            string msg = $"Warning: Row has more columns ({colCount}) than header ({result.Headers.Length}). Extra columns will be ignored.";
                             logger?.LogWarning("{Msg}", msg);
                             Debug.WriteLine(msg);
+
                             result.RowWarnings.Add(new RowWarning(currentRowIndex, msg));
                         }
 
-                        result.Rows.Add(rowBuffer.ToList()); // copy the row buffer to rows
+                        result.Rows.Add(rowBuffer.ToArray()); // copy the row buffer to rows
                     }
 
                     currentRowIndex++;
@@ -169,90 +179,6 @@ namespace HypeLab.IO.Core.Helpers.Excel
             }
 
             rowBuffer.Return(); // return the row buffer to the pool
-        }
-
-        /// <summary>
-        /// Processes the data from a specified Excel sheet entry and populates the provided <see cref="ExcelSheetData"/> object
-        /// with the parsed rows and headers.
-        /// </summary>
-        /// <remarks>This method reads the XML content of the specified Excel sheet, parses its rows and cells, and
-        /// populates the <paramref name="result"/> object with the extracted data. If the sheet contains a header row (as
-        /// specified by <paramref name="options"/>), the headers are extracted and stored separately in the <see
-        /// cref="ExcelSheetData.Headers"/> property. Any rows beyond the header row are added to the <see
-        /// cref="ExcelSheetData.Rows"/> collection. <para> If a row contains more columns than the header row, a warning is
-        /// logged using the provided <paramref name="logger"/> and added to the <see cref="ExcelSheetData.RowWarnings"/>
-        /// collection. </para> <para> Shared strings are resolved using the <paramref name="sharedStrings"/> list, and any
-        /// unresolved or missing values are replaced with empty strings. </para></remarks>
-        /// <param name="sheetEntry">The <see cref="ZipArchiveEntry"/> representing the Excel sheet to be processed.</param>
-        /// <param name="result">The <see cref="ExcelSheetData"/> object that will be populated with the parsed data, including headers and rows.</param>
-        /// <param name="options">The <see cref="ExcelReaderOptions"/> specifying how the sheet data should be processed, including header row index
-        /// and other parsing options.</param>
-        /// <param name="sharedStrings">A list of shared strings used for resolving cell values in the sheet.</param>
-        /// <param name="logger">An optional <see cref="ILogger"/> instance for logging warnings or informational messages during processing.</param>
-        /// <exception cref="AmbiguousHeaderIndexException">Thrown when the specified <see cref="ExcelReaderOptions.HeaderRowIndex"/> exceeds the number of available rows in
-        /// the sheet.</exception>
-        public static void WriteSheetDataLegacy(ZipArchiveEntry sheetEntry, ExcelSheetData result, ExcelReaderOptions options, List<string> sharedStrings, ILogger? logger = null)
-        {
-            using StreamReader reader = new(sheetEntry.Open());
-            XDocument xDocument = XDocument.Load(reader);
-
-            XNamespace ns = ExcelDefaults.Namespaces.SpreadsheetML;
-            XName rowName = XName.Get(ExcelDefaults.LocalNames.Row, ns.NamespaceName);
-            XName cellName = XName.Get(ExcelDefaults.LocalNames.C, ns.NamespaceName);
-            XName valueName = XName.Get(ExcelDefaults.LocalNames.V, ns.NamespaceName);
-            //XName typeName = XName.Get(ExcelDefaults.LocalNames.T, ns.NamespaceName)
-
-            List<XElement> rows = [.. xDocument.Descendants(rowName)];
-            if (!rows.Any())
-                return; // result; // No rows found, return empty data
-
-            if (options.HeaderRowIndex >= rows.Count)
-                throw new AmbiguousHeaderIndexException($"HeaderRowIndex {options.HeaderRowIndex} exceeds available rows ({rows.Count}) in sheet '{options.SheetName}'.");
-
-            int currentRowIndex = 0;
-            foreach (XElement row in rows)
-            {
-                //int columnCount = result.Headers.Count > 0 ? result.Headers.Count : 20
-                //List<string> rowValues = Enumerable.Repeat(string.Empty, columnCount).ToList()
-                List<string> rowValues = [];
-                foreach (XElement cell in row.Elements(cellName))
-                {
-                    string? cellRef = cell.Attribute(ExcelDefaults.LocalNames.R)?.Value;
-                    int colIndex = ExcelParserHelper.ParseColumnIndex(cellRef);
-
-                    // auto-expand la riga se necessario
-                    while (rowValues.Count <= colIndex)
-                        rowValues.Add(string.Empty);
-
-                    string? cellType = cell.Attribute(ExcelDefaults.LocalNames.T)?.Value;
-                    string? rawValue = cell.Element(valueName)?.Value;
-                    string? finalValue = rawValue;
-
-                    if (string.Equals(cellType, ExcelDefaults.LocalNames.S, StringComparison.OrdinalIgnoreCase)
-                        && int.TryParse(rawValue, out int sharedIndex)
-                        && sharedIndex >= 0 && sharedIndex < sharedStrings.Count)
-                    {
-                        finalValue = sharedStrings[sharedIndex];
-                    }
-
-                    rowValues[colIndex] = finalValue ?? string.Empty;
-                }
-
-                if (options.HasHeaderRow && result.Headers.Any() && rowValues.Count > result.Headers.Count)
-                {
-                    string msg = $"Warning: Row has more columns ({rowValues.Count}) than header ({result.Headers.Count}). Extra columns will be ignored.";
-                    logger?.LogWarning("{Msg}", msg);
-                    Debug.WriteLine(msg);
-                    result.RowWarnings.Add(new RowWarning(currentRowIndex, msg));
-                }
-
-                if (currentRowIndex == options.HeaderRowIndex && options.HasHeaderRow)
-                    result.Headers = rowValues;
-                else if (currentRowIndex > options.HeaderRowIndex || !options.HasHeaderRow)
-                    result.Rows.Add(rowValues);
-
-                currentRowIndex++;
-            }
         }
 
         /// <summary>
@@ -274,52 +200,54 @@ namespace HypeLab.IO.Core.Helpers.Excel
             if (string.IsNullOrWhiteSpace(sheetName))
                 return null;
 
-            // 1. Carica workbook.xml per trovare il r:id del foglio cercato
+            // 1. Trova r:id del foglio richiesto
             ZipArchiveEntry workbookEntry = archive.GetEntry("xl/workbook.xml")
-                ?? throw new FileNotFoundException("workbook.xml not found in archive");
+                ?? throw new FileNotFoundException("workbook.xml not found");
 
-            XDocument workbookDoc;
-            using (StreamReader reader = new(workbookEntry.Open()))
+            string? rId = null;
+            using (XmlReader reader = XmlReader.Create(workbookEntry.Open()))
             {
-                workbookDoc = XDocument.Load(reader);
+                while (reader.Read())
+                {
+                    if (reader.NodeType == XmlNodeType.Element && reader.LocalName == "sheet") // "sheet" is the element for a worksheet
+                    {
+                        string? nameAttr = reader.GetAttribute("name"); // "name" is the sheet name attribute
+                        if (string.Equals(nameAttr, sheetName, StringComparison.OrdinalIgnoreCase))
+                        {
+                            rId = reader.GetAttribute("r:id"); // "r:id" is the relationship ID for the sheet
+                            break;
+                        }
+                    }
+                }
             }
 
-            XNamespace ns = "http://schemas.openxmlformats.org/spreadsheetml/2006/main";
-            XNamespace relNs = "http://schemas.openxmlformats.org/officeDocument/2006/relationships";
-
-            // Cerca lo <sheet> con il nome richiesto
-            XElement? sheetElement = workbookDoc
-                .Root?
-                .Element(ns + "sheets")?
-                .Elements(ns + "sheet")
-                .FirstOrDefault(e => string.Equals(e.Attribute("name")?.Value, sheetName, StringComparison.OrdinalIgnoreCase));
-
-            if (sheetElement is null)
+            if (string.IsNullOrWhiteSpace(rId))
             {
-                logger?.LogWarning("Sheet name '{SheetName}' not found in workbook.", sheetName);
+                logger?.LogWarning("Sheet '{SheetName}' not found in workbook.xml", sheetName);
                 return null;
             }
 
-            string? rId = sheetElement.Attribute(relNs + "id")?.Value;
-            if (string.IsNullOrWhiteSpace(rId))
-                throw new InvalidOperationException($"Sheet '{sheetName}' has no relationship ID (r:id)");
-
-            // 2. Carica workbook.xml.rels e trova il path del file xml associato a quel rId
+            // 2. Trova il file XML associato a quell'r:id
             ZipArchiveEntry relsEntry = archive.GetEntry("xl/_rels/workbook.xml.rels")
-                ?? throw new FileNotFoundException("workbook.xml.rels not found in archive");
+                ?? throw new FileNotFoundException("workbook.xml.rels not found");
 
-            XDocument relsDoc;
-            using (StreamReader reader = new(relsEntry.Open()))
+            string? target = null;
+            using (XmlReader reader = XmlReader.Create(relsEntry.Open()))
             {
-                relsDoc = XDocument.Load(reader);
+                while (reader.Read())
+                {
+                    if (reader.NodeType == XmlNodeType.Element && reader.LocalName == "Relationship") // "Relationship" is the element for a relationship
+                    {
+                        string? id = reader.GetAttribute("Id"); // "Id" is the relationship ID attribute
+                        if (id == rId)
+                        {
+                            target = reader.GetAttribute("Target"); // "Target" is the target file path for the relationship
+                            break;
+                        }
+                    }
+                }
             }
 
-            XElement? relationship = relsDoc
-                .Root?
-                .Elements()
-                .FirstOrDefault(e => e.Attribute("Id")?.Value == rId);
-
-            string? target = relationship?.Attribute("Target")?.Value;
             if (string.IsNullOrWhiteSpace(target))
                 throw new InvalidOperationException($"No target found for rId '{rId}'");
 

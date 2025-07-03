@@ -92,9 +92,9 @@ namespace HypeLab.IO.Core.Helpers.Excel
                     }
 
                     // check if the index is out of range
-                    if (indexAttr.Index >= data.Headers.Count)
+                    if (indexAttr.Index >= data.Headers.Length)
                     {
-                        string msg = $"Column index {indexAttr.Index} for property '{prop.Name}' is out of range. Maximum index is {data.Headers.Count - 1}.";
+                        string msg = $"Column index {indexAttr.Index} for property '{prop.Name}' is out of range. Maximum index is {data.Headers.Length - 1}.";
                         logger?.LogError("{Msg}", msg);
                         Debug.WriteLine(msg);
                         throw new ColumnIndexAttributeOutOfRangeException(msg);
@@ -153,7 +153,7 @@ namespace HypeLab.IO.Core.Helpers.Excel
         public static void Parse<T>(ExcelSheetData data, Dictionary<int, PropertyInfo> indexMap, List<T> instances, ExcelParserOptions options, List<ExcelParseError> errors, ILogger? logger = null)
             where T : class
         {
-            foreach (List<string> row in data.Rows)
+            foreach (string[] row in data.Rows)
             {
                 //T instance = new();
                 Dictionary<PropertyInfo, object?> propertyValues = [];
@@ -162,13 +162,13 @@ namespace HypeLab.IO.Core.Helpers.Excel
                     int index = kvp.Key;
                     PropertyInfo prop = kvp.Value;
 
-                    if (index >= row.Count)
+                    if (index >= row.Length)
                     {
                         if (options.ThrowOnParseError)
-                            throw new ParseErrorException($"Index {index} is out of bounds for row with {row.Count} columns.");
+                            throw new ParseErrorException($"Index {index} is out of bounds for row with {row.Length} columns.");
 
-                        errors.Add(new ExcelParseError(prop.Name, $"Index {index} is out of bounds for row with {row.Count} columns.", data.Rows.IndexOf(row)));
-                        logger?.LogWarning("Skipping property '{Name}' for row {IndexOfRow}: index {Index} is out of bounds for row with {Count} columns.", prop.Name, data.Rows.IndexOf(row), index, row.Count);
+                        errors.Add(new ExcelParseError(prop.Name, $"Index {index} is out of bounds for row with {row.Length} columns.", data.Rows.IndexOf(row)));
+                        logger?.LogWarning("Skipping property '{Name}' for row {IndexOfRow}: index {Index} is out of bounds for row with {Count} columns.", prop.Name, data.Rows.IndexOf(row), index, row.Length);
                         continue; // Skip if index is out of bounds
                     }
 

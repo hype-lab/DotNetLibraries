@@ -85,35 +85,35 @@ namespace HypeLab.IO.Excel
 
         private static void ValidateHeaderExists(ExcelSheetData sheet, ExcelReaderOptions options)
         {
-            if (sheet.Headers.Count == 0)
+            if (sheet.Headers.Length == 0)
                 throw new InvalidOperationException($"Expected a header row at index {options.HeaderRowIndex}, but none was found.");
         }
 
         private static void ValidateDuplicateHeaders(ExcelSheetData sheet)
         {
-            List<string> duplicates = [.. sheet.Headers
-                .GroupBy(h => h, StringComparer.OrdinalIgnoreCase)
-                .Where(g => g.Count() > 1)
-                .Select(g => g.Key)];
+            string[] duplicates = [.. sheet.Headers
+           .GroupBy(h => h, StringComparer.OrdinalIgnoreCase)
+           .Where(g => g.Count() > 1)
+           .Select(g => g.Key)];
 
-            if (duplicates.Any())
+            if (duplicates.Length > 0)
                 throw new InvalidOperationException($"Duplicate headers detected: {string.Join(", ", duplicates)}");
         }
 
         private static void ValidateRowsAgainstHeader(ExcelSheetData sheet, ExcelReaderOptions options)
         {
-            if (!options.HasHeaderRow || sheet.Headers.Count == 0)
+            if (!options.HasHeaderRow || sheet.Headers.Length == 0)
                 return;
 
             for (int i = 0; i < sheet.Rows.Count; i++)
             {
-                List<string> row = sheet.Rows[i];
-                int headerCount = sheet.Headers.Count;
+                string[] row = sheet.Rows[i];
+                int headerCount = sheet.Headers.Length;
 
-                if (row.Count > headerCount)
-                    sheet.RowWarnings.Add(new RowWarning(i, $"Row has more columns ({row.Count}) than the header ({headerCount}). Extra columns will be ignored."));
-                else if (row.Count < headerCount)
-                    sheet.RowWarnings.Add(new RowWarning(i, $"Row has fewer columns ({row.Count}) than the header ({headerCount}). Missing columns will be empty."));
+                if (row.Length > headerCount)
+                    sheet.RowWarnings.Add(new RowWarning(i, $"Row has more columns ({row.Length}) than the header ({headerCount}). Extra columns will be ignored."));
+                else if (row.Length < headerCount)
+                    sheet.RowWarnings.Add(new RowWarning(i, $"Row has fewer columns ({row.Length}) than the header ({headerCount}). Missing columns will be empty."));
             }
         }
 
