@@ -27,17 +27,6 @@ namespace HypeLab.IO.Core.Data.Models.Common
                 _count = index + 1;
         }
 
-        public readonly List<string> ToList()
-        {
-            List<string> list = new(_count);
-            for (int i = 0; i < _count; i++)
-            {
-                list.Add(_array[i]);
-            }
-
-            return list;
-        }
-
         public readonly string[] ToArray()
         {
             return [.. _array.Take(_count)];
@@ -47,6 +36,7 @@ namespace HypeLab.IO.Core.Data.Models.Common
         {
             for (int i = 0; i < _count; i++)
                 _array[i] = string.Empty;
+
             _count = 0;
         }
 
