@@ -2,12 +2,9 @@
 ![Target Framework](https://img.shields.io/badge/target-.NET%20Standard%202.0-blue?style=flat-square)
 
 # Upates about performance improvements
-
 `ExcelReader.ExtractSheetData` improvements from the reddit discussion [here](https://www.reddit.com/r/dotnet/comments/1lput9r/i_have_released_a_nuget_package_to_readwrite/).
 
-### Last benchmark results:
-
-First benchmark with `HypeLabXlsx_ExtractSheetData` method made by `u/@MarkPflug`
+Starting benchmark with `HypeLabXlsx_ExtractSheetData` method made by `u/@MarkPflug`
 ```
 | Method                | Mean       | Error    | Ratio | Allocated    | Alloc Ratio |
 |-----------------------|------------|----------|-------|--------------|-------------|
@@ -18,7 +15,31 @@ First benchmark with `HypeLabXlsx_ExtractSheetData` method made by `u/@MarkPflug
 | OpenXmlXlsx           | 2,669.5 ms | 44.03 ms | 14.05 | 502498.45 KB | 2,060.28    |
 ```
 
+### History of benchmark results:
 New benchmark made by me using the same 65,000+ rows Excel file, made with `BenchmarkDotNet`:
+
+07/04/2025 (Second optimization):
+```
+| Method                           | Mean     | Error   | StdDev   | Gen0      | Gen1     | Gen2     | Allocated  |	
+|----------------------------------|----------|---------|----------|-----------|----------|----------|------------|
+| HypeLabXlsx_ExtractSheetData     | 306.8 ms | 5.82 ms | 6.47  ms | 16000.000 | 6500.000 | 2000.000 | *88.23 MB* |
+| HypeLabXlsx_ExtractSheetData     | 309.6 ms | 6.10 ms | 8.14  ms | 16000.000 | 6500.000 | 2000.000 | *88.23 MB* |
+| HypeLabXlsx_ExtractSheetData     | 298.6 ms | 5.64 ms | 5.27  ms | 16000.000 | 6500.000 | 2000.000 | *88.23 MB* |
+```
+In this last benchmark, Mean dropped further, also the mean of Error and StdDev slightly decreased. Starting from 1 second circa, now the mean is around 300 ms, which is a great improvement.
+But the most important thing is that the allocated memory is now around 88 MB, which is almost half of the previous benchmark (around 228 MB).
+So happy for these results, i see i can still improve it further, but for now this is a great result, considering the data is not streamed, but still materialized in memory as `List<string[]>`, which is a simple and easy to use API for the users of this library.
+
+07/04/2025 (First optimization):
+```
+| Method                           | Mean     | Error   | StdDev   | Gen0      | Gen1     | Gen2     | Allocated |
+|----------------------------------|----------|---------|----------|-----------|----------|----------|-----------|
+| HypeLabXlsx_ExtractSheetData     | 370.8 ms | 6.14 ms | 12.67 ms | 41000.000 | 12000.000| 4000.000 | 228.24 MB |
+| HypeLabXlsx_ExtractSheetData     | 358.9 ms | 7.07 ms | 6.94  ms | 41000.000 | 12000.000| 4000.000 | 228.24 MB |
+| HypeLabXlsx_ExtractSheetData     | 367.6 ms | 7.21 ms | 9.37  ms | 41000.000 | 12000.000| 4000.000 | 228.24 MB |
+```
+
+07/03/2025:
 ```
 | Method                           | Mean     | Error  | StdDev | Gen0     | Gen1     | Gen2    | Allocated	|
 |----------------------------------|----------|--------|--------|----------|----------|---------|-----------|

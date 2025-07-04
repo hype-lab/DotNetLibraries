@@ -5,6 +5,7 @@ using HypeLab.IO.Core.Exceptions;
 using HypeLab.IO.Core.Factories;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
 namespace HypeLab.IO.Core.Helpers.Excel
@@ -27,7 +28,7 @@ namespace HypeLab.IO.Core.Helpers.Excel
         /// the column, followed by optional numeric characters.</param>
         /// <returns>The zero-based column index derived from the column letters in the cell reference. Returns -1 if <paramref
         /// name="cellRef"/> is null, empty, or consists only of whitespace.</returns>
-        public static int ParseColumnIndex(string? cellRef)
+        public static int ParseColumnIndex2(string? cellRef)
         {
             if (string.IsNullOrWhiteSpace(cellRef))
                 return -1;
@@ -40,6 +41,29 @@ namespace HypeLab.IO.Core.Helpers.Excel
             {
                 columnIndex *= 26; // 26 perché ci sono 26 lettere nell'alfabeto (A-Z, anche se siamo in italia in tutto il mondo sono comunemente usate le lettere inglesi)
                 columnIndex += ch - 'A' + 1;
+            }
+
+            return columnIndex - 1; // Convert to zero-based index
+        }
+
+        [SuppressMessage("Roslynator", "RCS1113:Use 'string.IsNullOrEmpty' method", Justification = "Trying to save any KB, any cpu clock")]
+        public static int ParseColumnIndex(string? cellRef)
+        {
+            if (cellRef == null || cellRef.Length == 0)
+                return -1;
+
+            int columnIndex = 0;
+
+            for (int i = 0; i < cellRef!.Length; i++)
+            {
+                char ch = cellRef[i];
+
+                if (ch >= 'A' && ch <= 'Z')
+                    columnIndex = (columnIndex * 26) + (ch - 'A' + 1); // +1 perché l'indice è un base 1 (A=1, B=2, ..., Z=26)
+                else if (ch >= 'a' && ch <= 'z')
+                    columnIndex = (columnIndex * 26) + (ch - 'a' + 1); // 26 perché ci sono 26 lettere nell'alfabeto (A-Z, anche se siamo in italia in tutto il mondo sono comunemente usate le lettere inglesi)
+                else
+                    break;
             }
 
             return columnIndex - 1; // Convert to zero-based index
