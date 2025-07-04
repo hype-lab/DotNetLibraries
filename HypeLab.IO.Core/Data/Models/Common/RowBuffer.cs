@@ -29,13 +29,15 @@ namespace HypeLab.IO.Core.Data.Models.Common
 
         public readonly string[] ToArray()
         {
-            return [.. _array.Take(_count)];
+            string[] result = new string[_count];
+            Array.Copy(_array, 0, result, 0, _count);
+            return result;
         }
 
         public void Reset()
         {
-            for (int i = 0; i < _count; i++)
-                _array[i] = string.Empty;
+            if (_count > 0)
+                Array.Clear(_array, 0, _count);
 
             _count = 0;
         }

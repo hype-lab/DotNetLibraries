@@ -38,7 +38,7 @@ namespace HypeLab.IO.Core.Helpers.Excel
             int columnIndex = 0;
             foreach (char ch in columnRef)
             {
-                columnIndex *= 26;
+                columnIndex *= 26; // 26 perché ci sono 26 lettere nell'alfabeto (A-Z, anche se siamo in italia in tutto il mondo sono comunemente usate le lettere inglesi)
                 columnIndex += ch - 'A' + 1;
             }
 

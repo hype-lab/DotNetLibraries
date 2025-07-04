@@ -91,6 +91,80 @@ namespace HypeLab.IO.Core.Helpers.Excel
             return sheetData;
         }
 
+        public static void WriteSheetData(ZipArchiveEntry sheetEntry, ExcelSheetData result, ExcelReaderOptions options, List<string> sharedStrings, ILogger? logger = null)
+        {
+            using Stream stream = sheetEntry.Open();
+            using XmlReader reader = XmlReader.Create(stream, new XmlReaderSettings { DtdProcessing = DtdProcessing.Ignore });
+
+            int currentRowIndex = 0;
+            RowBuffer rowBuffer = new(_maxExpectedColumns);
+
+            while (reader.Read())
+            {
+                // START ROW
+                if (reader.NodeType == XmlNodeType.Element && reader.Name == "row")
+                {
+                    rowBuffer.Reset(); // reset the row buffer for each new row
+
+                    int rowDepth = reader.Depth; // store the current row depth to handle nested elements correctly
+
+                    string? cellRef = null;
+                    string? cellType = null;
+                    string? cellValue = null;
+
+                    while (reader.Read() && reader.Depth > rowDepth) // check if we are still within the current row
+                    {
+                        if (reader.NodeType == XmlNodeType.Element && reader.Name == "c")
+                        {
+                            // reset per ogni nuova cella
+                            cellRef = reader.GetAttribute("r");
+                            cellType = reader.GetAttribute("t");
+                        }
+                        else if (reader.NodeType == XmlNodeType.Element && reader.Name == "v")
+                        {
+                            cellValue = reader.ReadElementContentAsString();
+
+                            int colIndex = ExcelParserHelper.ParseColumnIndex(cellRef);
+
+                            string? finalValue = cellValue;
+                            if (string.Equals(cellType, "s", StringComparison.OrdinalIgnoreCase)
+                                && int.TryParse(cellValue, out int sharedIndex)
+                                && sharedIndex >= 0 && sharedIndex < sharedStrings.Count)
+                            {
+                                finalValue = sharedStrings[sharedIndex];
+                            }
+
+                            rowBuffer.Set(colIndex, finalValue ?? string.Empty);
+                        }
+                    }
+
+                    int colCount = rowBuffer.Count;
+
+                    if (options.HasHeaderRow && currentRowIndex == options.HeaderRowIndex)
+                    {
+                        result.Headers = rowBuffer.ToArray(); // copy the row buffer to headers
+                    }
+                    else if (currentRowIndex > options.HeaderRowIndex || !options.HasHeaderRow)
+                    {
+                        if (options.HasHeaderRow && colCount > result.Headers.Length)
+                        {
+                            string msg = $"Warning: Row has more columns ({colCount}) than header ({result.Headers.Length}). Extra columns will be ignored.";
+                            logger?.LogWarning("{Msg}", msg);
+                            Debug.WriteLine(msg);
+
+                            result.RowWarnings.Add(new RowWarning(currentRowIndex, msg));
+                        }
+
+                        result.Rows.Add(rowBuffer.ToArray()); // copy the row buffer to rows
+                    }
+
+                    currentRowIndex++;
+                }
+            }
+
+            rowBuffer.Return(); // return the row buffer to the pool
+        }
+
         /// <summary>
         /// Writes sheet data from the specified Excel sheet entry into the provided <see cref="ExcelSheetData"/>
         /// object.
@@ -103,7 +177,7 @@ namespace HypeLab.IO.Core.Helpers.Excel
         /// <param name="options">The options specifying how the sheet data should be processed, including header row handling.</param>
         /// <param name="sharedStrings">A list of shared strings used to resolve cell values marked as shared strings.</param>
         /// <param name="logger">An optional <see cref="ILogger"/> instance for logging warnings or informational messages.</param>
-        public static void WriteSheetData(ZipArchiveEntry sheetEntry, ExcelSheetData result, ExcelReaderOptions options, List<string> sharedStrings, ILogger? logger = null)
+        public static void WriteSheetData2(ZipArchiveEntry sheetEntry, ExcelSheetData result, ExcelReaderOptions options, List<string> sharedStrings, ILogger? logger = null)
         {
             using Stream stream = sheetEntry.Open();
             using XmlReader reader = XmlReader.Create(stream, new XmlReaderSettings { DtdProcessing = DtdProcessing.Ignore });
