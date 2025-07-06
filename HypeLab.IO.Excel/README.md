@@ -2,24 +2,12 @@
 ![Target Framework](https://img.shields.io/badge/target-.NET%20Standard%202.0-blue?style=flat-square)
 
 # Upates about performance improvements
-`ExcelReader.ExtractSheetData` improvements from the reddit discussion [here](https://www.reddit.com/r/dotnet/comments/1lput9r/i_have_released_a_nuget_package_to_readwrite/).
-
-Starting benchmark with `HypeLabXlsx_ExtractSheetData` method made by `u/@MarkPflug`
-```
-| Method                | Mean       | Error    | Ratio | Allocated    | Alloc Ratio |
-|-----------------------|------------|----------|-------|--------------|-------------|
-| Baseline              | 190.0 ms   | 5.45 ms  | 1.00  | 243.9 KB     | 1.00        |
-| SylvanXlsx            | 292.7 ms   | 3.59 ms  | 1.54  | 659.98 KB    | 2.71        |
-| ExcelDataReaderXlsx   | 941.7 ms   | 17.66 ms | 4.96  | 353883.76 KB | 1,450.95    |
-| HypeLabXlsx_SheetData | 1,193.8 ms | 20.94 ms | 6.28  | 459799.31 KB | 1,885.21    |
-| OpenXmlXlsx           | 2,669.5 ms | 44.03 ms | 14.05 | 502498.45 KB | 2,060.28    |
-```
 
 ## History of benchmark results:
 New benchmark made by me using the same 65,000+ rows Excel file, made with `BenchmarkDotNet`:
 
 ### Optimizations to parsing methods
-Test made using the `ExcelSheetData` extracted from the `HypeLabXlsx_ExtractSheetData` method.`
+Test made using the `ExcelSheetData` extracted from the `HypeLabXlsx_ExtractSheetData` method used previously
 
 Starting point:
 ```
@@ -40,6 +28,18 @@ Starting point:
 ```
 
 ### Optimizations to reading methods
+`ExcelReader.ExtractSheetData` improvements from the reddit discussion [here](https://www.reddit.com/r/dotnet/comments/1lput9r/i_have_released_a_nuget_package_to_readwrite/).
+
+Starting benchmark with `HypeLabXlsx_ExtractSheetData` method made by `u/@MarkPflug`
+```
+| Method                | Mean       | Error    | Ratio | Allocated    | Alloc Ratio |
+|-----------------------|------------|----------|-------|--------------|-------------|
+| Baseline              | 190.0 ms   | 5.45 ms  | 1.00  | 243.9 KB     | 1.00        |
+| SylvanXlsx            | 292.7 ms   | 3.59 ms  | 1.54  | 659.98 KB    | 2.71        |
+| ExcelDataReaderXlsx   | 941.7 ms   | 17.66 ms | 4.96  | 353883.76 KB | 1,450.95    |
+| HypeLabXlsx_SheetData | 1,193.8 ms | 20.94 ms | 6.28  | 459799.31 KB | 1,885.21    |
+| OpenXmlXlsx           | 2,669.5 ms | 44.03 ms | 14.05 | 502498.45 KB | 2,060.28    |
+```
 
 07/04/2025 (Second optimization):
 ```
