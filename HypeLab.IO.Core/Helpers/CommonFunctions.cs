@@ -1,10 +1,12 @@
 ﻿using HypeLab.IO.Core.Data.Models.Common;
 using HypeLab.IO.Core.Data.Options;
+using HypeLab.IO.Core.Data.Options.Impl.Excel;
 using HypeLab.IO.Core.Helpers.Const;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
+using System.Text;
 
 namespace HypeLab.IO.Core.Helpers
 {
@@ -72,6 +74,26 @@ namespace HypeLab.IO.Core.Helpers
         }
 
         /// <summary>
+        /// Creates a dictionary that maps properties to their corresponding values.
+        /// </summary>
+        /// <param name="props">An array of <see cref="PropertyInfo"/> objects representing the properties to be used as keys in the
+        /// dictionary. Cannot contain null elements.</param>
+        /// <param name="values">An array of objects representing the values to be associated with the properties. Must have the same length
+        /// as <paramref name="props"/>.</param>
+        /// <returns>A <see cref="Dictionary{TKey, TValue}"/> where each key is a <see cref="PropertyInfo"/> from <paramref
+        /// name="props"/>  and its corresponding value is the object from <paramref name="values"/> at the same index.</returns>
+        public static Dictionary<PropertyInfo, object?> ConvertToDict(PropertyInfo[] props, object?[] values)
+        {
+            Dictionary<PropertyInfo, object?> dict = new(props.Length);
+            for (int i = 0; i < props.Length; i++)
+            {
+                if (props[i] != null)
+                    dict[props[i]] = values[i];
+            }
+            return dict;
+        }
+
+        /// <summary>
         /// Attempts to convert the specified input string to a value of the specified target type.
         /// </summary>
         /// <remarks>This method supports conversion to common types such as <see cref="string"/>, <see
@@ -126,6 +148,17 @@ namespace HypeLab.IO.Core.Helpers
                     result = guid;
                     return true;
                 }
+
+                //if (isTargetTypeDecimal && !string.IsNullOrWhiteSpace(input))
+                //{
+                //    input = CleanDecimalInput(input, options);
+
+                //    if (decimal.TryParse(input, NumberStyles.Any, CultureInfo.InvariantCulture, out decimal decimalValue))
+                //    {
+                //        result = decimalValue;
+                //        return true;
+                //    }
+                //}
 
                 if (isTargetTypeDecimal && !string.IsNullOrWhiteSpace(input))
                 {
@@ -251,6 +284,44 @@ namespace HypeLab.IO.Core.Helpers
                 return false;
             }
         }
+
+        //private static string CleanDecimalInput(string? input, IParserOptions options)
+        //{
+        //    if (input == null || input.Length == 0)
+        //        return string.Empty;
+
+        //    input = input.Trim();
+
+        //    bool isComma = options.DecimalSepartor.IsComma;
+        //    bool isDot = options.DecimalSepartor.IsDot;
+
+        //    if (!isComma && !isDot)
+        //        return input; // fallback se mal configurato
+
+        //    // 1. Trova posizione dell'ultimo separatore
+        //    int lastComma = input.LastIndexOf(',');
+        //    int lastDot = input.LastIndexOf('.');
+
+        //    int decimalSeparatorIndex = Math.Max(lastComma, lastDot);
+
+        //    var sb = new StringBuilder(input.Length);
+
+        //    for (int i = 0; i < input.Length; i++)
+        //    {
+        //        char c = input[i];
+
+        //        if (char.IsDigit(c))
+        //        {
+        //            sb.Append(c);
+        //        }
+        //        else if ((c == ',' || c == '.') && i == decimalSeparatorIndex) //  otherwise i'ts a thousand separator or invalid character, skip   
+        //        {
+        //            sb.Append('.');
+        //        }
+        //    }
+
+        //    return sb.ToString();
+        //}
 
         private static bool IsOADateTime(string? input, out DateTime dateTime)
         {

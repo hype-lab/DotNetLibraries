@@ -51,8 +51,8 @@ namespace HypeLab.IO.Excel
 
                 ExcelParserHelper.FillIndexMap(data, props, indexMap, logger);
 
-                List<T> instances = [];
-                List<ExcelParseError> errors = [];
+                List<T> instances = new(data.Rows.Count);
+                List<ExcelParseError>? errors = null;
 
                 ExcelParserHelper.Parse(data, indexMap, instances, options, errors, logger);
 

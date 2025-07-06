@@ -15,8 +15,31 @@ Starting benchmark with `HypeLabXlsx_ExtractSheetData` method made by `u/@MarkPf
 | OpenXmlXlsx           | 2,669.5 ms | 44.03 ms | 14.05 | 502498.45 KB | 2,060.28    |
 ```
 
-### History of benchmark results:
+## History of benchmark results:
 New benchmark made by me using the same 65,000+ rows Excel file, made with `BenchmarkDotNet`:
+
+### Optimizations to parsing methods
+Test made using the `ExcelSheetData` extracted from the `HypeLabXlsx_ExtractSheetData` method.`
+
+Starting point:
+```
+| Method              | Mean     | Error   | StdDev  | Gen0     | Gen1     | Gen2   | Allocated |
+|---------------------|----------|---------|---------|----------|----------|--------|-----------|
+| HypeLabXlsx_BindT   | 140.2 ms | 2.79 ms | 5.95 ms | 20250.0  | 5500.0   | 250.0  | 120.54 MB |
+```
+
+07/06/2025:
+```
+| Method              | Mean     | Error   | StdDev  | Gen0     | Gen1     | Gen2   | Allocated |
+|---------------------|----------|---------|---------|----------|----------|--------|-----------|
+| HypeLabXlsx_BindT   | 112.5 ms | 1.92 ms | 1.80 ms | 4800.0   | 2000.0   | 600.0  | 26.54 MB  |
+
+| Method                   | Mean     | Error   | StdDev  | Gen0     | Gen1     | Gen2   | Allocated |
+|--------------------------|----------|---------|---------|----------|----------|--------|-----------|
+| HypeLabXlsx_BindTAsync   | 106.2 ms | 2.00 ms | 1.87 ms | 4600.0   | 1600.0   | 200.0  | 28.2 MB   |
+```
+
+### Optimizations to reading methods
 
 07/04/2025 (Second optimization):
 ```

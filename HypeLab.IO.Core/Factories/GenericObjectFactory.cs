@@ -109,5 +109,62 @@ namespace HypeLab.IO.Core.Factories
 
             return instance;
         }
+
+        /// <summary>
+        /// Creates an instance of the specified type <typeparamref name="T"/> and initializes its properties with the
+        /// provided values.
+        /// </summary>
+        /// <remarks>This method uses <see cref="Activator.CreateInstance(Type, bool)"/> to create an
+        /// instance of the specified type <typeparamref name="T"/>. Properties specified in <paramref name="props"/>
+        /// are set using the corresponding values in <paramref name="values"/>. If a property cannot be set, the error
+        /// is logged using the provided <paramref name="logger"/>, if available.</remarks>
+        /// <typeparam name="T">The type of the object to create. Must be a reference type.</typeparam>
+        /// <param name="props">An array of <see cref="PropertyInfo"/> objects representing the properties to be set on the created
+        /// instance.</param>
+        /// <param name="values">An array of values corresponding to the properties in <paramref name="props"/>. The length of this array
+        /// must match the length of <paramref name="props"/>.</param>
+        /// <param name="logger">An optional <see cref="ILogger"/> instance for logging errors during object creation or property
+        /// initialization.</param>
+        /// <returns>An instance of type <typeparamref name="T"/> with the specified properties initialized.</returns>
+        /// <exception cref="ObjectCreationException">Thrown if the instance of type <typeparamref name="T"/> cannot be created.</exception>
+        /// <exception cref="NullObjectException">Thrown if the created instance is null.</exception>
+        // trovare i costruttori etc non è poi così utile, alla fine una volta creata l'istanza gli passo direttamente le proprietà tramite props e values
+        public static T Create<T>(PropertyInfo[] props, object?[] values, ILogger? logger = null)
+            where T : class
+        {
+            Type type = typeof(T);
+            T? instance = null;
+
+            try
+            {
+                instance = (T?)Activator.CreateInstance(type, nonPublic: true);
+            }
+            catch (Exception ex)
+            {
+                string msg = $"Unable to create instance of type {type.FullName}.";
+                logger?.LogError(ex, msg);
+                throw new ObjectCreationException(msg, ex);
+            }
+
+            if (instance == null)
+                throw new NullObjectException($"Failed to create instance of type {type.FullName}.");
+
+            for (int i = 0; i < props.Length; i++)
+            {
+                PropertyInfo prop = props[i];
+                if (prop == null || !prop.CanWrite) continue;
+
+                try
+                {
+                    prop.SetValue(instance, values[i]);
+                }
+                catch (Exception ex)
+                {
+                    logger?.LogError(ex, "Failed to set property '{PropertyName}'", prop.Name);
+                }
+            }
+
+            return instance;
+        }
     }
 }

@@ -18,7 +18,7 @@
         /// </summary>
         /// <param name="parsedData">The collection of successfully parsed data items.</param>
         /// <param name="errors">The collection of errors encountered during parsing.</param>
-        public ExcelParseResult(IEnumerable<T> parsedData, IEnumerable<ExcelParseError> errors)
+        public ExcelParseResult(IEnumerable<T> parsedData, IEnumerable<ExcelParseError>? errors)
         {
             ParsedData = parsedData;
             Errors = errors;
@@ -32,7 +32,7 @@
         /// <summary>
         /// Gets or sets the collection of errors encountered during parsing.
         /// </summary>
-        public IEnumerable<ExcelParseError> Errors { get; set; }
+        public IEnumerable<ExcelParseError>? Errors { get; set; }
 
         /// <summary>
         /// Gets a value indicating whether the current object has any errors.
