@@ -34,6 +34,11 @@ namespace HypeLab.IO.Core.Data.Models.Excel
         /// Gets a dictionary that maps header names to their corresponding index positions.
         /// </summary>
         public Dictionary<string, int> HeaderIndexMap
-            => Headers.Select((h, i) => new { h, i }).ToDictionary(x => x.h, x => x.i, StringComparer.OrdinalIgnoreCase);
+            => Headers.Where(x => !string.IsNullOrEmpty(x)).Select((h, i) => new { h, i }).ToDictionary(x => x.h, x => x.i, StringComparer.OrdinalIgnoreCase);
+
+        /// <summary>
+        /// Gets a value indicating whether any header in the collection has a null or empty value.
+        /// </summary>
+        public bool HasNullHeaderValues => Headers.Any(string.IsNullOrEmpty);
     }
 }

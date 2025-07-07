@@ -90,6 +90,7 @@ namespace HypeLab.IO.Core.Helpers
                 if (props[i] != null)
                     dict[props[i]] = values[i];
             }
+
             return dict;
         }
 
@@ -148,17 +149,6 @@ namespace HypeLab.IO.Core.Helpers
                     result = guid;
                     return true;
                 }
-
-                //if (isTargetTypeDecimal && !string.IsNullOrWhiteSpace(input))
-                //{
-                //    input = CleanDecimalInput(input, options);
-
-                //    if (decimal.TryParse(input, NumberStyles.Any, CultureInfo.InvariantCulture, out decimal decimalValue))
-                //    {
-                //        result = decimalValue;
-                //        return true;
-                //    }
-                //}
 
                 if (isTargetTypeDecimal && !string.IsNullOrWhiteSpace(input))
                 {

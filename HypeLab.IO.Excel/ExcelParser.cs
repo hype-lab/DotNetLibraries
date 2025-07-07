@@ -47,6 +47,9 @@ namespace HypeLab.IO.Excel
                 List<PropertyInfo> props = [.. type.GetProperties(BindingFlags.Public | BindingFlags.Instance)
                     .Where(p => p.CanWrite && (p.GetCustomAttribute<ExcelIgnoreAttribute>() == null || (p.GetCustomAttribute<ExcelIgnoreAttribute>() is ExcelIgnoreAttribute ignoreAttr && !ignoreAttr.OnRead)))];
 
+                if (data.HasNullHeaderValues)
+                    data.Headers = [.. data.Headers.Where(x => !string.IsNullOrEmpty(x))];
+
                 Dictionary<int, PropertyInfo> indexMap = [];
 
                 ExcelParserHelper.FillIndexMap(data, props, indexMap, logger);
