@@ -225,3 +225,4 @@ Temporary Items
 /HypeLab.IO.Csv/CsvParser.cs
 /HypeLab.IO.Csv/CsvReader.cs
 /HypeLab.IO.Csv/CsvValidator.cs
+/HypeLab.IO.Core/Data/Models/Common/ColumnName.cs

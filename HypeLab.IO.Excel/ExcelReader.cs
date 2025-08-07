@@ -25,7 +25,7 @@ namespace HypeLab.IO.Excel
         /// Validation can be enabled via the <paramref name="options"/> to ensure the extracted data meets specific
         /// criteria.</remarks>
         /// <param name="path">The file path to the Excel file to be processed. Must not be null or empty.</param>
-        /// <param name="options">Optional configuration for reading the Excel file, such as the sheet name to extract, validation settings, 
+        /// <param name="options">Optional configuration for reading the Excel file, such as the sheet name to extract, validation settings,
         /// and error handling preferences. If not provided, default options will be used.</param>
         /// <param name="logger">An optional <see cref="ILogger"/> instance for logging errors and diagnostic information during the
         /// extraction process. If null, no logging will occur.</param>
@@ -62,7 +62,7 @@ namespace HypeLab.IO.Excel
                 }
 
                 if (options.EnableValidation)
-                    ExcelValidator.ValidateSheetData(result, options);
+                    ExcelValidator.ValidateSheetData(result, options, logger);
 
                 return result;
             }
@@ -123,7 +123,67 @@ namespace HypeLab.IO.Excel
                 }
 
                 if (options.EnableValidation)
-                    ExcelValidator.ValidateSheetData(result, options);
+                    ExcelValidator.ValidateSheetData(result, options, logger);
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                logger?.LogError(ex, "Error extracting sheet data from Excel file bytes.");
+                throw new ExcelReaderException("Failed to extract sheet data from provided file bytes. See inner exception for details.", ex);
+            }
+        }
+
+        /// <summary>
+        /// Extracts data from an Excel sheet provided as a stream and returns it as an <see cref="ExcelSheetData"/>
+        /// object.
+        /// </summary>
+        /// <remarks>This method reads the Excel file as a ZIP archive and processes the specified sheet
+        /// based on the provided options. If no sheet name is specified in <paramref name="options"/>, a default sheet
+        /// will be used. Validation can be enabled through the <paramref name="options"/> parameter to ensure the
+        /// extracted data meets specific criteria.</remarks>
+        /// <param name="stream">A readable <see cref="Stream"/> containing the Excel file data. The stream must not be null or unreadable.</param>
+        /// <param name="options">Optional configuration settings for reading the Excel file, such as the target sheet name and validation
+        /// options. If not provided, default options will be used.</param>
+        /// <param name="logger">An optional <see cref="ILogger"/> instance for logging errors or diagnostic information during the
+        /// extraction process. If null, no logging will occur.</param>
+        /// <returns>An <see cref="ExcelSheetData"/> object containing the extracted data from the specified Excel sheet.</returns>
+        /// <exception cref="ArgumentException">Thrown if the <paramref name="stream"/> is null or unreadable.</exception>
+        /// <exception cref="ExcelReaderException">Thrown if the specified sheet name is not found and <see
+        /// cref="ExcelReaderOptions.ThrowExceptionIfSheetNameNotFound"/> is set to <see langword="true"/>, or if an
+        /// error occurs during the extraction process.</exception>
+        /// <exception cref="FileNotFoundException">Thrown if the resolved sheet file path is not found in the Excel file.</exception>
+        public static ExcelSheetData ExtractSheetData(Stream stream, ExcelReaderOptions? options = null, ILogger? logger = null)
+        {
+            try
+            {
+                if (stream?.CanRead != true)
+                    throw new ArgumentException("The provided stream cannot be null or unreadable.", nameof(stream));
+
+                options ??= new ExcelReaderOptions();
+                ExcelSheetData result = new();
+
+                using (ZipArchive archive = new(stream, ZipArchiveMode.Read, leaveOpen: false))
+                {
+                    List<string> sharedStrings = ExcelReaderHelper.LoadSharedStrings(archive);
+                    string? sheetPath = ExcelReaderHelper.ResolveSheetFilePath(archive, options.SheetName, logger);
+
+                    if (sheetPath is null)
+                    {
+                        if (options.ThrowExceptionIfSheetNameNotFound)
+                            throw new ExcelReaderException($"Sheet '{options.SheetName}' not found in workbook.");
+                        else
+                            sheetPath = ExcelDefaults.Worksheets.Sheet1PathName; // fallback
+                    }
+
+                    ZipArchiveEntry sheetEntry = archive.GetEntry(sheetPath)
+                        ?? throw new FileNotFoundException($"Sheet file '{sheetPath}' not found in the Excel file.");
+
+                    ExcelReaderHelper.WriteSheetData(sheetEntry, result, options, sharedStrings, logger);
+                }
+
+                if (options.EnableValidation)
+                    ExcelValidator.ValidateSheetData(result, options, logger);
 
                 return result;
             }

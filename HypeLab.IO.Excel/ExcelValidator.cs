@@ -17,16 +17,19 @@ namespace HypeLab.IO.Excel
     public static class ExcelValidator
     {
         /// <summary>
-        /// Validates the integrity and structure of the provided sheet data based on the specified options.
+        /// Validates the structure and content of the specified Excel sheet data according to the provided options.
         /// </summary>
-        /// <remarks>If <paramref name="options"/> specifies that the sheet has a header row, the method
-        /// validates the presence of a header, checks for duplicate headers, and ensures that all rows conform to the
-        /// header structure.</remarks>
-        /// <param name="sheet">The sheet data to validate. Cannot be <see langword="null"/>.</param>
-        /// <param name="options">The options that define validation rules, such as whether the sheet has a header row. Cannot be <see
-        /// langword="null"/>.</param>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="sheet"/> or <paramref name="options"/> is <see langword="null"/>.</exception>
-        public static void ValidateSheetData(ExcelSheetData sheet, ExcelReaderOptions options)
+        /// <remarks>This method checks for the presence and uniqueness of headers if <paramref
+        /// name="options"/> indicates that a header row is expected. It also validates that each row matches the header
+        /// structure. Use this method to ensure that the sheet data is suitable for further processing or
+        /// import.</remarks>
+        /// <param name="sheet">The <see cref="ExcelSheetData"/> instance representing the sheet data to validate. Cannot be <c>null</c>.</param>
+        /// <param name="options">The <see cref="ExcelReaderOptions"/> that specify validation rules and sheet parsing options. Cannot be
+        /// <c>null</c>.</param>
+        /// <param name="logger">An optional <see cref="ILogger"/> instance used to log validation warnings or errors. If <c>null</c>, no
+        /// logging is performed.</param>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="sheet"/> or <paramref name="options"/> is <c>null</c>.</exception>
+        public static void ValidateSheetData(ExcelSheetData sheet, ExcelReaderOptions options, ILogger? logger = null)
         {
             if (options == null)
                 throw new ArgumentNullException(nameof(options));
@@ -40,7 +43,7 @@ namespace HypeLab.IO.Excel
                 ValidateDuplicateHeaders(sheet);
             }
 
-            ValidateRowsAgainstHeader(sheet, options);
+            ValidateRowsAgainstHeader(sheet, options, logger);
         }
 
         /// <summary>
@@ -91,7 +94,7 @@ namespace HypeLab.IO.Excel
 
         private static void ValidateDuplicateHeaders(ExcelSheetData sheet)
         {
-            string[] duplicates = [.. sheet.Headers
+            string?[] duplicates = [.. sheet.Headers
            .GroupBy(h => h, StringComparer.OrdinalIgnoreCase)
            .Where(g => g.Count() > 1)
            .Select(g => g.Key)];
@@ -100,20 +103,26 @@ namespace HypeLab.IO.Excel
                 throw new InvalidOperationException($"Duplicate headers detected: {string.Join(", ", duplicates)}");
         }
 
-        private static void ValidateRowsAgainstHeader(ExcelSheetData sheet, ExcelReaderOptions options)
+        private static void ValidateRowsAgainstHeader(ExcelSheetData sheet, ExcelReaderOptions options, ILogger? logger = null)
         {
             if (!options.HasHeaderRow || sheet.Headers.Length == 0)
                 return;
 
             for (int i = 0; i < sheet.Rows.Count; i++)
             {
-                string[] row = sheet.Rows[i];
+                string?[] row = sheet.Rows[i];
                 int headerCount = sheet.Headers.Length;
 
                 if (row.Length > headerCount)
+                {
+                    logger?.LogWarning("Row {RowIndex} has more columns ({ColumnCount}) than the header ({HeaderCount}). Extra columns will be ignored.", i, row.Length, headerCount);
                     sheet.RowWarnings.Add(new RowWarning(i, $"Row has more columns ({row.Length}) than the header ({headerCount}). Extra columns will be ignored."));
+                }
                 else if (row.Length < headerCount)
+                {
+                    logger?.LogWarning("Row {RowIndex} has fewer columns ({ColumnCount}) than the header ({HeaderCount}). Missing columns will be empty.", i, row.Length, headerCount);
                     sheet.RowWarnings.Add(new RowWarning(i, $"Row has fewer columns ({row.Length}) than the header ({headerCount}). Missing columns will be empty."));
+                }
             }
         }
 

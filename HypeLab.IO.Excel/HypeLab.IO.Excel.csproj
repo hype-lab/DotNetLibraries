@@ -2,9 +2,9 @@
 	<PropertyGroup>
 		<PackageId>HypeLab.IO.Excel</PackageId>
 		<Title>Hype-Lab.IO.Excel</Title>
-		<AssemblyVersion>1.0.5.0</AssemblyVersion>
-		<PackageVersion>1.0.5</PackageVersion>
-		<Version>1.0.5</Version>
+		<AssemblyVersion>1.0.7.0</AssemblyVersion>
+		<PackageVersion>1.0.7</PackageVersion>
+		<Version>1.0.7</Version>
 		<Authors>Matt P</Authors>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<Company>Hype-Lab</Company>
@@ -12,18 +12,18 @@
 		<PackageTags>excel;openxml;reader;writer;import;export;parser;hype-lab;dotnet</PackageTags>
 		<PackageProjectUrl>https://hype-lab.it/strumenti-per-sviluppatori/excel</PackageProjectUrl>
 		<Copyright>©2025 Hype-Lab</Copyright>
-		<PackageReleaseNotes>Added MultipleTrueFalseWords type to support multiple true/false boolean casting within multiple columns of the same sheet.</PackageReleaseNotes>
+		<PackageReleaseNotes>Rows length normalization with respect to header length management; added exception throwing management in ExcelReader; converted sheet data rows and columns arrays to nullable string from non-nullable string; added new API in ExcrelReader to read sheet data from a stream; added new APIs in ExcelParser to bind a collection of T's directly from an input file, a byte array, or a stream (sync and async); added logger support in ExcelValidator methods; updated NuGets.</PackageReleaseNotes>
 		<RepositoryUrl>https://github.com/hype-lab/DotNetLibraries/tree/main/HypeLab.IO.Excel</RepositoryUrl>
-		<!-- anche privata va bene -->
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<!-- o LicenseUrl se usi un file -->
+		<!-- or LicenseUrl if using file -->
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<DocumentationFile>bin\$(Configuration)\$(TargetFramework)\HypeLab.IO.Excel.xml</DocumentationFile>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 
-		<!--<DebugType>none</DebugType>
+		<DebugType>none</DebugType>
 		<EmbedUntrackedSources>false</EmbedUntrackedSources>
-		<IncludeSymbols>false</IncludeSymbols>-->
+		<PublishRepositoryUrl>true</PublishRepositoryUrl>
+		<IncludeSymbols>false</IncludeSymbols>
 	</PropertyGroup>
 	
 	<PropertyGroup>
@@ -38,11 +38,7 @@
 		<None Include="README.md" Pack="true" PackagePath="" />
 	</ItemGroup>
 	
-	<!--<ItemGroup>
-	  <PackageReference Include="HypeLab.IO.Core" Version="1.0.4" />
-	</ItemGroup>-->
-	
 	<ItemGroup>
-	  <ProjectReference Include="..\HypeLab.IO.Core\HypeLab.IO.Core.csproj" />
+	  <PackageReference Include="HypeLab.IO.Core" Version="1.0.6" />
 	</ItemGroup>
 </Project>

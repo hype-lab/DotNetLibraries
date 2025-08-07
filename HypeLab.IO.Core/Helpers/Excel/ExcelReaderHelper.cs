@@ -8,7 +8,6 @@ using System.Diagnostics;
 using System.IO.Compression;
 using System.Text;
 using System.Xml;
-using System.Xml.Linq;
 
 namespace HypeLab.IO.Core.Helpers.Excel
 {
@@ -21,16 +20,16 @@ namespace HypeLab.IO.Core.Helpers.Excel
     public static class ExcelReaderHelper
     {
         private const int _maxExpectedColumns = 64; // Default number of columns to expect if not specified
+
         /// <summary>
-        /// Loads shared strings from the specified <see cref="ZipArchive"/>.
+        /// Loads the shared strings from the specified Excel workbook archive.
         /// </summary>
-        /// <remarks>This method reads the shared strings from the XML file within the provided archive.
-        /// Shared strings  are typically used in spreadsheet documents to store text values in a centralized manner,
-        /// reducing  duplication. Each shared string is extracted from the <c>si</c> elements in the XML
-        /// file.</remarks>
-        /// <param name="archive">The <see cref="ZipArchive"/> containing the shared strings file.</param>
-        /// <returns>A list of shared strings extracted from the archive. If the shared strings file is not found,  an empty list
-        /// is returned.</returns>
+        /// <remarks>Shared strings are typically used in Excel files to store text values in a
+        /// centralized location,  allowing for efficient reuse across multiple cells. This method reads the shared
+        /// strings file  (if present) and parses its contents into a list of strings.</remarks>
+        /// <param name="archive">The <see cref="ZipArchive"/> representing the Excel workbook from which to load shared strings.</param>
+        /// <returns>A list of shared strings extracted from the workbook. Returns an empty list if the shared strings file is
+        /// not present in the archive.</returns>
         public static List<string> LoadSharedStrings(ZipArchive archive)
         {
             ZipArchiveEntry? entry = archive.GetEntry(ExcelDefaults.SharedStringsFileName);
@@ -39,14 +38,14 @@ namespace HypeLab.IO.Core.Helpers.Excel
                 return [];
 
             List<string> sharedStrings = [];
-            using var reader = XmlReader.Create(entry.Open());
+            using XmlReader reader = XmlReader.Create(entry.Open());
             while (reader.Read())
             {
                 if (reader.NodeType == XmlNodeType.Element && reader.Name == "si")
                 {
                     StringBuilder currentText = new();
 
-                    using (var subtree = reader.ReadSubtree())
+                    using (XmlReader subtree = reader.ReadSubtree())
                     {
                         while (subtree.Read())
                         {
@@ -92,17 +91,23 @@ namespace HypeLab.IO.Core.Helpers.Excel
         }
 
         /// <summary>
-        /// Writes sheet data from the specified Excel sheet entry into the provided <see cref="ExcelSheetData"/>
-        /// object.
+        /// Reads and processes the data from a worksheet entry in an Excel file, populating the provided <see
+        /// cref="ExcelSheetData"/> object with the parsed rows and headers.
         /// </summary>
-        /// <remarks>This method reads the contents of an Excel sheet entry, processes its rows and cells,
-        /// and populates the <see cref="ExcelSheetData"/> object with headers and rows. It supports shared strings and
-        /// handles header rows based on the provided <see cref="ExcelReaderOptions"/>.</remarks>
-        /// <param name="sheetEntry">The <see cref="ZipArchiveEntry"/> representing the Excel sheet to be read.</param>
-        /// <param name="result">The <see cref="ExcelSheetData"/> object to populate with the sheet's data.</param>
-        /// <param name="options">The options specifying how the sheet data should be processed, including header row handling.</param>
-        /// <param name="sharedStrings">A list of shared strings used to resolve cell values marked as shared strings.</param>
-        /// <param name="logger">An optional <see cref="ILogger"/> instance for logging warnings or informational messages.</param>
+        /// <remarks>This method reads the XML content of the worksheet, processes rows and cells, and
+        /// populates the <paramref name="result"/> object with the parsed data. It supports handling shared strings,
+        /// header rows, and row length normalization based on the provided <paramref name="options"/>. <para> If the
+        /// worksheet contains a header row (as specified in <paramref name="options"/>), the header values are stored
+        /// in the <see cref="ExcelSheetData.Headers"/> property. Subsequent rows are added to the <see
+        /// cref="ExcelSheetData.Rows"/> collection. </para> <para> Warnings are logged if rows contain more columns
+        /// than the header row or if invalid cell references are encountered. These warnings are also added to the <see
+        /// cref="ExcelSheetData.RowWarnings"/> collection. </para></remarks>
+        /// <param name="sheetEntry">The <see cref="ZipArchiveEntry"/> representing the worksheet to be read.</param>
+        /// <param name="result">The <see cref="ExcelSheetData"/> object where the parsed data will be stored, including headers and rows.</param>
+        /// <param name="options">The <see cref="ExcelReaderOptions"/> specifying how the worksheet data should be processed, such as header
+        /// row handling and row normalization.</param>
+        /// <param name="sharedStrings">A list of shared strings used to resolve cell values that reference shared string indices.</param>
+        /// <param name="logger">An optional <see cref="ILogger"/> instance for logging warnings or errors encountered during processing.</param>
         public static void WriteSheetData(ZipArchiveEntry sheetEntry, ExcelSheetData result, ExcelReaderOptions options, List<string> sharedStrings, ILogger? logger = null)
         {
             using Stream stream = sheetEntry.Open();
@@ -113,37 +118,65 @@ namespace HypeLab.IO.Core.Helpers.Excel
 
             while (reader.Read())
             {
-                // START ROW
-                if (reader.NodeType == XmlNodeType.Element && reader.Name == "row") // "row" is the row element
+                if (reader.NodeType == XmlNodeType.Element && reader.Name == "row")
                 {
-                    rowBuffer.Reset(); // reset the row buffer for each new row
+                    rowBuffer.Reset();
+                    int rowDepth = reader.Depth;
 
+                    int inferredColumnIndex = 0;
                     string? cellRef = null;
                     string? cellType = null;
                     string? cellValue = null;
-                    using XmlReader rowSubtree = reader.ReadSubtree();
-                    while (rowSubtree.Read())
+
+                    while (reader.Read() && reader.Depth > rowDepth)
                     {
-                        if (rowSubtree.NodeType == XmlNodeType.Element && rowSubtree.Name == "c") // "c" is the cell element
+                        if (reader.NodeType == XmlNodeType.Element && reader.Name == "c")
                         {
-                            cellRef = rowSubtree.GetAttribute("r"); // "r" is the cell reference, e.g., "A1"
-                            cellType = rowSubtree.GetAttribute("t"); // "t" is the type attribute, e.g., "s" for shared string
+                            cellRef = reader.GetAttribute("r");
+                            cellType = reader.GetAttribute("t");
                         }
-                        else if (rowSubtree.NodeType == XmlNodeType.Element && rowSubtree.Name == "v") // "v" is the value element
+                        else if (reader.NodeType == XmlNodeType.Element && reader.Name == "v")
                         {
-                            cellValue = rowSubtree.ReadElementContentAsString();
+                            cellValue = reader.ReadElementContentAsString();
 
-                            int colIndex = ExcelParserHelper.ParseColumnIndex(cellRef);
+                            int colIndex;
+                            string? errorMessage = null;
+                            if (!string.IsNullOrWhiteSpace(cellRef))
+                            {
+                                try
+                                {
+                                    colIndex = ExcelParserHelper.ParseColumnIndex(cellRef);
+                                }
+                                catch (Exception ex)
+                                {
+                                    colIndex = inferredColumnIndex;
+                                    errorMessage = $"Invalid cell reference '{cellRef}' at row {currentRowIndex}:\n{ex.GetFullMessage()}.";
+                                }
+                            }
+                            else
+                            {
+                                colIndex = inferredColumnIndex;
+                                errorMessage = $"Cell reference is null or empty at row {currentRowIndex}.";
+                            }
 
-                            // usando un RowBuffer, non ho più bisogno di gestire la dimensione della riga manualmente, perché il RowBuffer si espande automaticamente
-                            // anche evitare questo passaggio dovrebbe ottimizzare le prestazioni un minimo
-                            //while (rowBuffer.Count <= colIndex)
-                            //{
-                            //    rowBuffer.Set(colIndex, string.Empty); // auto-expand the row if necessary
-                            //}
+                            if (!string.IsNullOrWhiteSpace(errorMessage))
+                            {
+                                if (!options.ThrowExceptionOnError)
+                                {
+                                    errorMessage += $"\nFalling back to inferred index {colIndex}.";
+                                    // Log the warning if not throwing an exception
+                                    logger?.LogWarning("{ErrorMessage}", errorMessage);
+                                    Debug.WriteLine(errorMessage);
+                                    result.RowWarnings.Add(new RowWarning(currentRowIndex, errorMessage));
+                                }
+                                else
+                                {
+                                    throw new InvalidCellReferenceException(errorMessage);
+                                }
+                            }
 
                             string? finalValue = cellValue;
-                            if (string.Equals(cellType, "s", StringComparison.OrdinalIgnoreCase) // "s" indicates a shared string
+                            if (string.Equals(cellType, "s", StringComparison.OrdinalIgnoreCase)
                                 && int.TryParse(cellValue, out int sharedIndex)
                                 && sharedIndex >= 0 && sharedIndex < sharedStrings.Count)
                             {
@@ -152,18 +185,25 @@ namespace HypeLab.IO.Core.Helpers.Excel
 
                             rowBuffer.Set(colIndex, finalValue ?? string.Empty);
                         }
+
+                        // always increment at every end element of a cell
+                        if (reader.NodeType == XmlNodeType.EndElement && reader.Name == "c")
+                            inferredColumnIndex++;
                     }
 
                     int colCount = rowBuffer.Count;
 
                     if (options.HasHeaderRow && currentRowIndex == options.HeaderRowIndex)
                     {
-                        result.Headers = rowBuffer.ToArray(); // copy the row buffer to headers
+                        result.Headers = rowBuffer.ToArray();
                     }
                     else if (currentRowIndex > options.HeaderRowIndex || !options.HasHeaderRow)
                     {
                         if (options.HasHeaderRow && colCount > result.Headers.Length)
                         {
+                            if (options.ThrowExceptionOnError)
+                                throw new RowLargerThanHeaderException($"Row {currentRowIndex} has more columns ({colCount}) than header ({result.Headers.Length}).");
+
                             string msg = $"Warning: Row has more columns ({colCount}) than header ({result.Headers.Length}). Extra columns will be ignored.";
                             logger?.LogWarning("{Msg}", msg);
                             Debug.WriteLine(msg);
@@ -171,14 +211,17 @@ namespace HypeLab.IO.Core.Helpers.Excel
                             result.RowWarnings.Add(new RowWarning(currentRowIndex, msg));
                         }
 
-                        result.Rows.Add(rowBuffer.ToArray()); // copy the row buffer to rows
+                        if (options.NormalizeRowLength && options.HasHeaderRow && result.Headers.Length > 0)
+                            rowBuffer.PadToLength(result.Headers.Length);
+
+                        result.Rows.Add(rowBuffer.ToArray());
                     }
 
                     currentRowIndex++;
                 }
             }
 
-            rowBuffer.Return(); // return the row buffer to the pool
+            rowBuffer.Return();
         }
 
         /// <summary>
