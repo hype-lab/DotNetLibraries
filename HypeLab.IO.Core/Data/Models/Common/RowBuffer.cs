@@ -7,7 +7,7 @@ namespace HypeLab.IO.Core.Data.Models.Common
     /// </summary>
     public ref struct RowBuffer
     {
-        private readonly string[] _array;
+        private readonly string?[] _array;
 
         private int _count;
 
@@ -20,7 +20,7 @@ namespace HypeLab.IO.Core.Data.Models.Common
         /// <param name="size">The initial capacity of the buffer. Must be a positive integer.</param>
         public RowBuffer(int size)
         {
-            _array = ArrayPool<string>.Shared.Rent(size);
+            _array = ArrayPool<string?>.Shared.Rent(size);
             _count = 0;
         }
 
@@ -37,7 +37,7 @@ namespace HypeLab.IO.Core.Data.Models.Common
         /// <param name="index">The zero-based index at which to set the value. Must be within the bounds of the array.</param>
         /// <param name="value">The value to set at the specified index.</param>
         /// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="index"/> is less than 0 or greater than or equal to the length of the array.</exception>
-        public void Set(int index, string value)
+        public void Set(int index, string? value)
         {
             if ((uint)index >= (uint)_array.Length)
                 throw new ArgumentOutOfRangeException(nameof(index));
@@ -52,9 +52,9 @@ namespace HypeLab.IO.Core.Data.Models.Common
         /// Converts the current collection to an array.
         /// </summary>
         /// <returns>An array containing all elements in the collection, in the same order as they appear in the collection.</returns>
-        public readonly string[] ToArray()
+        public readonly string?[] ToArray()
         {
-            string[] result = new string[_count];
+            string?[] result = new string?[_count];
             Array.Copy(_array, 0, result, 0, _count);
             return result;
         }
@@ -78,7 +78,22 @@ namespace HypeLab.IO.Core.Data.Models.Common
         /// ensure no sensitive or stale data remains.</remarks>
         public readonly void Return()
         {
-            ArrayPool<string>.Shared.Return(_array, clearArray: true);
+            ArrayPool<string?>.Shared.Return(_array, clearArray: true);
+        }
+
+        /// <summary>
+        /// Pads the collection with empty strings until it reaches the specified target length.
+        /// </summary>
+        /// <remarks>This method adds empty strings to the collection starting from the current count
+        /// until the total number of elements equals <paramref name="targetLength"/>.  If <paramref
+        /// name="targetLength"/> is less than the current count, the method does nothing.</remarks>
+        /// <param name="targetLength">The desired length of the collection. Must be greater than or equal to the current count.</param>
+        public void PadToLength(int targetLength)
+        {
+            for (int i = _count; i < targetLength; i++)
+            {
+                Set(i, null);
+            }
         }
     }
 }

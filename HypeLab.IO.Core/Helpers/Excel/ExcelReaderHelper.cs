@@ -1,6 +1,7 @@
 ﻿using HypeLab.IO.Core.Data.Models.Common;
 using HypeLab.IO.Core.Data.Models.Excel;
 using HypeLab.IO.Core.Data.Options.Impl.Excel;
+using HypeLab.IO.Core.Exceptions;
 using HypeLab.IO.Core.Helpers.Const;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
@@ -90,20 +91,23 @@ namespace HypeLab.IO.Core.Helpers.Excel
         }
 
         /// <summary>
-        /// Reads and processes sheet data from an Excel file and writes the parsed content into the provided <see
-        /// cref="ExcelSheetData"/> object.
+        /// Reads and processes the data from a worksheet entry in an Excel file, populating the provided <see
+        /// cref="ExcelSheetData"/> object with the parsed rows and headers.
         /// </summary>
-        /// <remarks>This method processes the XML content of the specified sheet entry, extracting rows
-        /// and cells based on the provided options. If the sheet contains a header row, it will be stored in the <see
-        /// cref="ExcelSheetData.Headers"/> property. Subsequent rows will be added to the <see
-        /// cref="ExcelSheetData.Rows"/> collection.  If a row contains more columns than the header row, a warning will
-        /// be logged and extra columns will be ignored. Shared string references in cells are resolved using the
-        /// <paramref name="sharedStrings"/> list.</remarks>
-        /// <param name="sheetEntry">The <see cref="ZipArchiveEntry"/> representing the sheet to be processed.</param>
-        /// <param name="result">The <see cref="ExcelSheetData"/> object where the parsed sheet data will be stored.</param>
-        /// <param name="options">The <see cref="ExcelReaderOptions"/> specifying how the sheet data should be read and processed.</param>
-        /// <param name="sharedStrings">A list of shared strings used for resolving cell values in the sheet.</param>
-        /// <param name="logger">An optional <see cref="ILogger"/> instance for logging warnings or informational messages during processing.</param>
+        /// <remarks>This method reads the XML content of the worksheet, processes rows and cells, and
+        /// populates the <paramref name="result"/> object with the parsed data. It supports handling shared strings,
+        /// header rows, and row length normalization based on the provided <paramref name="options"/>. <para> If the
+        /// worksheet contains a header row (as specified in <paramref name="options"/>), the header values are stored
+        /// in the <see cref="ExcelSheetData.Headers"/> property. Subsequent rows are added to the <see
+        /// cref="ExcelSheetData.Rows"/> collection. </para> <para> Warnings are logged if rows contain more columns
+        /// than the header row or if invalid cell references are encountered. These warnings are also added to the <see
+        /// cref="ExcelSheetData.RowWarnings"/> collection. </para></remarks>
+        /// <param name="sheetEntry">The <see cref="ZipArchiveEntry"/> representing the worksheet to be read.</param>
+        /// <param name="result">The <see cref="ExcelSheetData"/> object where the parsed data will be stored, including headers and rows.</param>
+        /// <param name="options">The <see cref="ExcelReaderOptions"/> specifying how the worksheet data should be processed, such as header
+        /// row handling and row normalization.</param>
+        /// <param name="sharedStrings">A list of shared strings used to resolve cell values that reference shared string indices.</param>
+        /// <param name="logger">An optional <see cref="ILogger"/> instance for logging warnings or errors encountered during processing.</param>
         public static void WriteSheetData(ZipArchiveEntry sheetEntry, ExcelSheetData result, ExcelReaderOptions options, List<string> sharedStrings, ILogger? logger = null)
         {
             using Stream stream = sheetEntry.Open();
@@ -114,22 +118,20 @@ namespace HypeLab.IO.Core.Helpers.Excel
 
             while (reader.Read())
             {
-                // START ROW
                 if (reader.NodeType == XmlNodeType.Element && reader.Name == "row")
                 {
-                    rowBuffer.Reset(); // reset the row buffer for each new row
+                    rowBuffer.Reset();
+                    int rowDepth = reader.Depth;
 
-                    int rowDepth = reader.Depth; // store the current row depth to handle nested elements correctly
-
+                    int inferredColumnIndex = 0;
                     string? cellRef = null;
                     string? cellType = null;
                     string? cellValue = null;
 
-                    while (reader.Read() && reader.Depth > rowDepth) // check if we are still within the current row
+                    while (reader.Read() && reader.Depth > rowDepth)
                     {
                         if (reader.NodeType == XmlNodeType.Element && reader.Name == "c")
                         {
-                            // reset per ogni nuova cella
                             cellRef = reader.GetAttribute("r");
                             cellType = reader.GetAttribute("t");
                         }
@@ -137,7 +139,41 @@ namespace HypeLab.IO.Core.Helpers.Excel
                         {
                             cellValue = reader.ReadElementContentAsString();
 
-                            int colIndex = ExcelParserHelper.ParseColumnIndex(cellRef);
+                            int colIndex;
+                            string? errorMessage = null;
+                            if (!string.IsNullOrWhiteSpace(cellRef))
+                            {
+                                try
+                                {
+                                    colIndex = ExcelParserHelper.ParseColumnIndex(cellRef);
+                                }
+                                catch (Exception ex)
+                                {
+                                    colIndex = inferredColumnIndex;
+                                    errorMessage = $"Invalid cell reference '{cellRef}' at row {currentRowIndex}:\n{ex.GetFullMessage()}.";
+                                }
+                            }
+                            else
+                            {
+                                colIndex = inferredColumnIndex;
+                                errorMessage = $"Cell reference is null or empty at row {currentRowIndex}.";
+                            }
+
+                            if (!string.IsNullOrWhiteSpace(errorMessage))
+                            {
+                                if (!options.ThrowExceptionOnError)
+                                {
+                                    errorMessage += $"\nFalling back to inferred index {colIndex}.";
+                                    // Log the warning if not throwing an exception
+                                    logger?.LogWarning("{ErrorMessage}", errorMessage);
+                                    Debug.WriteLine(errorMessage);
+                                    result.RowWarnings.Add(new RowWarning(currentRowIndex, errorMessage));
+                                }
+                                else
+                                {
+                                    throw new InvalidCellReferenceException(errorMessage);
+                                }
+                            }
 
                             string? finalValue = cellValue;
                             if (string.Equals(cellType, "s", StringComparison.OrdinalIgnoreCase)
@@ -149,18 +185,25 @@ namespace HypeLab.IO.Core.Helpers.Excel
 
                             rowBuffer.Set(colIndex, finalValue ?? string.Empty);
                         }
+
+                        // always increment at every end element of a cell
+                        if (reader.NodeType == XmlNodeType.EndElement && reader.Name == "c")
+                            inferredColumnIndex++;
                     }
 
                     int colCount = rowBuffer.Count;
 
                     if (options.HasHeaderRow && currentRowIndex == options.HeaderRowIndex)
                     {
-                        result.Headers = rowBuffer.ToArray(); // copy the row buffer to headers
+                        result.Headers = rowBuffer.ToArray();
                     }
                     else if (currentRowIndex > options.HeaderRowIndex || !options.HasHeaderRow)
                     {
                         if (options.HasHeaderRow && colCount > result.Headers.Length)
                         {
+                            if (options.ThrowExceptionOnError)
+                                throw new RowLargerThanHeaderException($"Row {currentRowIndex} has more columns ({colCount}) than header ({result.Headers.Length}).");
+
                             string msg = $"Warning: Row has more columns ({colCount}) than header ({result.Headers.Length}). Extra columns will be ignored.";
                             logger?.LogWarning("{Msg}", msg);
                             Debug.WriteLine(msg);
@@ -168,14 +211,17 @@ namespace HypeLab.IO.Core.Helpers.Excel
                             result.RowWarnings.Add(new RowWarning(currentRowIndex, msg));
                         }
 
-                        result.Rows.Add(rowBuffer.ToArray()); // copy the row buffer to rows
+                        if (options.NormalizeRowLength && options.HasHeaderRow && result.Headers.Length > 0)
+                            rowBuffer.PadToLength(result.Headers.Length);
+
+                        result.Rows.Add(rowBuffer.ToArray());
                     }
 
                     currentRowIndex++;
                 }
             }
 
-            rowBuffer.Return(); // return the row buffer to the pool
+            rowBuffer.Return();
         }
 
         /// <summary>

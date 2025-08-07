@@ -60,5 +60,16 @@ namespace HypeLab.IO.Core.Data.Options.Impl.Excel
         /// Gets or sets a value indicating whether validation is enabled. (default: <see langword="true"/>)
         /// </summary>
         public bool EnableValidation { get; set; } = true;
+
+        /// <summary>
+        /// Gets or sets a value indicating whether rows should be normalized to have the same length.
+        /// </summary>
+        /// <remarks>If rows have empty cells, they will be filled with <see langword="null"/> values to ensure that all rows have the same length as the header row.</remarks>
+        public bool NormalizeRowLength { get; set; } = true;
+
+        /// <summary>
+        /// Gets or sets a value indicating whether exceptions should be thrown when an error occurs.
+        /// </summary>
+        public bool ThrowExceptionOnError { get; set; } = true;
     }
 }

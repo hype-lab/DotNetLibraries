@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+using System.Text;
 
 namespace HypeLab.IO.Core.Helpers.Excel
 {
@@ -116,16 +117,17 @@ namespace HypeLab.IO.Core.Helpers.Excel
             }
 
             // if any of these is not present in the indexMap, throw an exception
-            foreach (PropertyInfo prop in props.Where(p => p.GetCustomAttribute<ExcelColumnAttribute>() is ExcelColumnAttribute att && att.ThrowExceptionIfNotFound))
+            StringBuilder columnsNotFoundSb = new();
+            foreach (string pName in props.Where(p => p.GetCustomAttribute<ExcelColumnAttribute>() is ExcelColumnAttribute att && att.ThrowExceptionIfNotFound && !indexMap.Values.Contains(p)).Select(s => s.Name))
             {
-                if (!indexMap.Values.Contains(prop))
-                {
-                    string msg = $"Property '{prop.Name}' is marked as required but no column index mapping found.";
-                    logger?.LogError("{Msg}", msg);
-                    Debug.WriteLine(msg);
-                    throw new ColumnNotFoundException(msg);
-                }
+                string msg = $"Property '{pName}' is marked as required but no column index mapping found.";
+                logger?.LogError("{Msg}", msg);
+                Debug.WriteLine(msg);
+                columnsNotFoundSb.AppendLine(msg);
             }
+
+            if (columnsNotFoundSb.Length > 0)
+                throw new ColumnNotFoundException(columnsNotFoundSb.ToString().TrimEnd());
         }
 
         /// <summary>
@@ -161,7 +163,7 @@ namespace HypeLab.IO.Core.Helpers.Excel
             object?[] values = new object?[colCount];
             for (int rowIndex = 0; rowIndex < data.Rows.Count; rowIndex++)
             {
-                string[] row = data.Rows[rowIndex];
+                string?[] row = data.Rows[rowIndex];
                 Array.Clear(values, 0, values.Length);
 
                 for (int i = 0; i < row.Length && i < propByIndex.Length; i++)
@@ -169,15 +171,13 @@ namespace HypeLab.IO.Core.Helpers.Excel
                     PropertyInfo prop = propByIndex[i];
                     if (prop == null) continue;
 
-                    string cellValue = row[i];
+                    string? cellValue = row[i];
                     Type propertyType = Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType;
 
                     if (string.IsNullOrWhiteSpace(cellValue))
                     {
                         values[i] = null;
                         logger?.LogWarning("Property '{Name}' set to null for row {RowIndex}: cell is empty.", prop.Name, rowIndex);
-                        errors ??= [];
-                        errors.Add(new ExcelParseError(prop.Name, $"Empty value at row {rowIndex}.", rowIndex));
                         continue;
                     }
 
@@ -189,7 +189,7 @@ namespace HypeLab.IO.Core.Helpers.Excel
                         }
                         else
                         {
-                            var msg = $"Failed to convert '{cellValue}' to {propertyType.Name} for property '{prop.Name}' at row {rowIndex}.";
+                            string msg = $"Failed to convert '{cellValue}' to {propertyType.Name} for property '{prop.Name}' at row {rowIndex}.";
                             logger?.LogWarning(msg);
                             errors ??= [];
                             errors.Add(new ExcelParseError(prop.Name, msg, rowIndex));

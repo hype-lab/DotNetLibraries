@@ -24,10 +24,17 @@
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<DocumentationFile>bin\$(Configuration)\$(TargetFramework)\HypeLab.IO.Core.xml</DocumentationFile>
 
-		<DebugType>none</DebugType>
-		<EmbedUntrackedSources>false</EmbedUntrackedSources>
-		<PublishRepositoryUrl>false</PublishRepositoryUrl>
-		<IncludeSymbols>false</IncludeSymbols>
+		<!--
+			<DebugType>none</DebugType>
+			<EmbedUntrackedSources>false</EmbedUntrackedSources>
+			<PublishRepositoryUrl>false</PublishRepositoryUrl>
+			<IncludeSymbols>false</IncludeSymbols>
+		-->
+
+		<DebugType>full</DebugType>
+		<EmbedUntrackedSources>true</EmbedUntrackedSources>
+		<PublishRepositoryUrl>true</PublishRepositoryUrl>
+		<IncludeSymbols>true</IncludeSymbols>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -35,7 +42,7 @@
 	</ItemGroup>
 	<!-- Pacchetti comuni -->
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.6" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.8" />
 		<PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
 	</ItemGroup>
 </Project>

@@ -73,6 +73,80 @@ namespace HypeLab.IO.Excel
         }
 
         /// <summary>
+        /// Parses the specified Excel file into a collection of objects of type <typeparamref name="T"/>.
+        /// </summary>
+        /// <remarks>This method reads the specified Excel file, extracts its data, and converts it into a
+        /// collection of objects of type <typeparamref name="T"/>. The parsing process is influenced by the provided
+        /// <paramref name="options"/> and may log diagnostic information if a <paramref name="logger"/> is
+        /// supplied.</remarks>
+        /// <typeparam name="T">The type of objects to parse the Excel data into. Must be a reference type.</typeparam>
+        /// <param name="filePath">The full path to the Excel file to be parsed. This parameter cannot be <see langword="null"/> or empty.</param>
+        /// <param name="options">Optional configuration for reading and parsing the Excel file. If <see langword="null"/>, default options
+        /// will be used.</param>
+        /// <param name="logger">An optional logger instance for capturing diagnostic or error information during the parsing process. If
+        /// <see langword="null"/>, no logging will occur.</param>
+        /// <returns>An <see cref="ExcelParseResult{T}"/> containing the parsed objects and any associated metadata or errors.</returns>
+        public static ExcelParseResult<T> ParseTo<T>(string filePath, ExcelImportOptions? options = null, ILogger? logger = null)
+            where T : class
+        {
+            options ??= new ExcelImportOptions();
+
+            using FileStream stream = File.OpenRead(filePath);
+            ExcelSheetData sheetData = ExcelReader.ExtractSheetData(filePath, options.Reader, logger);
+
+            return ParseTo<T>(sheetData, options.Parser, logger: logger);
+        }
+
+        /// <summary>
+        /// Parses the specified Excel file bytes into a collection of objects of type <typeparamref name="T"/>.
+        /// </summary>
+        /// <remarks>This method reads the provided Excel file bytes and parses each row into an instance
+        /// of <typeparamref name="T"/> according to the specified import options. Use the <paramref name="options"/>
+        /// parameter to customize reading and parsing behavior. If logging is required, provide an <paramref
+        /// name="logger"/>.</remarks>
+        /// <typeparam name="T">The type of objects to parse each row of the Excel file into. Must be a reference type.</typeparam>
+        /// <param name="fileBytes">The byte array containing the contents of the Excel file to parse. Cannot be <see langword="null"/>.</param>
+        /// <param name="options">The options to use for importing and parsing the Excel file. If <see langword="null"/>, default options are
+        /// used.</param>
+        /// <param name="logger">An optional logger for capturing diagnostic or error information during parsing. May be <see
+        /// langword="null"/>.</param>
+        /// <param name="cancellationToken">A token to monitor for cancellation requests. The operation is canceled if the token is triggered.</param>
+        /// <returns>An <see cref="ExcelParseResult{T}"/> containing the parsed objects and any associated parsing results or
+        /// errors.</returns>
+        public static ExcelParseResult<T> ParseTo<T>(byte[] fileBytes, ExcelImportOptions? options = null, ILogger? logger = null, CancellationToken cancellationToken = default)
+            where T : class
+        {
+            options ??= new ExcelImportOptions();
+
+            ExcelSheetData sheetData = ExcelReader.ExtractSheetData(fileBytes, options.Reader, logger);
+
+            return ParseTo<T>(sheetData, options.Parser, logger: logger);
+        }
+
+        /// <summary>
+        /// Parses the content of an Excel stream into a strongly-typed collection of objects.
+        /// </summary>
+        /// <remarks>This method reads the Excel data from the provided stream, processes it using the
+        /// specified or default options,  and converts it into a collection of objects of type <typeparamref
+        /// name="T"/>. The parsing process may log  warnings or errors if issues are encountered in the data.</remarks>
+        /// <typeparam name="T">The type of objects to parse the Excel data into. Must be a reference type.</typeparam>
+        /// <param name="stream">The input stream containing the Excel file data. The stream must be readable and positioned at the beginning
+        /// of the file.</param>
+        /// <param name="options">Optional configuration for customizing the Excel import process, such as reader and parser settings. If not
+        /// provided, default options will be used.</param>
+        /// <param name="logger">An optional logger for capturing diagnostic or error information during the parsing process.</param>
+        /// <returns>An <see cref="ExcelParseResult{T}"/> containing the parsed objects and any associated metadata or errors.</returns>
+        public static ExcelParseResult<T> ParseTo<T>(Stream stream, ExcelImportOptions? options = null, ILogger? logger = null)
+            where T : class
+        {
+            options ??= new ExcelImportOptions();
+
+            ExcelSheetData sheetData = ExcelReader.ExtractSheetData(stream, options.Reader, logger);
+
+            return ParseTo<T>(sheetData, options.Parser, logger: logger);
+        }
+
+        /// <summary>
         /// Parses the provided sheet data into a collection of objects of type <typeparamref name="T"/> asynchronously.
         /// </summary>
         /// <remarks>This method processes the sheet data in chunks to avoid blocking the calling thread,
@@ -137,6 +211,74 @@ namespace HypeLab.IO.Excel
                 logger?.LogError(ex, "{Msg}", msg);
                 throw new ExcelParserException(msg, ex);
             }
+        }
+
+        /// <summary>
+        /// Asynchronously parses an Excel file into a collection of objects of the specified type.
+        /// </summary>
+        /// <remarks>This method reads the specified Excel file, extracts its data, and parses it into a
+        /// collection of objects of type <typeparamref name="T"/>. The parsing process is influenced by the provided
+        /// <paramref name="options"/>, which can specify custom readers, parsers, or other settings.</remarks>
+        /// <typeparam name="T">The type of objects to parse the Excel data into. Must be a reference type.</typeparam>
+        /// <param name="filePath">The full path to the Excel file to be parsed. This cannot be null or empty.</param>
+        /// <param name="options">Optional configuration for reading and parsing the Excel file. If not provided, default options will be
+        /// used.</param>
+        /// <param name="logger">An optional logger instance for capturing diagnostic or error information during the parsing process.</param>
+        /// <param name="cancellationToken">A token to monitor for cancellation requests. If the operation is canceled, the returned task will be
+        /// canceled.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains an <see
+        /// cref="ExcelParseResult{T}"/> object, which includes the parsed data and any associated metadata or errors.</returns>
+        public static async Task<ExcelParseResult<T>> ParseToAsync<T>(string filePath, ExcelImportOptions? options = null, ILogger? logger = null, CancellationToken cancellationToken = default)
+            where T : class
+        {
+            options ??= new ExcelImportOptions();
+            return await ParseToAsync<T>(ExcelReader.ExtractSheetData(filePath, options.Reader, logger), options.Parser, logger: logger, cancellationToken: cancellationToken).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Asynchronously parses the provided Excel file into a collection of objects of the specified type.
+        /// </summary>
+        /// <remarks>This method reads the Excel file from the provided byte array, extracts the sheet
+        /// data, and parses it into objects of type <typeparamref name="T"/>. The parsing process can be customized
+        /// using the <paramref name="options"/> parameter.</remarks>
+        /// <typeparam name="T">The type of objects to parse the Excel data into. Must be a reference type.</typeparam>
+        /// <param name="fileBytes">The byte array representing the contents of the Excel file to parse. Cannot be null or empty.</param>
+        /// <param name="options">Optional configuration for customizing the Excel import process, including reader and parser settings. If
+        /// not provided, default options will be used.</param>
+        /// <param name="logger">An optional <see cref="ILogger"/> instance for logging diagnostic or error information during the parsing
+        /// process.</param>
+        /// <param name="cancellationToken">A token to monitor for cancellation requests. If the operation is canceled, the returned task will be in a
+        /// canceled state.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains an <see
+        /// cref="ExcelParseResult{T}"/> with the parsed data and any associated metadata or errors.</returns>
+        public static async Task<ExcelParseResult<T>> ParseToAsync<T>(byte[] fileBytes, ExcelImportOptions? options = null, ILogger? logger = null, CancellationToken cancellationToken = default)
+            where T : class
+        {
+            options ??= new ExcelImportOptions();
+            return await ParseToAsync<T>(ExcelReader.ExtractSheetData(fileBytes, options.Reader, logger), options.Parser, logger: logger, cancellationToken: cancellationToken).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Asynchronously parses the content of an Excel stream into a collection of objects of the specified type.
+        /// </summary>
+        /// <remarks>This method reads the Excel data from the provided stream, extracts the sheet data,
+        /// and parses it into objects of type <typeparamref name="T"/>. The parsing process can be customized using the
+        /// <paramref name="options"/> parameter.</remarks>
+        /// <typeparam name="T">The type of objects to parse the Excel data into. Must be a reference type.</typeparam>
+        /// <param name="stream">The input stream containing the Excel data to parse. The stream must be readable and positioned at the
+        /// beginning of the data.</param>
+        /// <param name="options">Optional configuration for customizing the Excel import process, such as reader and parser settings. If not
+        /// provided, default options will be used.</param>
+        /// <param name="logger">An optional logger instance for capturing diagnostic or error information during the parsing process. If
+        /// null, no logging will occur.</param>
+        /// <param name="cancellationToken">A token to monitor for cancellation requests. Parsing will be canceled if the token is triggered.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains an <see
+        /// cref="ExcelParseResult{T}"/> object,  which includes the parsed data and any associated metadata or errors.</returns>
+        public static async Task<ExcelParseResult<T>> ParseToAsync<T>(Stream stream, ExcelImportOptions? options = null, ILogger? logger = null, CancellationToken cancellationToken = default)
+            where T : class
+        {
+            options ??= new ExcelImportOptions();
+            return await ParseToAsync<T>(ExcelReader.ExtractSheetData(stream, options.Reader, logger), options.Parser, logger: logger, cancellationToken: cancellationToken).ConfigureAwait(false);
         }
     }
 }

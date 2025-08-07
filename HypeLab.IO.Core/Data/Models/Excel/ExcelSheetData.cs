@@ -12,12 +12,12 @@ namespace HypeLab.IO.Core.Data.Models.Excel
         /// <summary>
         /// Gets or sets the collection of header names.
         /// </summary>
-        public string[] Headers { get; set; } = [];
+        public string?[] Headers { get; set; } = [];
 
         /// <summary>
         /// Gets or sets the collection of rows, where each row is represented as an array of strings.
         /// </summary>
-        public List<string[]> Rows { get; set; } = [];
+        public List<string?[]> Rows { get; set; } = [];
 
         /// <summary>
         /// Gets or sets the collection of warnings associated with individual rows.
@@ -33,7 +33,7 @@ namespace HypeLab.IO.Core.Data.Models.Excel
         /// <summary>
         /// Gets a dictionary that maps header names to their corresponding index positions.
         /// </summary>
-        public Dictionary<string, int> HeaderIndexMap
+        public Dictionary<string?, int> HeaderIndexMap
             => Headers.Where(x => !string.IsNullOrEmpty(x)).Select((h, i) => new { h, i }).ToDictionary(x => x.h, x => x.i, StringComparer.OrdinalIgnoreCase);
 
         /// <summary>

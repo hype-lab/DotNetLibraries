@@ -20,9 +20,15 @@
 		<DocumentationFile>bin\$(Configuration)\$(TargetFramework)\HypeLab.IO.Excel.xml</DocumentationFile>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 
-		<DebugType>none</DebugType>
-		<EmbedUntrackedSources>false</EmbedUntrackedSources>
-		<IncludeSymbols>false</IncludeSymbols>
+		<!--
+			<DebugType>none</DebugType>
+			<EmbedUntrackedSources>false</EmbedUntrackedSources>
+			<IncludeSymbols>false</IncludeSymbols>
+		-->
+
+		<DebugType>full</DebugType>
+		<EmbedUntrackedSources>true</EmbedUntrackedSources>
+		<IncludeSymbols>true</IncludeSymbols>
 	</PropertyGroup>
 	
 	<PropertyGroup>
@@ -38,7 +44,7 @@
 	</ItemGroup>
 	
 	<ItemGroup>
-	  <PackageReference Include="HypeLab.IO.Core" Version="1.0.5" />
+	  <ProjectReference Include="..\HypeLab.IO.Core\HypeLab.IO.Core.csproj" />
 	</ItemGroup>
 	
 	<!--<ItemGroup>
