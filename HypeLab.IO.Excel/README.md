@@ -1,7 +1,30 @@
 ﻿[![NuGet](https://img.shields.io/nuget/v/HypeLab.IO.Excel.svg?style=flat-square)](https://www.nuget.org/packages/HypeLab.IO.Excel)
 ![Target Framework](https://img.shields.io/badge/target-.NET%20Standard%202.0-blue?style=flat-square)
 
-# Upates about performance improvements
+# [v1.0.7] Added New API in reading / parsing
+- New API for reading Excel files from a Stream (`ExcelSheetData ExtractSheetData(Stream stream, ExcelReaderOptions? options = null, ILogger? logger = null);`)
+
+- New APIs for parsing Excel files into strongly-typed objects directyl from the input file path, a byte array or a stream:
+```csharp
+// Synchronous
+ExcelParseResult<T> ParseTo<T>(string filePath, ExcelImportOptions? options = null, ILogger? logger = null);
+ExcelParseResult<T> ParseTo<T>(byte[] fileBytes, ExcelImportOptions? options = null, ILogger? logger = null);
+ExcelParseResult<T> ParseTo<T>(Stream stream, ExcelImportOptions? options = null, ILogger? logger = null);
+
+// Asynchronous
+Task<ExcelParseResult<T>> ParseToAsync<T>(string filePath, ExcelImportOptions? options = null, ILogger? logger = null, CancellationToken cancellationToken = default);
+Task<ExcelParseResult<T>> ParseToAsync<T>(byte[] fileBytes, ExcelImportOptions? options = null, ILogger? logger = null, CancellationToken cancellationToken = default);
+Task<ExcelParseResult<T>> ParseToAsync<T>(Stream stream, ExcelImportOptions? options = null, ILogger? logger = null, CancellationToken cancellationToken = default);
+```
+
+## Other improvements
+- Added (deactivatable) rows length normalization to `ExcelSheetData` with respect to header length;
+- Added exception throwing management in ExcelReader;
+- Converted sheet data rows and columns arrays to nullable string from non-nullable string;
+- Added logger support in ExcelValidator methods;
+- Updated NuGets.
+
+# ---
 
 ## History of benchmark results:
 New benchmark made by me using the same 65,000+ rows Excel file, made with `BenchmarkDotNet`:

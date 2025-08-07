@@ -109,7 +109,7 @@ namespace HypeLab.IO.Excel
         /// <param name="cancellationToken">A token to monitor for cancellation requests. The operation is canceled if the token is triggered.</param>
         /// <returns>An <see cref="ExcelParseResult{T}"/> containing the parsed objects and any associated parsing results or
         /// errors.</returns>
-        public static ExcelParseResult<T> ParseTo<T>(byte[] fileBytes, ExcelImportOptions? options = null, ILogger? logger = null, CancellationToken cancellationToken = default)
+        public static ExcelParseResult<T> ParseTo<T>(byte[] fileBytes, ExcelImportOptions? options = null, ILogger? logger = null)
             where T : class
         {
             options ??= new ExcelImportOptions();

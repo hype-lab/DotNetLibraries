@@ -9,32 +9,26 @@
 		<!-- NuGet metadata -->
 		<PackageId>HypeLab.IO.Core</PackageId>
 		<Title>Hype-Lab.IO.Core</Title>
-		<AssemblyVersion>1.0.5.0</AssemblyVersion>
-		<PackageVersion>1.0.5</PackageVersion>
-		<Version>1.0.5</Version>
+		<AssemblyVersion>1.0.6.0</AssemblyVersion>
+		<PackageVersion>1.0.6</PackageVersion>
+		<Version>1.0.6</Version>
 		<Authors>Matt P</Authors>
 		<Company>Hype-Lab</Company>
 		<Description>Shared infrastructure and core components used by HypeLab.IO libraries for structured data parsing and IO.</Description>
 		<PackageTags>core;infrastructure;IO;parsers;hype-lab;dotnet</PackageTags>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageProjectUrl>https://hype-lab.it/strumenti-per-sviluppatori/excel</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/hype-lab/DotNetLibraries/tree/main/HypeLab.IO.Core</RepositoryUrl>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<Copyright>©2025 Hype-Lab</Copyright>
-		<PackageReleaseNotes>Improved Excel file reading and parsing perfomance and memory allocation from inputs given in the Reddit discussion.</PackageReleaseNotes>
+		<PackageReleaseNotes>Rows length normalization with respect to header length management; added exception throwing management in ExcelReader; converted sheet data rows and columns arrays to nullable string from non-nullable string; added new API in ExcrelReader to read sheet data from a stream; added new APIs in ExcelParser to bind a collection of T's directly from an input file, a byte array, or a stream (sync and async); added logger support in ExcelValidator methods; updated NuGets.</PackageReleaseNotes>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<DocumentationFile>bin\$(Configuration)\$(TargetFramework)\HypeLab.IO.Core.xml</DocumentationFile>
 
-		<!--
-			<DebugType>none</DebugType>
-			<EmbedUntrackedSources>false</EmbedUntrackedSources>
-			<PublishRepositoryUrl>false</PublishRepositoryUrl>
-			<IncludeSymbols>false</IncludeSymbols>
-		-->
-
-		<DebugType>full</DebugType>
-		<EmbedUntrackedSources>true</EmbedUntrackedSources>
+		<DebugType>none</DebugType>
+		<EmbedUntrackedSources>false</EmbedUntrackedSources>
 		<PublishRepositoryUrl>true</PublishRepositoryUrl>
-		<IncludeSymbols>true</IncludeSymbols>
+		<IncludeSymbols>false</IncludeSymbols>
 	</PropertyGroup>
 
 	<ItemGroup>
