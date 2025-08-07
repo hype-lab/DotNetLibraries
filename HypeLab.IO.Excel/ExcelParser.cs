@@ -204,71 +204,76 @@ namespace HypeLab.IO.Excel
         }
 
         /// <summary>
-        /// Asynchronously parses an Excel file into a collection of objects of the specified type.
+        /// Asynchronously parses the specified Excel file into a collection of objects of type <typeparamref
+        /// name="T"/>.
         /// </summary>
-        /// <remarks>This method reads the specified Excel file, extracts its data, and parses it into a
-        /// collection of objects of type <typeparamref name="T"/>. The parsing process is influenced by the provided
-        /// <paramref name="options"/>, which can specify custom readers, parsers, or other settings.</remarks>
-        /// <typeparam name="T">The type of objects to parse the Excel data into. Must be a reference type.</typeparam>
-        /// <param name="filePath">The full path to the Excel file to be parsed. This cannot be null or empty.</param>
-        /// <param name="options">Optional configuration for reading and parsing the Excel file. If not provided, default options will be
+        /// <remarks>This method reads the Excel file at the specified <paramref name="filePath"/> and
+        /// parses its contents into objects of type <typeparamref name="T"/> using the provided or default import
+        /// options. The parsing is performed in batches, as specified by <paramref name="chunksBatchSize"/>, which can
+        /// help manage memory usage for large files.</remarks>
+        /// <typeparam name="T">The type of objects to parse each row into. Must be a reference type.</typeparam>
+        /// <param name="filePath">The path to the Excel file to parse. Cannot be null or empty.</param>
+        /// <param name="options">The options to use for importing and parsing the Excel file. If <see langword="null"/>, default options are
         /// used.</param>
-        /// <param name="logger">An optional logger instance for capturing diagnostic or error information during the parsing process.</param>
-        /// <param name="cancellationToken">A token to monitor for cancellation requests. If the operation is canceled, the returned task will be
-        /// canceled.</param>
-        /// <returns>A task that represents the asynchronous operation. The task result contains an <see
-        /// cref="ExcelParseResult{T}"/> object, which includes the parsed data and any associated metadata or errors.</returns>
-        public static async Task<ExcelParseResult<T>> ParseToAsync<T>(string filePath, ExcelImportOptions? options = null, ILogger? logger = null, CancellationToken cancellationToken = default)
+        /// <param name="chunksBatchSize">The number of rows to process in each batch. Must be greater than zero.</param>
+        /// <param name="logger">An optional logger for capturing diagnostic or error information during parsing. If <see langword="null"/>,
+        /// no logging is performed.</param>
+        /// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
+        /// <returns>A task that represents the asynchronous parse operation. The task result contains an <see
+        /// cref="ExcelParseResult{T}"/> with the parsed objects and any associated parsing information.</returns>
+        public static async Task<ExcelParseResult<T>> ParseToAsync<T>(string filePath, ExcelImportOptions? options = null, int chunksBatchSize = 50, ILogger? logger = null, CancellationToken cancellationToken = default)
             where T : class
         {
             options ??= new ExcelImportOptions();
-            return await ParseToAsync<T>(ExcelReader.ExtractSheetData(filePath, options.Reader, logger), options.Parser, logger: logger, cancellationToken: cancellationToken).ConfigureAwait(false);
+            return await ParseToAsync<T>(ExcelReader.ExtractSheetData(filePath, options.Reader, logger), options.Parser, chunksBatchSize, logger, cancellationToken).ConfigureAwait(false);
         }
 
         /// <summary>
-        /// Asynchronously parses the provided Excel file into a collection of objects of the specified type.
+        /// Asynchronously parses the specified Excel file bytes into a collection of objects of type <typeparamref
+        /// name="T"/>.
         /// </summary>
-        /// <remarks>This method reads the Excel file from the provided byte array, extracts the sheet
-        /// data, and parses it into objects of type <typeparamref name="T"/>. The parsing process can be customized
-        /// using the <paramref name="options"/> parameter.</remarks>
-        /// <typeparam name="T">The type of objects to parse the Excel data into. Must be a reference type.</typeparam>
-        /// <param name="fileBytes">The byte array representing the contents of the Excel file to parse. Cannot be null or empty.</param>
-        /// <param name="options">Optional configuration for customizing the Excel import process, including reader and parser settings. If
-        /// not provided, default options will be used.</param>
-        /// <param name="logger">An optional <see cref="ILogger"/> instance for logging diagnostic or error information during the parsing
-        /// process.</param>
-        /// <param name="cancellationToken">A token to monitor for cancellation requests. If the operation is canceled, the returned task will be in a
-        /// canceled state.</param>
-        /// <returns>A task that represents the asynchronous operation. The task result contains an <see
-        /// cref="ExcelParseResult{T}"/> with the parsed data and any associated metadata or errors.</returns>
-        public static async Task<ExcelParseResult<T>> ParseToAsync<T>(byte[] fileBytes, ExcelImportOptions? options = null, ILogger? logger = null, CancellationToken cancellationToken = default)
+        /// <remarks>This method reads the provided Excel file bytes and parses them into objects of type
+        /// <typeparamref name="T"/> according to the specified import options. The parsing is performed in batches, as
+        /// determined by <paramref name="chunksBatchSize"/>, which can improve performance for large files.</remarks>
+        /// <typeparam name="T">The type of objects to parse each row of the Excel file into. Must be a reference type.</typeparam>
+        /// <param name="fileBytes">The byte array containing the contents of the Excel file to parse. Cannot be <c>null</c> or empty.</param>
+        /// <param name="options">The options to use for importing and parsing the Excel file. If <c>null</c>, default options are used.</param>
+        /// <param name="chunksBatchSize">The number of rows to process in each batch during parsing. Must be greater than zero.</param>
+        /// <param name="logger">An optional logger for capturing diagnostic or error information during parsing. If <c>null</c>, no logging
+        /// is performed.</param>
+        /// <param name="cancellationToken">A token to monitor for cancellation requests. Parsing is canceled if the token is triggered.</param>
+        /// <returns>A task that represents the asynchronous parse operation. The task result contains an <see
+        /// cref="ExcelParseResult{T}"/> with the parsed objects and any associated parsing results or errors.</returns>
+        public static async Task<ExcelParseResult<T>> ParseToAsync<T>(byte[] fileBytes, ExcelImportOptions? options = null, int chunksBatchSize = 50, ILogger? logger = null, CancellationToken cancellationToken = default)
             where T : class
         {
             options ??= new ExcelImportOptions();
-            return await ParseToAsync<T>(ExcelReader.ExtractSheetData(fileBytes, options.Reader, logger), options.Parser, logger: logger, cancellationToken: cancellationToken).ConfigureAwait(false);
+            return await ParseToAsync<T>(ExcelReader.ExtractSheetData(fileBytes, options.Reader, logger), options.Parser, chunksBatchSize, logger, cancellationToken).ConfigureAwait(false);
         }
 
         /// <summary>
-        /// Asynchronously parses the content of an Excel stream into a collection of objects of the specified type.
+        /// Asynchronously parses data from the specified Excel stream into a collection of objects of type
+        /// <typeparamref name="T"/>.
         /// </summary>
-        /// <remarks>This method reads the Excel data from the provided stream, extracts the sheet data,
-        /// and parses it into objects of type <typeparamref name="T"/>. The parsing process can be customized using the
-        /// <paramref name="options"/> parameter.</remarks>
-        /// <typeparam name="T">The type of objects to parse the Excel data into. Must be a reference type.</typeparam>
-        /// <param name="stream">The input stream containing the Excel data to parse. The stream must be readable and positioned at the
-        /// beginning of the data.</param>
-        /// <param name="options">Optional configuration for customizing the Excel import process, such as reader and parser settings. If not
-        /// provided, default options will be used.</param>
-        /// <param name="logger">An optional logger instance for capturing diagnostic or error information during the parsing process. If
-        /// null, no logging will occur.</param>
-        /// <param name="cancellationToken">A token to monitor for cancellation requests. Parsing will be canceled if the token is triggered.</param>
-        /// <returns>A task that represents the asynchronous operation. The task result contains an <see
-        /// cref="ExcelParseResult{T}"/> object,  which includes the parsed data and any associated metadata or errors.</returns>
-        public static async Task<ExcelParseResult<T>> ParseToAsync<T>(Stream stream, ExcelImportOptions? options = null, ILogger? logger = null, CancellationToken cancellationToken = default)
+        /// <remarks>This method reads data from an Excel file provided as a <see cref="Stream"/>, applies
+        /// the specified import options, and parses the data into strongly typed objects. The parsing operation is
+        /// performed asynchronously and supports cancellation.</remarks>
+        /// <typeparam name="T">The type of objects to parse each row into. Must be a reference type.</typeparam>
+        /// <param name="stream">The stream containing the Excel file to parse. The stream must be readable and positioned at the beginning
+        /// of the file.</param>
+        /// <param name="options">The options to use for importing and parsing the Excel data. If <see langword="null"/>, default options are
+        /// used.</param>
+        /// <param name="chunksBatchSize">The number of rows to process in each batch during parsing. Must be greater than zero.</param>
+        /// <param name="logger">An optional logger for capturing diagnostic or error information during parsing. If <see langword="null"/>,
+        /// no logging is performed.</param>
+        /// <param name="cancellationToken">A token to monitor for cancellation requests. If cancellation is requested, the operation is aborted.</param>
+        /// <returns>A task that represents the asynchronous parse operation. The task result contains an <see
+        /// cref="ExcelParseResult{T}"/> with the parsed objects and any associated errors or warnings.</returns>
+        public static async Task<ExcelParseResult<T>> ParseToAsync<T>(Stream stream, ExcelImportOptions? options = null, int chunksBatchSize = 50, ILogger? logger = null, CancellationToken cancellationToken = default)
             where T : class
         {
             options ??= new ExcelImportOptions();
-            return await ParseToAsync<T>(ExcelReader.ExtractSheetData(stream, options.Reader, logger), options.Parser, logger: logger, cancellationToken: cancellationToken).ConfigureAwait(false);
+            return await ParseToAsync<T>(ExcelReader.ExtractSheetData(stream, options.Reader, logger), options.Parser, chunksBatchSize, logger, cancellationToken).ConfigureAwait(false);
         }
     }
 }
