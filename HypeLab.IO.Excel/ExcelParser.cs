@@ -90,11 +90,7 @@ namespace HypeLab.IO.Excel
             where T : class
         {
             options ??= new ExcelImportOptions();
-
-            using FileStream stream = File.OpenRead(filePath);
-            ExcelSheetData sheetData = ExcelReader.ExtractSheetData(filePath, options.Reader, logger);
-
-            return ParseTo<T>(sheetData, options.Parser, logger: logger);
+            return ParseTo<T>(ExcelReader.ExtractSheetData(filePath, options.Reader, logger), options.Parser, logger: logger);
         }
 
         /// <summary>
@@ -117,10 +113,7 @@ namespace HypeLab.IO.Excel
             where T : class
         {
             options ??= new ExcelImportOptions();
-
-            ExcelSheetData sheetData = ExcelReader.ExtractSheetData(fileBytes, options.Reader, logger);
-
-            return ParseTo<T>(sheetData, options.Parser, logger: logger);
+            return ParseTo<T>(ExcelReader.ExtractSheetData(fileBytes, options.Reader, logger), options.Parser, logger: logger);
         }
 
         /// <summary>
@@ -140,10 +133,7 @@ namespace HypeLab.IO.Excel
             where T : class
         {
             options ??= new ExcelImportOptions();
-
-            ExcelSheetData sheetData = ExcelReader.ExtractSheetData(stream, options.Reader, logger);
-
-            return ParseTo<T>(sheetData, options.Parser, logger: logger);
+            return ParseTo<T>(ExcelReader.ExtractSheetData(stream, options.Reader, logger), options.Parser, logger: logger);
         }
 
         /// <summary>
