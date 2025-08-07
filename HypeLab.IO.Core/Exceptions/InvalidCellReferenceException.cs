@@ -4,47 +4,46 @@ using System.Runtime.Serialization;
 namespace HypeLab.IO.Core.Exceptions
 {
     /// <summary>
-    /// Represents an exception that is thrown when a null object is encountered in a context where it is not allowed.
+    /// The exception that is thrown when a reference to an invalid or non-existent cell is encountered in a spreadsheet
+    /// or table.
     /// </summary>
-    [DebuggerDisplay("NullObjectException: {Message}")]
+    [DebuggerDisplay("InvalidCellReferenceException: {Message}")]
     [Serializable]
-    public class NullObjectException : Exception
+    public class InvalidCellReferenceException : Exception
     {
-        private const string _defaultMessage = "The object cannot be null.";
+        private const string _defaultMessage = "The cell reference is invalid or does not exist.";
 
         /// <summary>
-        /// Represents an exception that is thrown when an object is null and a non-null value is required.
+        /// Represents an exception that is thrown when a reference to an invalid or non-existent cell is encountered.
         /// </summary>
-        public NullObjectException()
+        public InvalidCellReferenceException()
             : base(_defaultMessage) { }
 
         /// <summary>
-        /// Represents an exception that is thrown when an operation encounters a null object where a non-null object is
-        /// required.
+        /// Represents an exception that is thrown when a cell reference in a spreadsheet or table is invalid.
         /// </summary>
         /// <param name="message">The message that describes the error.</param>
-        public NullObjectException(string? message)
+        public InvalidCellReferenceException(string? message)
             : base(message ?? _defaultMessage) { }
 
         /// <summary>
-        /// Represents an exception that is thrown when an operation encounters a null object where a non-null object is
-        /// required.
+        /// Represents an exception that is thrown when a reference to an invalid or non-existent cell is encountered.
         /// </summary>
-        /// <param name="message">The message that describes the error.</param>
+        /// <param name="message">The error message that explains the reason for the exception.</param>
         /// <param name="innerException">The exception that is the cause of the current exception, or <see langword="null"/> if no inner exception is
         /// specified.</param>
-        public NullObjectException(string? message, Exception? innerException)
+        public InvalidCellReferenceException(string? message, Exception? innerException)
             : base(message ?? _defaultMessage, innerException) { }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="NullObjectException"/> class with serialized data.
+        /// Initializes a new instance of the <see cref="InvalidCellReferenceException"/> class with serialized data.
         /// </summary>
         /// <remarks>This constructor is used during deserialization to reconstruct the exception object
         /// transmitted over a stream.</remarks>
         /// <param name="info">The <see cref="SerializationInfo"/> object that holds the serialized object data.</param>
         /// <param name="context">The <see cref="StreamingContext"/> object that contains contextual information about the source or
         /// destination.</param>
-        protected NullObjectException(SerializationInfo info, StreamingContext context)
+        protected InvalidCellReferenceException(SerializationInfo info, StreamingContext context)
             : base(info, context) { }
     }
 }

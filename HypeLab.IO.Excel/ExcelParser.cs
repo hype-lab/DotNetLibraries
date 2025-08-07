@@ -94,21 +94,19 @@ namespace HypeLab.IO.Excel
         }
 
         /// <summary>
-        /// Parses the specified Excel file bytes into a collection of objects of type <typeparamref name="T"/>.
+        /// Parses the provided Excel file bytes into a collection of objects of type <typeparamref name="T"/>.
         /// </summary>
-        /// <remarks>This method reads the provided Excel file bytes and parses each row into an instance
-        /// of <typeparamref name="T"/> according to the specified import options. Use the <paramref name="options"/>
-        /// parameter to customize reading and parsing behavior. If logging is required, provide an <paramref
-        /// name="logger"/>.</remarks>
-        /// <typeparam name="T">The type of objects to parse each row of the Excel file into. Must be a reference type.</typeparam>
-        /// <param name="fileBytes">The byte array containing the contents of the Excel file to parse. Cannot be <see langword="null"/>.</param>
-        /// <param name="options">The options to use for importing and parsing the Excel file. If <see langword="null"/>, default options are
-        /// used.</param>
-        /// <param name="logger">An optional logger for capturing diagnostic or error information during parsing. May be <see
-        /// langword="null"/>.</param>
-        /// <param name="cancellationToken">A token to monitor for cancellation requests. The operation is canceled if the token is triggered.</param>
-        /// <returns>An <see cref="ExcelParseResult{T}"/> containing the parsed objects and any associated parsing results or
-        /// errors.</returns>
+        /// <remarks>This method processes the Excel file by extracting its sheet data and parsing it into
+        /// objects of the specified type. The parsing behavior can be customized using the <paramref name="options"/>
+        /// parameter.</remarks>
+        /// <typeparam name="T">The type of objects to parse the Excel data into. Must be a reference type.</typeparam>
+        /// <param name="fileBytes">The byte array representing the Excel file to be parsed. This cannot be null or empty.</param>
+        /// <param name="options">Optional configuration for customizing the Excel import process, such as reader and parser settings. If not
+        /// provided, default options will be used.</param>
+        /// <param name="logger">An optional logger instance for capturing diagnostic or error information during the parsing process. If
+        /// null, no logging will occur.</param>
+        /// <returns>An <see cref="ExcelParseResult{T}"/> containing the parsed objects of type <typeparamref name="T"/> and any
+        /// associated metadata or errors encountered during parsing.</returns>
         public static ExcelParseResult<T> ParseTo<T>(byte[] fileBytes, ExcelImportOptions? options = null, ILogger? logger = null)
             where T : class
         {

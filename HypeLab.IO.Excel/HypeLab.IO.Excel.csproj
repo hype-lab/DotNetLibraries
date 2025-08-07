@@ -39,6 +39,10 @@
 	</ItemGroup>
 	
 	<ItemGroup>
-	  <PackageReference Include="HypeLab.IO.Core" Version="1.0.6" />
+	  <ProjectReference Include="..\HypeLab.IO.Core\HypeLab.IO.Core.csproj" />
 	</ItemGroup>
+	
+	<!--<ItemGroup>
+	  <PackageReference Include="HypeLab.IO.Core" Version="1.0.6" />
+	</ItemGroup>-->
 </Project>
