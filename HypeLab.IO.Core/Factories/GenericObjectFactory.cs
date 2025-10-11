@@ -133,7 +133,7 @@ namespace HypeLab.IO.Core.Factories
             where T : class
         {
             Type type = typeof(T);
-            T? instance = null;
+            T? instance;
 
             try
             {
@@ -152,7 +152,7 @@ namespace HypeLab.IO.Core.Factories
             for (int i = 0; i < props.Length; i++)
             {
                 PropertyInfo prop = props[i];
-                if (prop == null || !prop.CanWrite) continue;
+                if (prop?.CanWrite != true) continue;
 
                 try
                 {
