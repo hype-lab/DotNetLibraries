@@ -1,4 +1,4 @@
-﻿using HypeLab.IO.Core.Data.Options.Impl.Excel;
+﻿using HypeLab.IO.Core.Data.Models.Common;
 
 namespace HypeLab.IO.Core.Data.Models.Excel
 {
@@ -21,5 +21,15 @@ namespace HypeLab.IO.Core.Data.Models.Excel
         /// Gets the current zero-based index of the row.
         /// </summary>
         int RowIndex { get; } // indice attuale
+
+        /// <summary>
+        /// Gets the number of columns in the current <see cref="BoxableRowBuffer" />."
+        /// </summary>
+        int ColumnCount { get; } // numero di colonne del RowBuffer corrente
+
+        /// <summary>
+        /// Gets a value indicating whether the current row is a header row.
+        /// </summary>
+        bool IsHeader { get; } // indica se la riga corrente è un header
     }
 }

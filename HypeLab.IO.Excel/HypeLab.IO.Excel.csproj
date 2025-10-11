@@ -20,10 +20,10 @@
 		<DocumentationFile>bin\$(Configuration)\$(TargetFramework)\HypeLab.IO.Excel.xml</DocumentationFile>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 
-		<DebugType>none</DebugType>
-		<EmbedUntrackedSources>false</EmbedUntrackedSources>
+		<DebugType>full</DebugType>
+		<EmbedUntrackedSources>true</EmbedUntrackedSources>
 		<PublishRepositoryUrl>true</PublishRepositoryUrl>
-		<IncludeSymbols>false</IncludeSymbols>
+		<IncludeSymbols>true</IncludeSymbols>
 	</PropertyGroup>
 	
 	<PropertyGroup>

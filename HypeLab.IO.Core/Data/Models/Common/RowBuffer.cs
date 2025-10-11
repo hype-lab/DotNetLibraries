@@ -97,6 +97,10 @@ namespace HypeLab.IO.Core.Data.Models.Common
         }
     }
 
+    /// <summary>
+    /// Represents a buffer for storing rows of string data, backed by a pooled array to optimize memory usage.
+    /// It's similar to <see cref="RowBuffer"/>, but allows it can be boxed and encapsulated in a reference type.
+    /// </summary>
     public struct BoxableRowBuffer
     {
         private readonly string?[] _array;

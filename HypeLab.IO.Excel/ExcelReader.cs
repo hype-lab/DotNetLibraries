@@ -50,7 +50,7 @@ namespace HypeLab.IO.Excel
                     if (sheetPath is null)
                     {
                         if (options.ThrowExceptionIfSheetNameNotFound)
-                            throw new ExcelReaderException($"Sheet '{options.SheetName}' not found in workbook.");
+                            throw new SheetNameNotFoundException($"Sheet '{options.SheetName}' not found in workbook.");
                         else
                             sheetPath = ExcelDefaults.Worksheets.Sheet1PathName; // fallback
                     }
@@ -111,7 +111,7 @@ namespace HypeLab.IO.Excel
                     if (sheetPath is null)
                     {
                         if (options.ThrowExceptionIfSheetNameNotFound)
-                            throw new ExcelReaderException($"Sheet '{options.SheetName}' not found in workbook.");
+                            throw new SheetNameNotFoundException($"Sheet '{options.SheetName}' not found in workbook.");
                         else
                             sheetPath = ExcelDefaults.Worksheets.Sheet1PathName; // fallback
                     }
@@ -171,7 +171,7 @@ namespace HypeLab.IO.Excel
                     if (sheetPath is null)
                     {
                         if (options.ThrowExceptionIfSheetNameNotFound)
-                            throw new ExcelReaderException($"Sheet '{options.SheetName}' not found in workbook.");
+                            throw new SheetNameNotFoundException($"Sheet '{options.SheetName}' not found in workbook.");
                         else
                             sheetPath = ExcelDefaults.Worksheets.Sheet1PathName; // fallback
                     }
